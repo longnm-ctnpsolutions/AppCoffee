@@ -79,7 +79,7 @@ export function TableFilterDropdown<T>({ column }: TableFilterDropdownProps<T>) 
                 checked={isAllSelected}
                 onCheckedChange={(checked) => handleSelectAll(!!checked)}
               />
-              <Label htmlFor="select-all" className="font-medium">Select All</Label>
+              <Label htmlFor="select-all" className="font-medium">Chọn tất cả</Label>
             </div>
             <Separator className="my-2" />
         </div>
@@ -99,14 +99,10 @@ export function TableFilterDropdown<T>({ column }: TableFilterDropdownProps<T>) 
         </ScrollArea>
          <Separator className="my-2" />
         <div className="flex justify-end gap-2 p-2">
-          <Button variant="ghost" size="sm" onClick={handleCancel}>Cancel</Button>
+          <Button variant="ghost" size="sm" onClick={handleCancel}>Hủy</Button>
           <Button size="sm" onClick={handleOk}>OK</Button>
         </div>
       </PopoverContent>
     </Popover>
   );
 };
-
-    
-
-    

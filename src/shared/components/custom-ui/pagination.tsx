@@ -40,7 +40,7 @@ export function TablePagination<T>({ table,  pageSizeOptions = [5, 10, 20] }: Ta
   if (totalPages === 0) {
     return (
       <div className="flex items-center justify-center p-2 text-sm text-muted-foreground">
-        No data available
+        Không có dữ liệu
       </div>
     )
   }
@@ -57,7 +57,7 @@ export function TablePagination<T>({ table,  pageSizeOptions = [5, 10, 20] }: Ta
               "h-8 w-8 p-0",
               table.getState().pagination.pageSize === pageSize ? "rounded-full" : ""
             )}
-            aria-label={`Show ${pageSize} items per page`}
+            aria-label={`Hiển thị ${pageSize} mục mỗi trang`}
           >
             {pageSize}
           </Button>
@@ -66,7 +66,7 @@ export function TablePagination<T>({ table,  pageSizeOptions = [5, 10, 20] }: Ta
 
       <div className="flex items-center gap-4">
         <div className="text-muted-foreground hidden sm:block">
-          Page {currentPage + 1} of {totalPages} ({table.getFilteredRowModel().rows.length} items)
+          Trang {currentPage + 1} của {totalPages} ({table.getFilteredRowModel().rows.length} mục)
         </div>
 
         <div className="flex items-center gap-1">
@@ -76,8 +76,8 @@ export function TablePagination<T>({ table,  pageSizeOptions = [5, 10, 20] }: Ta
             className="h-8 w-8"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            aria-label="Go to previous page"
-            title="Previous page"
+            aria-label="Đi đến trang trước"
+            title="Trang trước"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -100,7 +100,7 @@ export function TablePagination<T>({ table,  pageSizeOptions = [5, 10, 20] }: Ta
                   currentPage === pageIndex ? "rounded-full" : ""
                 )}
                 onClick={() => table.setPageIndex(pageIndex)}
-                aria-label={`Go to page ${pageIndex + 1}`}
+                aria-label={`Đi đến trang ${pageIndex + 1}`}
               >
                 {pageIndex + 1}
               </Button>
@@ -113,8 +113,8 @@ export function TablePagination<T>({ table,  pageSizeOptions = [5, 10, 20] }: Ta
             className="h-8 w-8"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            aria-label="Go to next page"
-            title="Next page"
+            aria-label="Đi đến trang tiếp theo"
+            title="Trang tiếp theo"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>

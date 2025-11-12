@@ -7,8 +7,8 @@ export default function UserDetailHeader() {
     <CardHeader>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <CardTitle>Users</CardTitle>
-          <CardDescription>UI for admins to manage identities.</CardDescription>
+          <CardTitle>Người dùng</CardTitle>
+          <CardDescription>Giao diện cho quản trị viên quản lý danh tính.</CardDescription>
         </div>
       </div>
     </CardHeader>

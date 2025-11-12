@@ -26,7 +26,7 @@ export default function UserProfileForm() {
     defaultValues: {
       firstName: "Long",
       lastName: "Nguyen",
-      role: "Admin",
+      role: "Quản trị viên",
       gender: undefined,
       birthDate: undefined,
       email: "long.nguyen@example.com",
@@ -46,8 +46,8 @@ export default function UserProfileForm() {
       
       console.log(values)
       toast({
-        title: "Profile Updated",
-        description: "Your profile information has been successfully updated.",
+        title: "Hồ sơ đã được cập nhật",
+        description: "Thông tin hồ sơ của bạn đã được cập nhật thành công.",
       })
     })
   }

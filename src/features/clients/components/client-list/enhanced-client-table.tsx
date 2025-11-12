@@ -218,7 +218,7 @@ export function EnhancedClientTable({ table, columns, isLoading }: ClientTablePr
                   colSpan={debugInfo.visibleColumns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  Không có kết quả.
                 </TableCell>
               </TableRow>
             )}
@@ -240,14 +240,14 @@ EnhancedClientTable.columns = (handleDeleteRow: (id: string) => void): ColumnDef
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
+        aria-label="Chọn tất cả"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
+        aria-label="Chọn hàng"
       />
     ),
     enableSorting: false,
@@ -286,7 +286,7 @@ EnhancedClientTable.columns = (handleDeleteRow: (id: string) => void): ColumnDef
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="h-auto p-0 font-semibold justify-start"
       >
-        Client Name
+        Tên máy khách
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
@@ -304,7 +304,7 @@ EnhancedClientTable.columns = (handleDeleteRow: (id: string) => void): ColumnDef
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="h-auto p-0 font-semibold justify-start"
       >
-        Description
+        Mô tả
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
@@ -316,7 +316,7 @@ EnhancedClientTable.columns = (handleDeleteRow: (id: string) => void): ColumnDef
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: "Trạng thái",
     cell: ({ row }) => {
       const statusValue = row.getValue("status") 
       const status = (statusValue === 1 || statusValue === "1") ? 'active' : 'inactive'
@@ -327,7 +327,7 @@ EnhancedClientTable.columns = (handleDeleteRow: (id: string) => void): ColumnDef
           isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
         )}>
           <span className={cn("mr-1.5 h-2 w-2 rounded-full", isActive ? "bg-green-500" : "bg-gray-400")} />
-          <span className="capitalize">{status}</span>
+          <span className="capitalize">{isActive ? 'Hoạt động' : 'Không hoạt động'}</span>
         </div>
       )
     }
@@ -340,7 +340,7 @@ EnhancedClientTable.columns = (handleDeleteRow: (id: string) => void): ColumnDef
       const router = useRouter()
       
       const handleDetailsClick = () => {
-        router.push(`/en/clients/${client.id}`)
+        router.push(`/vi/clients/${client.id}`)
       }
       
       const handleDeleteClick = async () => {
@@ -352,13 +352,13 @@ EnhancedClientTable.columns = (handleDeleteRow: (id: string) => void): ColumnDef
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">Mở menu</span>
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onSelect={handleDetailsClick}>
-                Details
+                Chi tiết
               </DropdownMenuItem>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -366,23 +366,23 @@ EnhancedClientTable.columns = (handleDeleteRow: (id: string) => void): ColumnDef
                     onSelect={(e) => e.preventDefault()} 
                     className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/50"
                   >
-                    Delete
+                    Xóa
                   </DropdownMenuItem>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogTitle>Bạn có chắc chắn không?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete this client.
+                      Hành động này không thể được hoàn tác. Điều này sẽ xóa vĩnh viễn máy khách này.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>Hủy</AlertDialogCancel>
                     <AlertDialogAction 
                       onClick={handleDeleteClick}
                       className="bg-red-600 hover:bg-red-700"
                     >
-                      Continue
+                      Tiếp tục
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

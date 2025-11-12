@@ -97,7 +97,7 @@ export function UserTable({ table, columns }: UserTableProps) {
                 colSpan={columns.length}
                 className="h-24 text-center"
               >
-                No results.
+                Không có kết quả.
               </TableCell>
             </TableRow>
           )}
@@ -117,14 +117,14 @@ UserTable.columns = (handleDeleteRow: (id: string) => void): ColumnDef<User>[] =
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
+        aria-label="Chọn tất cả"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
+        aria-label="Chọn hàng"
       />
     ),
     enableSorting: false,
@@ -155,15 +155,16 @@ UserTable.columns = (handleDeleteRow: (id: string) => void): ColumnDef<User>[] =
         const map = new Map();
         table.getPreFilteredRowModel().rows.forEach(row => {
             const value = row.getValue(column.id);
-            const count = map.get(value) || 0;
-            map.set(value, count + 1);
+            if(value !== undefined && value !== null) {
+                map.set(value, (map.get(value) || 0) + 1);
+            }
         })
         return map;
     }
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: "Trạng thái",
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
       const isActive = status === 'active' || status === 1;
@@ -172,7 +173,7 @@ UserTable.columns = (handleDeleteRow: (id: string) => void): ColumnDef<User>[] =
           isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
         )}>
            <span className={cn("mr-1 h-2 w-2 rounded-full", isActive ? "bg-green-500" : "bg-gray-400")} />
-           <span className="capitalize">{isActive ? 'Active' : 'Inactive'}</span>
+           <span className="capitalize">{isActive ? 'Hoạt động' : 'Không hoạt động'}</span>
         </div>
       )
     }
@@ -185,7 +186,7 @@ UserTable.columns = (handleDeleteRow: (id: string) => void): ColumnDef<User>[] =
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Connection
+          Kết nối
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -202,28 +203,28 @@ UserTable.columns = (handleDeleteRow: (id: string) => void): ColumnDef<User>[] =
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">Mở menu</span>
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-            <DropdownMenuItem >Details</DropdownMenuItem>
-              <DropdownMenuItem>Change Password</DropdownMenuItem>
-              <DropdownMenuItem>Deactivate</DropdownMenuItem>
+            <DropdownMenuItem >Chi tiết</DropdownMenuItem>
+              <DropdownMenuItem>Đổi mật khẩu</DropdownMenuItem>
+              <DropdownMenuItem>Hủy kích hoạt</DropdownMenuItem>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/50">Delete</DropdownMenuItem>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/50">Xóa</DropdownMenuItem>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogTitle>Bạn có chắc chắn không?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete this user account.
+                      Hành động này không thể được hoàn tác. Điều này sẽ xóa vĩnh viễn tài khoản người dùng này.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => handleDeleteRow(user.id)} className="bg-red-600 hover:bg-red-700">Continue</AlertDialogAction>
+                    <AlertDialogCancel>Hủy</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => handleDeleteRow(user.id)} className="bg-red-600 hover:bg-red-700">Tiếp tục</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
@@ -234,7 +235,3 @@ UserTable.columns = (handleDeleteRow: (id: string) => void): ColumnDef<User>[] =
     },
   },
 ]
-
-    
-
-    

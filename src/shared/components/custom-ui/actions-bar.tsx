@@ -101,18 +101,18 @@ const ActionDialog: React.FC<{ action: ActionItem }> = ({ action }) => {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Confirm Action</AlertDialogTitle>
+          <AlertDialogTitle>Xác nhận hành động</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to {action.label.toLowerCase()}?
+            Bạn có chắc chắn muốn {action.label.toLowerCase()} không?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>Hủy</AlertDialogCancel>
           <AlertDialogAction 
             onClick={action.onClick}
             className={action.variant === 'destructive' ? 'bg-red-600 hover:bg-red-700' : ''}
           >
-            Continue
+            Tiếp tục
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -170,18 +170,18 @@ const renderDropdownItem = (action: ActionItem, key: string) => {
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Confirm Action</AlertDialogTitle>
+              <AlertDialogTitle>Xác nhận hành động</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to {action.label.toLowerCase()}?
+                Bạn có chắc chắn muốn {action.label.toLowerCase()} không?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel>Hủy</AlertDialogCancel>
               <AlertDialogAction 
                 onClick={action.onClick}
                 className={action.variant === 'destructive' ? 'bg-red-600 hover:bg-red-700' : ''}
               >
-                Continue
+                Tiếp tục
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

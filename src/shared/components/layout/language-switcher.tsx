@@ -17,11 +17,13 @@ interface LanguageSwitcherProps {
 export function LanguageSwitcher({ menuState, menuActions }: LanguageSwitcherProps) {
   const { currentLanguage, languageOptions, handleLanguageChange } = useHeaderLanguage(menuState, menuActions);
 
+  const activeLanguage = languageOptions.find(lang => lang.code === currentLanguage);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="flex items-center gap-2">
-          <span className="font-bold">{currentLanguage}</span>
+          <span className="font-bold">{activeLanguage?.code || 'VI'}</span>
           <ChevronDown className="h-4 w-4 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>

@@ -44,8 +44,8 @@ export function BasicInfoSection({ form, isPending }: BasicInfoSectionProps) {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(() => {
       toast({
-        title: "Copied to clipboard",
-        description: "The user ID has been copied.",
+        title: "Đã sao chép vào clipboard",
+        description: "ID người dùng đã được sao chép.",
       })
     })
   }
@@ -55,7 +55,7 @@ export function BasicInfoSection({ form, isPending }: BasicInfoSectionProps) {
   return (
     <Card className="bg-white dark:bg-card shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg">Basic Info</CardTitle>
+        <CardTitle className="text-lg">Thông tin cơ bản</CardTitle>
       </CardHeader>
       <CardContent className="space-y-8">
         {/* Row 1: Avatar and ID Section */}
@@ -73,7 +73,7 @@ export function BasicInfoSection({ form, isPending }: BasicInfoSectionProps) {
             </div>
             <Button variant="outline" className="w-full max-w-xs">
               <KeyRound className="mr-2 h-4 w-4" />
-              Change your password
+              Thay đổi mật khẩu của bạn
             </Button>
           </div>
         </div>
@@ -85,9 +85,9 @@ export function BasicInfoSection({ form, isPending }: BasicInfoSectionProps) {
             name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>First Name <span className="text-destructive">*</span></FormLabel>
+                <FormLabel>Tên <span className="text-destructive">*</span></FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter first name" {...field} disabled={isPending} />
+                  <Input placeholder="Nhập tên" {...field} disabled={isPending} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -98,9 +98,9 @@ export function BasicInfoSection({ form, isPending }: BasicInfoSectionProps) {
             name="lastName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Last Name <span className="text-destructive">*</span></FormLabel>
+                <FormLabel>Họ <span className="text-destructive">*</span></FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter last name" {...field} disabled={isPending} />
+                  <Input placeholder="Nhập họ" {...field} disabled={isPending} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -116,7 +116,7 @@ export function BasicInfoSection({ form, isPending }: BasicInfoSectionProps) {
                 name="role"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Role</FormLabel>
+                    <FormLabel>Vai trò</FormLabel>
                     <FormControl>
                       <Input {...field} disabled />
                     </FormControl>
@@ -131,17 +131,17 @@ export function BasicInfoSection({ form, isPending }: BasicInfoSectionProps) {
                 name="gender"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Gender</FormLabel>
+                    <FormLabel>Giới tính</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isPending}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Choose gender" />
+                          <SelectValue placeholder="Chọn giới tính" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        <SelectItem value="male">Nam</SelectItem>
+                        <SelectItem value="female">Nữ</SelectItem>
+                        <SelectItem value="other">Khác</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -153,7 +153,7 @@ export function BasicInfoSection({ form, isPending }: BasicInfoSectionProps) {
                 name="birthDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Birth Date <span className="text-destructive">*</span></FormLabel>
+                    <FormLabel>Ngày sinh <span className="text-destructive">*</span></FormLabel>
                       <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -168,7 +168,7 @@ export function BasicInfoSection({ form, isPending }: BasicInfoSectionProps) {
                             {field.value ? (
                               format(field.value, "PPP")
                             ) : (
-                              <span>Select birth date</span>
+                              <span>Chọn ngày sinh</span>
                             )}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>

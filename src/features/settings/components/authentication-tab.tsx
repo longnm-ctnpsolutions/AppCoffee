@@ -16,14 +16,14 @@ export function AuthenticationTab() {
       <Card>
         <CardHeader className="flex flex-row items-center gap-4 space-y-0">
           <ShieldCheck className="h-6 w-6" />
-          <CardTitle className="text-lg">MFA Configuration</CardTitle>
+          <CardTitle className="text-lg">Cấu hình MFA</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between rounded-lg border p-4">
             <div>
-              <Label htmlFor="mfa-switch" className="font-semibold">Enable MFA</Label>
+              <Label htmlFor="mfa-switch" className="font-semibold">Bật MFA</Label>
               <p className="text-sm text-muted-foreground">
-                MFA Methods: Authenticator App (TOTP)
+                Phương pháp MFA: Ứng dụng xác thực (TOTP)
               </p>
             </div>
             <Switch id="mfa-switch" />
@@ -33,14 +33,14 @@ export function AuthenticationTab() {
       <Card>
         <CardHeader className="flex flex-row items-center gap-4 space-y-0">
           <LockKeyhole className="h-6 w-6" />
-          <CardTitle className="text-lg">Login Security</CardTitle>
+          <CardTitle className="text-lg">Bảo mật đăng nhập</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="max-w-sm space-y-2">
-            <Label htmlFor="login-attempts">Max Failed Login Attempts</Label>
+            <Label htmlFor="login-attempts">Số lần đăng nhập thất bại tối đa</Label>
             <Input id="login-attempts" type="number" defaultValue="5" className="w-24" />
             <p className="text-sm text-muted-foreground">
-              Lock account after this number of failed logins
+              Khóa tài khoản sau số lần đăng nhập thất bại này
             </p>
           </div>
         </CardContent>

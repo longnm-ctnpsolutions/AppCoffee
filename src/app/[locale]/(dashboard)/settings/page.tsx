@@ -19,14 +19,13 @@ export default function SettingsPage() {
               <div>
                 <TabsList className="bg-transparent border-b rounded-none p-0 w-full justify-start -mb-px">
                   <TabsTrigger value="authentication" className="tab-trigger">
-                    Authentication
+                    Xác thực
                   </TabsTrigger>
                   <TabsTrigger value="password" className="tab-trigger">
-                    Password Policy
+                    Chính sách mật khẩu
                   </TabsTrigger>
                 </TabsList>
                 
-                {/* Tab content is now inside the card */}
                 <div className="pt-6 border-t">
                   <TabsContent value="authentication" className="mt-0">
                     <AuthenticationTab />

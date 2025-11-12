@@ -52,7 +52,7 @@ export default function ClientDetailTabs({ client }: ClientDetailTabsProps) {
             className="flex items-center gap-1 cursor-pointer select-none"
             onClick={() => column.toggleSorting(sorted === "asc")}
           >
-            Permission {icon}
+            Quyền {icon}
           </div>
         );
       },
@@ -70,7 +70,7 @@ export default function ClientDetailTabs({ client }: ClientDetailTabsProps) {
             className="flex items-center gap-1 cursor-pointer select-none"
             onClick={() => column.toggleSorting(sorted === "asc")}
           >
-            Description {icon}
+            Mô tả {icon}
           </div>
         );
       },
@@ -115,8 +115,8 @@ export default function ClientDetailTabs({ client }: ClientDetailTabsProps) {
       <Card className="rounded-b-none border-b-0 shadow-md">
         <div className="px-2 pt-1 pb-2">
           <TabsList className="w-full justify-start bg-transparent">
-            <TabsTrigger value="details">Details</TabsTrigger>
-            <TabsTrigger value="permissions">Permissions</TabsTrigger>
+            <TabsTrigger value="details">Chi tiết</TabsTrigger>
+            <TabsTrigger value="permissions">Quyền</TabsTrigger>
           </TabsList>
         </div>
       </Card>
@@ -132,7 +132,7 @@ export default function ClientDetailTabs({ client }: ClientDetailTabsProps) {
                 <div className="flex justify-end mt-4 gap-x-2">
                   <Button size="sm" variant="outline">
                     <RefreshCcw className="w-4 h-4 mr-2" />
-                    Deactivate
+                    Hủy kích hoạt
                   </Button>
 
                   {isEditable ? (
@@ -142,7 +142,7 @@ export default function ClientDetailTabs({ client }: ClientDetailTabsProps) {
                         variant="outline"
                         onClick={() => setIsEditable(false)}
                       >
-                        Cancel
+                        Hủy
                       </Button>
                       <Button
                         size="sm"
@@ -152,7 +152,7 @@ export default function ClientDetailTabs({ client }: ClientDetailTabsProps) {
                           setIsEditable(false);
                         }}
                       >
-                        Save
+                        Lưu
                       </Button>
                     </>
                   ) : (
@@ -162,40 +162,40 @@ export default function ClientDetailTabs({ client }: ClientDetailTabsProps) {
                       onClick={() => setIsEditable(true)}
                     >
                       <Pencil className="w-4 h-4 mr-2" />
-                      Edit
+                      Chỉnh sửa
                     </Button>
                   )}
                 </div>
                 
-                <p>Client ID</p>
+                <p>ID Máy khách</p>
                 <Input
                   disabled={true}
                   className="bg-transparent"
                   defaultValue={client.id}
                 />
-                <p>Client Name <span className="text-red-500">*</span></p>
+                <p>Tên máy khách <span className="text-red-500">*</span></p>
                 <Input
                   disabled={!isEditable}
                   className="bg-transparent"
                   defaultValue={client.name}
                 />
-                <p>Identifier</p>
+                <p>Định danh</p>
                 <Input
                   disabled={true}
                   className="bg-transparent"
                   defaultValue={client.clientId}
                 />
-                <p>Description</p>
+                <p>Mô tả</p>
                 <Input
                   disabled={!isEditable}
                   className="bg-transparent"
                   defaultValue={client.description}
                 />
-                <p>Homepage URL</p>
+                <p>URL Trang chủ</p>
                 <Input
                   disabled={!isEditable}
                   className="bg-transparent"
-                  placeholder="Enter client name"
+                  placeholder="Nhập URL trang chủ"
                 />
 
                 <div className="flex flex-col items-center justify-center w-full">
@@ -209,7 +209,7 @@ export default function ClientDetailTabs({ client }: ClientDetailTabsProps) {
                   >
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                       <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                        Click to upload or drag and drop
+                        Nhấn để tải lên hoặc kéo và thả
                       </p>
                     </div>
                     <Input
@@ -228,11 +228,11 @@ export default function ClientDetailTabs({ client }: ClientDetailTabsProps) {
                           ? "pointer-events-none opacity-50" 
                           : "cursor-pointer"}
                       >
-                        Select a file
+                        Chọn một tệp
                       </label>
                     </Button>
                     <span className="ml-2 text-sm text-muted-foreground">
-                      or Drop file here
+                      hoặc Thả tệp vào đây
                     </span>
                   </div>
                 </div>
@@ -242,24 +242,24 @@ export default function ClientDetailTabs({ client }: ClientDetailTabsProps) {
             <TabsContent value="permissions" className="flex-1 flex flex-col min-h-0 space-y-6">
               {/* Card: Add a Permission - Enhanced shadow */}
               <Card className="rounded-[8px] border pt-[20px] pb-[20px] px-[24px] space-y-4 shadow-lg border-gray-200 bg-white flex-shrink-0">
-                <div className="text-lg font-semibold">Add a Permission</div>
+                <div className="text-lg font-semibold">Thêm một quyền</div>
 
                 <div className="flex flex-col md:flex-row w-full gap-4 md:items-end">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm mb-1">
-                      Permission <span className="text-red-500">*</span>
+                      Quyền <span className="text-red-500">*</span>
                     </p>
                     <Input
                       className="bg-transparent w-full"
-                      placeholder="Enter permission name"
+                      placeholder="Nhập tên quyền"
                     />
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm mb-1">Description</p>
+                    <p className="text-sm mb-1">Mô tả</p>
                     <Input
                       className="bg-transparent w-full"
-                      placeholder="Enter description"
+                      placeholder="Nhập mô tả"
                     />
                   </div>
 
@@ -268,7 +268,7 @@ export default function ClientDetailTabs({ client }: ClientDetailTabsProps) {
                       size="sm"
                       className="w-auto md:w-[70px] bg-[#0f6cbd] text-white hover:bg-[#084c91]"
                     >
-                      Create
+                      Tạo
                     </Button>
                   </div>
                 </div>
@@ -276,7 +276,7 @@ export default function ClientDetailTabs({ client }: ClientDetailTabsProps) {
 
               {/* Card: List of Permissions - Enhanced shadow */}
               <Card className="flex flex-col flex-shrink-0 rounded-[8px] border pt-[20px] pb-[20px] px-[24px] space-y-4 shadow-lg border-gray-200 bg-white">
-                <div className="text-lg font-semibold flex-shrink-0">List of Permissions</div>
+                <div className="text-lg font-semibold flex-shrink-0">Danh sách quyền</div>
 
  // Phần table được refactor để sử dụng shadcn Table components
 <Card className="flex flex-col h-[350px] overflow-hidden shadow-md border-gray-100 mt-2">

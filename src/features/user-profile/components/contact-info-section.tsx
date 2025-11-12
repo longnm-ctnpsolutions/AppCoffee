@@ -29,8 +29,8 @@ export function ContactInfoSection({ form, isPending }: ContactInfoSectionProps)
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(() => {
       toast({
-        title: "Copied to clipboard",
-        description: "The email address has been copied.",
+        title: "Đã sao chép vào clipboard",
+        description: "Địa chỉ email đã được sao chép.",
       })
     })
   }
@@ -38,7 +38,7 @@ export function ContactInfoSection({ form, isPending }: ContactInfoSectionProps)
   return (
     <Card className="bg-white dark:bg-card shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg">Contacts</CardTitle>
+        <CardTitle className="text-lg">Liên hệ</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex items-center gap-4">
@@ -58,9 +58,9 @@ export function ContactInfoSection({ form, isPending }: ContactInfoSectionProps)
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone <span className="text-destructive">*</span></FormLabel>
+                <FormLabel>Điện thoại <span className="text-destructive">*</span></FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter phone number" {...field} disabled={isPending} />
+                  <Input placeholder="Nhập số điện thoại" {...field} disabled={isPending} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

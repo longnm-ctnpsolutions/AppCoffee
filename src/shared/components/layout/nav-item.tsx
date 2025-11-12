@@ -46,7 +46,7 @@ export function MenuItem({
   const effectiveState = isMobile && openMobile ? 'expanded' : state;
   const pathname = usePathname();
   const router = useRouter();
-  const locale = pathname.split('/')[1] || 'en';
+  const locale = pathname.split('/')[1] || 'vi';
   
   const fullPath = parentPath ? `${parentPath}.${item.id}` : item.id;
   const isOpen = openState[fullPath] || false;

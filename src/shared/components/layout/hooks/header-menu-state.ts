@@ -25,7 +25,7 @@ export const useMenuState = (user?: User) => {
     isSidebarOpen: true,
     activeMenuItem: null,
     expandedSections: [],
-    currentLanguage: 'EN'
+    currentLanguage: 'VI'
   });
 
   const router = useRouter();
@@ -36,7 +36,7 @@ export const useMenuState = (user?: User) => {
     if (typeof window !== 'undefined') {
       const savedState = {
         isSidebarOpen: localStorage.getItem(STORAGE_KEYS.SIDEBAR_STATE) !== 'false',
-        currentLanguage: localStorage.getItem(STORAGE_KEYS.LANGUAGE) || 'EN',
+        currentLanguage: localStorage.getItem(STORAGE_KEYS.LANGUAGE) || 'VI',
         expandedSections: JSON.parse(localStorage.getItem(STORAGE_KEYS.EXPANDED_SECTIONS) || '[]')
       };
       
@@ -111,8 +111,8 @@ export const useHeaderTheme = () => {
   const { setTheme } = useTheme();
 
   const themeOptions: ThemeOption[] = [
-    { value: 'light', label: 'Light', icon: '☀️' },
-    { value: 'dark', label: 'Dark', icon: '🌙' },
+    { value: 'light', label: 'Sáng', icon: '☀️' },
+    { value: 'dark', label: 'Tối', icon: '🌙' },
   ];
 
   const handleThemeChange = useCallback((theme: ThemeOption['value']) => {
@@ -127,14 +127,14 @@ export const useHeaderTheme = () => {
 
 export const useHeaderLanguage = (menuState: MenuState, menuActions: MenuActions) => {
   const languageOptions: LanguageOption[] = [
-    { code: 'EN', label: 'English', flag: '🇺🇸' },
-    { code: 'VI', label: 'Vietnamese', flag: '🇻🇳' }
+    { code: 'EN', label: 'Tiếng Anh', flag: '🇺🇸' },
+    { code: 'VI', label: 'Tiếng Việt', flag: '🇻🇳' }
   ];
   
   const handleLanguageChange = useCallback((languageCode: string) => {
     menuActions.setLanguage(languageCode);
     // Thêm logic i18n ở đây
-    console.log(`Language changed to: ${languageCode}`);
+    console.log(`Ngôn ngữ đã đổi thành: ${languageCode}`);
   }, [menuActions]);
   const cleanLanguage = menuState.currentLanguage.replace(/"/g, '')
   return {
@@ -149,7 +149,7 @@ export const useUserMenu = (user?: User) => {
 
   const handleLogout = useCallback(() => {
     // Thêm logic logout ở đây
-    console.log('User logged out');
+    console.log('Người dùng đã đăng xuất');
     // router.push('/login');
   }, [router]);
 
@@ -168,13 +168,13 @@ export const useUserMenu = (user?: User) => {
   const userMenuActions: UserMenuAction[] = [
     {
       key: 'profile',
-      label: 'Profile',
+      label: 'Hồ sơ',
       icon: SquareUser,
       onClick: handleProfile
     },
     {
       key: 'logout',
-      label: 'Logout',
+      label: 'Đăng xuất',
       icon: LogOut,
       onClick: handleLogout,
       separator: true

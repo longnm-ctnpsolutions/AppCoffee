@@ -34,8 +34,8 @@ import { ActionItem } from '@/shared/components/custom-ui/hooks/use-responsive-a
 import { ExportDialog } from "@/shared/components/custom-ui/export-dialog"
 
 const addClientFormSchema = z.object({
-  name: z.string().min(1, { message: "Please enter a client name." }),
-  identifier: z.string().min(1, { message: "Please enter a client identifier." }),
+  name: z.string().min(1, { message: "Vui lòng nhập tên máy khách." }),
+  identifier: z.string().min(1, { message: "Vui lòng nhập định danh máy khách." }),
   description: z.string(),
   homepageurl: z.string(),
   logo: z.any().optional(),
@@ -113,7 +113,7 @@ export const ClientActions = React.memo(function ClientActions({
   const actions: ActionItem[] = React.useMemo(() => [
     {
       id: 'add-client',
-      label: 'Add Client',
+      label: 'Thêm máy khách',
       icon: UserPlus,
       type: 'custom',
       priority: 5, 
@@ -128,7 +128,7 @@ export const ClientActions = React.memo(function ClientActions({
     },
     {
       id: 'delete',
-      label: 'Delete',
+      label: 'Xóa',
       icon: Trash2,
       type: 'dialog',
       variant: 'destructive',
@@ -142,7 +142,7 @@ export const ClientActions = React.memo(function ClientActions({
     },
     {
       id: 'refresh',
-      label: 'Refresh Data',
+      label: 'Làm mới dữ liệu',
       icon: RefreshCw,
       type: 'button',
       variant: 'ghost',
@@ -156,7 +156,7 @@ export const ClientActions = React.memo(function ClientActions({
     },
     {
       id: 'column-chooser',
-      label: 'Column Chooser',
+      label: 'Chọn cột',
       icon: Columns,
       type: 'dropdown',
       variant: 'ghost',
@@ -170,7 +170,7 @@ export const ClientActions = React.memo(function ClientActions({
         {
           id: 'column-chooser-label',
           type: 'custom',
-          component: <DropdownMenuLabel className="font-bold">Column Chooser</DropdownMenuLabel>
+          component: <DropdownMenuLabel className="font-bold">Chọn cột</DropdownMenuLabel>
         },
         {
           id: 'column-chooser-separator',
@@ -200,7 +200,7 @@ export const ClientActions = React.memo(function ClientActions({
     },
     {
       id: 'export-dropdown',
-      label: 'Export Data',
+      label: 'Xuất dữ liệu',
       icon: Download,
       type: 'button',
       onClick: handleExportClick,
@@ -225,15 +225,15 @@ export const ClientActions = React.memo(function ClientActions({
         <CardHeader>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <CardTitle>Clients</CardTitle>
-              <CardDescription>Manage your application clients.</CardDescription>
+              <CardTitle>Máy khách</CardTitle>
+              <CardDescription>Quản lý máy khách ứng dụng của bạn.</CardDescription>
             </div>
             
             <div className="flex items-center gap-2">
               <div className="relative flex-1 md:grow-0">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search clients..."
+                  placeholder="Tìm kiếm máy khách..."
                   value=""
                   className="pl-9 w-full md:w-[150px] lg:w-[250px]"
                   disabled
@@ -261,15 +261,15 @@ export const ClientActions = React.memo(function ClientActions({
       <CardHeader>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <CardTitle>Clients</CardTitle>
-            <CardDescription>Manage your application clients.</CardDescription>
+            <CardTitle>Máy khách</CardTitle>
+            <CardDescription>Quản lý máy khách ứng dụng của bạn.</CardDescription>
           </div>
           
           <div className="flex items-center gap-2">
             <div className="relative flex-1 md:grow-0">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search clients..."
+                placeholder="Tìm kiếm máy khách..."
                 value={searchTerm}
                 onChange={handleSearchChange}
                 className="pl-9 w-full md:w-[150px] lg:w-[250px]"

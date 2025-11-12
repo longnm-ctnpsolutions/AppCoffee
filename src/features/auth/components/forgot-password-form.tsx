@@ -28,7 +28,7 @@ import Link from "next/link"
 
 const formSchema = z.object({
   email: z.string().email({
-    message: "Please enter a valid email address.",
+    message: "Vui lòng nhập một địa chỉ email hợp lệ.",
   }),
 })
 
@@ -49,33 +49,33 @@ export function ForgotPasswordForm() {
       <div className="flex flex-col items-center mb-2">
         <div className="flex items-center gap-3">
           <Image src="/images/new-icon.png" alt="Logo" width={32} height={32} data-ai-hint="logo" />
-          <h1 className="text-2xl font-bold text-foreground">Forgot password?</h1>
+          <h1 className="text-2xl font-bold text-foreground">Quên mật khẩu?</h1>
         </div>
       </div>
       <div className="flex justify-end mb-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Image src="https://placehold.co/20x15.png" alt="UK Flag" width={20} height={15} data-ai-hint="uk flag" />
-              <span>EN</span>
+              <Image src="https://placehold.co/20x15.png" alt="Vietnam Flag" width={20} height={15} data-ai-hint="vietnam flag" />
+              <span>VI</span>
               <ChevronDown className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem>
               <Image src="https://placehold.co/20x15.png" alt="UK Flag" width={20} height={15} className="mr-2" data-ai-hint="uk flag" />
-              <span>English</span>
+              <span>Tiếng Anh</span>
             </DropdownMenuItem>
              <DropdownMenuItem>
               <Image src="https://placehold.co/20x15.png" alt="Vietnam Flag" width={20} height={15} className="mr-2" data-ai-hint="vietnam flag" />
-              <span>Vietnamese</span>
+              <span>Tiếng Việt</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
       <p className="text-muted-foreground text-sm mb-6 text-start">
-        Enter your email, we will send a verification code to your email
+        Nhập email của bạn, chúng tôi sẽ gửi mã xác thực đến email của bạn
       </p>
 
       <Form {...form}>
@@ -86,14 +86,14 @@ export function ForgotPasswordForm() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="Enter your email" {...field} className="h-12 text-base" />
+                  <Input placeholder="Nhập email của bạn" {...field} className="h-12 text-base" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           <Button type="submit" className="w-full h-12 text-base font-semibold" style={{backgroundColor: '#003366'}}>
-            Recover Password
+            Khôi phục mật khẩu
           </Button>
         </form>
       </Form>
@@ -101,14 +101,14 @@ export function ForgotPasswordForm() {
       <div className="relative my-6">
         <Separator />
         <span className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-          or
+          hoặc
         </span>
       </div>
 
       <Button variant="outline" className="w-full h-12 text-base" asChild>
-        <Link href="/en/auth/login">
+        <Link href="/vi/auth/login">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Return to Sign In
+            Quay lại Đăng nhập
         </Link>
       </Button>
     </div>

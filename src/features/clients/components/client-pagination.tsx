@@ -36,7 +36,7 @@ const PageSizeControls = memo(({
             "h-8 w-8 p-0",
             pageSize === pageSizeOption ? "rounded-full" : ""
           )}
-          aria-label={`Show ${pageSizeOption} items per page`}
+          aria-label={`Hiển thị ${pageSizeOption} mục mỗi trang`}
         >
           {pageSizeOption}
         </Button>
@@ -57,12 +57,12 @@ const PaginationInfo = memo(({
   totalCount: number;
 }) => {
   if (totalCount === 0) {
-    return <span className="text-muted-foreground hidden sm:block">No items</span>
+    return <span className="text-muted-foreground hidden sm:block">Không có mục nào</span>
   }
   
   return (
     <div className="text-muted-foreground hidden sm:block">
-      Page {currentPage + 1} of {totalPages} ({totalCount} items)
+      Trang {currentPage + 1} của {totalPages} ({totalCount} mục)
     </div>
   )
 })
@@ -119,7 +119,7 @@ const PageNumbers = memo(({
               currentPage === pageIndex ? "rounded-full" : ""
             )}
             onClick={() => onPageChange(pageIndex)}
-            aria-label={`Go to page ${pageIndex + 1}`}
+            aria-label={`Đi đến trang ${pageIndex + 1}`}
           >
             {pageIndex + 1}
           </Button>
@@ -151,8 +151,8 @@ const NavigationControls = memo(({
         className="h-8 w-8"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={!canPreviousPage}
-        aria-label="Go to previous page"
-        title="Previous page"
+        aria-label="Đi đến trang trước"
+        title="Trang trước"
       >
         <ChevronLeft className="h-4 w-4" />
       </Button>
@@ -169,8 +169,8 @@ const NavigationControls = memo(({
         className="h-8 w-8"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={!canNextPage}
-        aria-label="Go to next page"
-        title="Next page"
+        aria-label="Đi đến trang tiếp theo"
+        title="Trang tiếp theo"
       >
         <ChevronRight className="h-4 w-4" />
       </Button>
@@ -213,7 +213,7 @@ export function ClientPagination({
   if (totalPages === 0) {
     return (
       <div className="flex items-center justify-center p-2 text-sm text-muted-foreground">
-        No data available
+        Không có dữ liệu
       </div>
     )
   }

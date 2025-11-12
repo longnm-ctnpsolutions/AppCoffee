@@ -28,7 +28,7 @@ import { UserActions } from "./user-actions"
 import { useSidebar } from "@/shared/components/ui/sidebar"
 
 const addUserFormSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email." }),
+  email: z.string().email({ message: "Vui lòng nhập một địa chỉ email hợp lệ." }),
 })
 
 export function UserDashboard() {
@@ -59,8 +59,8 @@ export function UserDashboard() {
     setAddUserDialogOpen(false)
     addUserForm.reset()
     toast({
-      title: "User added",
-      description: `${values.email} has been added to the user list.`,
+      title: "Đã thêm người dùng",
+      description: `${values.email} đã được thêm vào danh sách người dùng.`,
     })
   }
   
@@ -69,8 +69,8 @@ export function UserDashboard() {
     setUsers(prev => prev.filter(user => !selectedIds.includes(user.id)));
     setRowSelection({});
     toast({
-      title: "Users deleted",
-      description: `${selectedIds.length} user(s) have been deleted.`,
+      title: "Đã xóa người dùng",
+      description: `${selectedIds.length} người dùng đã được xóa.`,
       variant: "destructive"
     })
   }
@@ -78,8 +78,8 @@ export function UserDashboard() {
   const handleDeleteRow = (userId: string) => {
     setUsers(prev => prev.filter(user => user.id !== userId));
      toast({
-      title: "User deleted",
-      description: `The user has been deleted.`,
+      title: "Đã xóa người dùng",
+      description: `Người dùng đã được xóa.`,
       variant: "destructive"
     })
   }

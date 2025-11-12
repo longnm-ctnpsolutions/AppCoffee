@@ -4,17 +4,17 @@ import { z } from "zod"
 
 export const userProfileSchema = z.object({
   // Basic Info
-  firstName: z.string().min(1, "First name is required."),
-  lastName: z.string().min(1, "Last name is required."),
+  firstName: z.string().min(1, "Tên là bắt buộc."),
+  lastName: z.string().min(1, "Họ là bắt buộc."),
   role: z.string(),
   gender: z.enum(["male", "female", "other"]).optional(),
   birthDate: z.date({
-    required_error: "A date of birth is required.",
+    required_error: "Ngày sinh là bắt buộc.",
   }).optional(),
   
   // Contact Info
-  email: z.string().email("Invalid email address.").min(1, "Email is required."),
-  phone: z.string().min(1, "Phone number is required."),
+  email: z.string().email("Địa chỉ email không hợp lệ.").min(1, "Email là bắt buộc."),
+  phone: z.string().min(1, "Số điện thoại là bắt buộc."),
 
   // Address Info
   address: z.string().optional(),

@@ -15,26 +15,26 @@ export function PasswordPolicyTab() {
     <Card>
       <CardHeader className="flex flex-row items-center gap-4 space-y-0">
         <KeyRound className="h-6 w-6" />
-        <CardTitle className="text-lg">Password Policy</CardTitle>
+        <CardTitle className="text-lg">Chính sách mật khẩu</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6 pt-6">
         <div className="space-y-2">
           <Label htmlFor="password-history" className="font-semibold">
-            Password History Restriction
+            Hạn chế lịch sử mật khẩu
           </Label>
           <Input id="password-history" type="number" defaultValue="3" className="w-24" />
           <p className="text-sm text-muted-foreground">
-            User cannot reuse the last 3 passwords
+            Người dùng không thể sử dụng lại 3 mật khẩu cuối cùng
           </p>
         </div>
         <Separator />
         <div className="space-y-2">
           <Label htmlFor="password-expiry" className="font-semibold">
-            Password Expiry (days)
+            Hết hạn mật khẩu (ngày)
           </Label>
           <Input id="password-expiry" type="number" defaultValue="90" className="w-24" />
           <p className="text-sm text-muted-foreground">
-            Force password change after 90 days (except AD accounts)
+            Buộc thay đổi mật khẩu sau 90 ngày (trừ tài khoản AD)
           </p>
         </div>
       </CardContent>

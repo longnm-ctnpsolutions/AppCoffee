@@ -2,5 +2,5 @@
 import { redirect } from 'next/navigation';
 
 export default function RootPage() {
-  redirect('/en/auth/login');
+  redirect('/vi/auth/login');
 }

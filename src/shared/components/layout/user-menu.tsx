@@ -28,11 +28,11 @@ export function UserMenu({ user }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-md" aria-label="Open user menu">
+        <Button variant="ghost" size="icon" className="rounded-md" aria-label="Mở menu người dùng">
           <Avatar className="rounded-md cursor-pointer h-8 w-8">
             <AvatarImage 
               src={user?.avatar || "/images/personal.svg"} 
-              alt={user?.name || "User"}
+              alt={user?.name || "Người dùng"}
               data-ai-hint="avatar user"  
             />
             <AvatarFallback>{getInitials(user?.name)}</AvatarFallback>
@@ -41,7 +41,7 @@ export function UserMenu({ user }: UserMenuProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>
-          {user?.name || 'User Name'}
+          {user?.name || 'Tên người dùng'}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {userMenuActions.map((action, index) => (

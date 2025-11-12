@@ -13,33 +13,33 @@ export default function UserDetailTabs() {
       <div className="p-6">
         <Tabs defaultValue="details">
           <TabsList>
-            <TabsTrigger value="details">Details</TabsTrigger>
-            <TabsTrigger value="permissions">Permissions</TabsTrigger>
+            <TabsTrigger value="details">Chi tiết</TabsTrigger>
+            <TabsTrigger value="permissions">Quyền</TabsTrigger>
           </TabsList>
           <div className="flex justify-end mt-2 gap-x-2">
             <Button size="sm" variant="outline">
               <RefreshCcw className="w-4 h-4 mr-2" />
-              Deactivate
+              Hủy kích hoạt
             </Button>
             <Button size="sm" className="bg-[#0f6cbd] text-white hover:bg-[#084c91]">
               <Pencil className="w-4 h-4 mr-2" />
-              Edit
+              Chỉnh sửa
             </Button>
           </div>
           <div className="pt-3">
             <TabsContent value="details">
               <div className="space-y-2 p-2">
-                <p>Client ID</p>
-                <Input className="bg-transparent" placeholder="Enter client name" />
-                <p>Client Name</p>
-                <Input placeholder="Enter client name" />
-                <p>Identifier</p>
-                <Input placeholder="Enter client name" />
-                <p>Description</p>
-                <Input placeholder="Enter client name" />
-                <p>Homepage URL</p>
-                <Input placeholder="Enter client name" />
-                <p>Homepage URL</p>
+                <p>ID Máy khách</p>
+                <Input className="bg-transparent" placeholder="Nhập tên máy khách" />
+                <p>Tên máy khách</p>
+                <Input placeholder="Nhập tên máy khách" />
+                <p>Định danh</p>
+                <Input placeholder="Nhập tên máy khách" />
+                <p>Mô tả</p>
+                <Input placeholder="Nhập tên máy khách" />
+                <p>URL Trang chủ</p>
+                <Input placeholder="Nhập tên máy khách" />
+                <p>URL Trang chủ</p>
                 <div className="flex flex-col items-center justify-center w-full">
                   <label
                     htmlFor="dropzone-file"
@@ -47,7 +47,7 @@ export default function UserDetailTabs() {
                   >
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                       <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                        Click to upload or drag and drop
+                        Nhấn để tải lên hoặc kéo và thả
                       </p>
                     </div>
                     <Input 
@@ -59,15 +59,15 @@ export default function UserDetailTabs() {
                   </label>
                   <div className="flex items-center mt-2">
                     <Button asChild variant="outline" size="sm">
-                      <label htmlFor="dropzone-file">Select a file</label>
+                      <label htmlFor="dropzone-file">Chọn một tệp</label>
                     </Button>
-                    <span className="ml-2 text-sm text-muted-foreground">or Drop file here</span>
+                    <span className="ml-2 text-sm text-muted-foreground">hoặc Thả tệp vào đây</span>
                   </div>
                 </div>
               </div>
             </TabsContent>
             <TabsContent value="permissions">
-              <p>Access and update your documents.</p>
+              <p>Truy cập và cập nhật tài liệu của bạn.</p>
             </TabsContent>
           </div>
         </Tabs>

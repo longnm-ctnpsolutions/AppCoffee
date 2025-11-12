@@ -38,13 +38,13 @@ const AddClientDialog: React.FC<AddClientDialogProps> = ({
       <DialogTrigger asChild>
         <Button>
           <UserPlus className="mr-2 h-4 w-4" />
-          Add Client
+          Thêm máy khách
         </Button>
       </DialogTrigger>
       <DialogContent className=" max-sm:w-full max-sm:h-full max-sm:max-w-none max-sm:rounded-none max-sm:border-0 max-sm:p-0 max-sm:flex max-sm:flex-col">
         <div className="border-b-2 pb-4 max-sm:p-4 max-sm:border-b-2">
           <DialogHeader>
-            <DialogTitle className="max-sm:text-left">Add Client</DialogTitle>
+            <DialogTitle className="max-sm:text-left">Thêm máy khách</DialogTitle>
           </DialogHeader>
         </div>
 
@@ -56,10 +56,10 @@ const AddClientDialog: React.FC<AddClientDialogProps> = ({
                 name="name"
                 render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>Client Name <span className="text-destructive">*</span></FormLabel>
+                    <FormLabel>Tên máy khách <span className="text-destructive">*</span></FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="Enter client name" 
+                        placeholder="Nhập tên máy khách" 
                         {...field}
                       />
                     </FormControl>
@@ -72,10 +72,10 @@ const AddClientDialog: React.FC<AddClientDialogProps> = ({
                 name="identifier"
                 render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>Identifier <span className="text-destructive">*</span></FormLabel>
+                    <FormLabel>Định danh <span className="text-destructive">*</span></FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="Enter client identifier" 
+                        placeholder="Nhập định danh máy khách" 
                         {...field}
                       />
                     </FormControl>
@@ -88,9 +88,9 @@ const AddClientDialog: React.FC<AddClientDialogProps> = ({
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>Mô tả</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter description" {...field} />
+                      <Input placeholder="Nhập mô tả" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -101,9 +101,9 @@ const AddClientDialog: React.FC<AddClientDialogProps> = ({
                 name="homepageurl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Homepage URL</FormLabel>
+                    <FormLabel>URL trang chủ</FormLabel>
                     <FormControl>
-                      <Input placeholder="Homepage URL" {...field} />
+                      <Input placeholder="URL trang chủ" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -123,7 +123,7 @@ const AddClientDialog: React.FC<AddClientDialogProps> = ({
                         >
                           <div className="flex flex-col items-center justify-center pt-5 pb-6">
                             <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                              Click to upload or drag and drop
+                              Nhấn để tải lên hoặc kéo và thả
                             </p>
                           </div>
                           <Input 
@@ -135,9 +135,9 @@ const AddClientDialog: React.FC<AddClientDialogProps> = ({
                         </label>
                         <div className="flex items-center mt-2">
                           <Button asChild variant="outline" size="sm">
-                            <label htmlFor="dropzone-file">Select a file</label>
+                            <label htmlFor="dropzone-file">Chọn một tệp</label>
                           </Button>
-                          <span className="ml-2 text-sm text-muted-foreground">or Drop file here</span>
+                          <span className="ml-2 text-sm text-muted-foreground">hoặc Thả tệp vào đây</span>
                         </div>
                       </div>
                     </FormControl>
@@ -152,11 +152,11 @@ const AddClientDialog: React.FC<AddClientDialogProps> = ({
         <DialogFooter className="!justify-center gap-2 max-sm:flex-row max-sm:justify-center max-sm:pb-4">
                 <DialogClose asChild>
                   <Button type="button" variant="outline" size="sm">
-                    Cancel
+                    Hủy
                   </Button>
                 </DialogClose>
                 <Button type="submit" size="sm">
-                  Save
+                  Lưu
                 </Button>
               </DialogFooter>
       </DialogContent>

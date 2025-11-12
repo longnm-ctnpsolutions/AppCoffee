@@ -36,9 +36,9 @@ export function UserFilters({ table }: UserFiltersProps) {
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All</SelectItem>
-          <SelectItem value="active">Active</SelectItem>
-          <SelectItem value="inactive">Inactive</SelectItem>
+          <SelectItem value="all">Tất cả</SelectItem>
+          <SelectItem value="active">Hoạt động</SelectItem>
+          <SelectItem value="inactive">Không hoạt động</SelectItem>
         </SelectContent>
       </Select>
     </>

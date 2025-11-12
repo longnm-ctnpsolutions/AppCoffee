@@ -31,7 +31,7 @@ export function AddressSection({ form, isPending }: AddressSectionProps) {
   return (
     <Card className="bg-white dark:bg-card shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg">Address</CardTitle>
+        <CardTitle className="text-lg">Địa chỉ</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex items-center gap-4">
@@ -45,18 +45,18 @@ export function AddressSection({ form, isPending }: AddressSectionProps) {
             name="country"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Country</FormLabel>
+                <FormLabel>Quốc gia</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isPending}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select country" />
+                      <SelectValue placeholder="Chọn quốc gia" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="usa">United States</SelectItem>
+                    <SelectItem value="usa">Hoa Kỳ</SelectItem>
                     <SelectItem value="canada">Canada</SelectItem>
-                    <SelectItem value="vietnam">Vietnam</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="vietnam">Việt Nam</SelectItem>
+                    <SelectItem value="other">Khác</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -68,9 +68,9 @@ export function AddressSection({ form, isPending }: AddressSectionProps) {
             name="city"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>City</FormLabel>
+                <FormLabel>Thành phố</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter city" {...field} disabled={isPending} />
+                  <Input placeholder="Nhập thành phố" {...field} disabled={isPending} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -82,9 +82,9 @@ export function AddressSection({ form, isPending }: AddressSectionProps) {
             name="state"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>State/Province/Area</FormLabel>
+                <FormLabel>Tỉnh/Thành phố/Khu vực</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter state/province/area" {...field} disabled={isPending} />
+                  <Input placeholder="Nhập tỉnh/thành phố/khu vực" {...field} disabled={isPending} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -95,9 +95,9 @@ export function AddressSection({ form, isPending }: AddressSectionProps) {
           name="address"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Address</FormLabel>
+              <FormLabel>Địa chỉ</FormLabel>
               <FormControl>
-                <Input placeholder="Enter address" {...field} disabled={isPending} />
+                <Input placeholder="Nhập địa chỉ" {...field} disabled={isPending} />
               </FormControl>
               <FormMessage />
             </FormItem>

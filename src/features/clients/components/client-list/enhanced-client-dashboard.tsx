@@ -25,8 +25,8 @@ import { ListLayout } from "@/shared/components/custom-ui/list-layout"
 import { useClientsActions } from "@/shared/context/clients-context"
 
 const addClientFormSchema = z.object({
-  name: z.string().min(1, { message: "Please enter a client name." }),
-  identifier: z.string().min(1, { message: "Please enter a client identifier." }),
+  name: z.string().min(1, { message: "Vui lòng nhập tên máy khách." }),
+  identifier: z.string().min(1, { message: "Vui lòng nhập định danh máy khách." }),
   description: z.string(),
   homepageurl: z.string(),
   logo: z.any().optional(),
@@ -161,8 +161,8 @@ export function EnhancedClientDashboard() {
       setAddClientDialogOpen(false)
       addClientForm.reset()
       toast({
-        title: "Client added",
-        description: `${values.name} has been added to the client list.`,
+        title: "Đã thêm máy khách",
+        description: `${values.name} đã được thêm vào danh sách máy khách.`,
       })
     }
   }, [addClient, addClientForm, toast])
@@ -171,8 +171,8 @@ export function EnhancedClientDashboard() {
     const success = await removeClient(clientId)
     if (success) {
       toast({
-        title: "Client deleted",
-        description: `The client has been deleted.`,
+        title: "Đã xóa máy khách",
+        description: `Máy khách đã được xóa.`,
         variant: "destructive"
       })
     }
@@ -192,7 +192,7 @@ export function EnhancedClientDashboard() {
   React.useEffect(() => {
     if (error) {
       toast({
-        title: "An error occurred",
+        title: "Đã xảy ra lỗi",
         description: error,
         variant: "destructive",
       })
@@ -272,8 +272,8 @@ export function EnhancedClientDashboard() {
     if (success) {
       setRowSelection({})
       toast({
-        title: "Clients deleted",
-        description: `${selectedIds.length} client(s) have been deleted.`,
+        title: "Đã xóa máy khách",
+        description: `${selectedIds.length} máy khách đã được xóa.`,
         variant: "destructive"
       })
     }
@@ -402,12 +402,12 @@ export function EnhancedClientDashboard() {
             />
           </svg>
           <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-            No clients found
+            Không tìm thấy máy khách nào
           </h3>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
             {isSearching || columnFilters.length > 0 
-              ? "Try adjusting your search or filters to find what you're looking for."
-              : "Get started by adding your first client to the system."
+              ? "Hãy thử điều chỉnh tìm kiếm hoặc bộ lọc của bạn để tìm thấy những gì bạn đang tìm kiếm."
+              : "Bắt đầu bằng cách thêm máy khách đầu tiên của bạn vào hệ thống."
             }
           </p>
           {(!isSearching && columnFilters.length === 0) && (
@@ -415,7 +415,7 @@ export function EnhancedClientDashboard() {
               onClick={() => setAddClientDialogOpen(true)}
               className="mt-4 inline-flex items-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              Add your first client
+              Thêm máy khách đầu tiên của bạn
             </button>
           )}
         </div>

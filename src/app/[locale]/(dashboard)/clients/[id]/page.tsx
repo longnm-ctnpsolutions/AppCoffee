@@ -18,7 +18,7 @@ export default function ClientDetailPage() {
   if (!client) {
     return (
       <div className="flex items-center justify-center h-full">
-        <p>Client not found.</p>
+        <p>Không tìm thấy máy khách.</p>
       </div>
     );
   }

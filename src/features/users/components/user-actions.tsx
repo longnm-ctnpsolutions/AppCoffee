@@ -70,7 +70,7 @@ import { UserFilters } from "./user-filters"
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/components/ui/popover"
 
 const addUserFormSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email." }),
+  email: z.string().email({ message: "Vui lòng nhập một địa chỉ email hợp lệ." }),
 })
 
 interface UserActionsProps {
@@ -98,14 +98,14 @@ export function UserActions({
       <DialogTrigger asChild>
         <Button>
           <UserPlus className="mr-2 h-4 w-4" />
-          Add User
+          Thêm người dùng
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] max-sm:w-full max-sm:h-full max-sm:max-w-none max-sm:rounded-none max-sm:border-0">
         <DialogHeader>
-          <DialogTitle>Create User</DialogTitle>
+          <DialogTitle>Tạo người dùng</DialogTitle>
           <DialogDescription>
-            Fill in the details below to add a new user to the system.
+            Điền vào các chi tiết dưới đây để thêm người dùng mới vào hệ thống.
           </DialogDescription>
         </DialogHeader>
         <Form {...addUserForm}>
@@ -118,7 +118,7 @@ export function UserActions({
                   <FormLabel>Email <span className="text-destructive">*</span></FormLabel>
                   <FormControl>
                       <Input 
-                        placeholder="Enter your email" 
+                        placeholder="Nhập email của bạn" 
                         {...field} 
                         error={!!fieldState.error}
                       />
@@ -129,9 +129,9 @@ export function UserActions({
             />
             <DialogFooter>
               <DialogClose asChild>
-                <Button type="button" variant="ghost">Cancel</Button>
+                <Button type="button" variant="ghost">Hủy</Button>
               </DialogClose>
-              <Button type="submit">Add User</Button>
+              <Button type="submit">Thêm người dùng</Button>
             </DialogFooter>
           </form>
         </Form>
@@ -144,19 +144,19 @@ export function UserActions({
         <AlertDialogTrigger asChild>
             <Button variant="outline" disabled={table.getFilteredSelectedRowModel().rows.length === 0}>
             <Trash2 className="mr-2 h-4 w-4" />
-            Delete
+            Xóa
             </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
             <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>Bạn có chắc chắn không?</AlertDialogTitle>
             <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete the selected user(s).
+                Hành động này không thể được hoàn tác. Điều này sẽ xóa vĩnh viễn (các) người dùng đã chọn.
             </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={onDeleteSelected} className="bg-red-600 hover:bg-red-700">Continue</AlertDialogAction>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
+            <AlertDialogAction onClick={onDeleteSelected} className="bg-red-600 hover:bg-red-700">Tiếp tục</AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
     </AlertDialog>
@@ -167,26 +167,26 @@ export function UserActions({
         <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-10">
             <FileUp className="h-4 w-4" />
-            <span>Export</span>
+            <span>Xuất</span>
             <ChevronDown className="ml-2 h-4 w-4 hidden lg:inline-flex" />
             </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
             <DropdownMenuItem>
             <FileSpreadsheet className="mr-2 h-4 w-4" />
-            <span>Export all data to Excel</span>
+            <span>Xuất tất cả dữ liệu ra Excel</span>
             </DropdownMenuItem>
             <DropdownMenuItem>
             <FileSpreadsheet className="mr-2 h-4 w-4" />
-            <span>Export selected rows to Excel</span>
+            <span>Xuất các hàng đã chọn ra Excel</span>
             </DropdownMenuItem>
             <DropdownMenuItem>
             <FileText className="mr-2 h-4 w-4" />
-            <span>Export all data to PDF</span>
+            <span>Xuất tất cả dữ liệu ra PDF</span>
             </DropdownMenuItem>
             <DropdownMenuItem>
             <FileText className="mr-2 h-4 w-4" />
-            <span>Export selected rows to PDF</span>
+            <span>Xuất các hàng đã chọn ra PDF</span>
             </DropdownMenuItem>
         </DropdownMenuContent>
     </DropdownMenu>
@@ -200,7 +200,7 @@ export function UserActions({
             </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuLabel className="font-bold">Column Chooser</DropdownMenuLabel>
+            <DropdownMenuLabel className="font-bold">Chọn cột</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {table
             .getAllColumns()
@@ -228,14 +228,14 @@ export function UserActions({
       <CardHeader>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <CardTitle>Users</CardTitle>
-            <CardDescription>UI for admins to manage identities.</CardDescription>
+            <CardTitle>Người dùng</CardTitle>
+            <CardDescription>Giao diện cho quản trị viên quản lý danh tính.</CardDescription>
           </div>
           <div className="flex items-center gap-2">
             <div className="relative flex-1 md:grow-0">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="User Search"
+                  placeholder="Tìm kiếm người dùng"
                   value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
                   onChange={(event) =>
                     table.getColumn("email")?.setFilterValue(event.target.value)
@@ -272,7 +272,7 @@ export function UserActions({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onSelect={() => setAddUserDialogOpen(true)} className={cn(isSidebarExpanded ? 'flex' : 'hidden', 'xl:hidden')}>
-                           <UserPlus className="mr-2 h-4 w-4" /> Add User
+                           <UserPlus className="mr-2 h-4 w-4" /> Thêm người dùng
                         </DropdownMenuItem>
                         <DropdownMenuItem onSelect={(e) => e.preventDefault()} className={cn(isSidebarExpanded ? 'flex' : 'hidden', 'lg:hidden')}>
                           <div onClick={(e) => {
@@ -283,19 +283,19 @@ export function UserActions({
                            <AlertDialog>
                               <AlertDialogTrigger asChild id="delete-dialog-trigger">
                                   <div className="flex items-center">
-                                    <Trash2 className="mr-2 h-4 w-4" /> Delete
+                                    <Trash2 className="mr-2 h-4 w-4" /> Xóa
                                   </div>
                               </AlertDialogTrigger>
                               <AlertDialogContent>
                                   <AlertDialogHeader>
-                                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                  <AlertDialogTitle>Bạn có chắc chắn không?</AlertDialogTitle>
                                   <AlertDialogDescription>
-                                      This action cannot be undone. This will permanently delete the selected user(s).
+                                      Hành động này không thể được hoàn tác. Điều này sẽ xóa vĩnh viễn (các) người dùng đã chọn.
                                   </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction onClick={onDeleteSelected} className="bg-red-600 hover:bg-red-700">Continue</AlertDialogAction>
+                                  <AlertDialogCancel>Hủy</AlertDialogCancel>
+                                  <AlertDialogAction onClick={onDeleteSelected} className="bg-red-600 hover:bg-red-700">Tiếp tục</AlertDialogAction>
                                   </AlertDialogFooter>
                               </AlertDialogContent>
                           </AlertDialog>
@@ -308,26 +308,26 @@ export function UserActions({
                             <DropdownMenuSubContent>
                                 <DropdownMenuItem>
                                 <FileSpreadsheet className="mr-2 h-4 w-4" />
-                                <span>Export all data to Excel</span>
+                                <span>Xuất tất cả dữ liệu ra Excel</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem>
                                 <FileSpreadsheet className="mr-2 h-4 w-4" />
-                                <span>Export selected rows to Excel</span>
+                                <span>Xuất các hàng đã chọn ra Excel</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem>
                                 <FileText className="mr-2 h-4 w-4" />
-                                <span>Export all data to PDF</span>
+                                <span>Xuất tất cả dữ liệu ra PDF</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem>
                                 <FileText className="mr-2 h-4 w-4" />
-                                <span>Export selected rows to PDF</span>
+                                <span>Xuất các hàng đã chọn ra PDF</span>
                                 </DropdownMenuItem>
                             </DropdownMenuSubContent>
                         </DropdownMenuSub>
                         <DropdownMenuSub className={cn(isSidebarExpanded ? 'flex' : 'hidden', 'md-lg:hidden')}>
                             <DropdownMenuSubTrigger>
                                 <Columns className="mr-2 h-4 w-4" />
-                                <span>Column Chooser</span>
+                                <span>Chọn cột</span>
                             </DropdownMenuSubTrigger>
                             <DropdownMenuSubContent>
                                 {table

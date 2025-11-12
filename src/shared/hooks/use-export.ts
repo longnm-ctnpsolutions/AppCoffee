@@ -129,7 +129,7 @@ export function useUniversalExport<T extends Record<string, any>>(
         } else if (typeof value === 'object') {
           value = JSON.stringify(value)
         } else if (typeof value === 'boolean') {
-          value = value ? 'Yes' : 'No'
+          value = value ? 'Có' : 'Không'
         }
         
         formattedRow[header] = value
@@ -337,7 +337,7 @@ export function useUniversalExport<T extends Record<string, any>>(
       
       // Generate filename
       const timestamp = new Date().toISOString().split('T')[0]
-      const defaultFilename = `export_${options.scope}_${timestamp}`
+      const defaultFilename = `xuat_${options.scope}_${timestamp}`
       const filename = options.filename || defaultFilename
 
       // Export based on format

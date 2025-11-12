@@ -13,30 +13,30 @@ export interface MenuItem {
 export const menuConfig: MenuItem[] = [
   {
     id: "identity",
-    label: "Identity Manager",
+    label: "Quản lý định danh",
     icon: SquareUser,
     dividerAfter: true,
     children: [
-      { id: "users", label: "Users", icon: User, href: "/users" },
-      { id: "clients", label: "Clients", icon: User, href: "/clients" },
-      { id: "roles", label: "Roles", icon: Shield, href: "/roles" },
+      { id: "users", label: "Người dùng", icon: User, href: "/users" },
+      { id: "clients", label: "Máy khách", icon: User, href: "/clients" },
+      { id: "roles", label: "Vai trò", icon: Shield, href: "/roles" },
     ]
   },
   {
     id: "applications",
-    label: "Applications",
+    label: "Ứng dụng",
     icon: BriefcaseBusiness,
     href: "/applications",
     dividerAfter: true,
   },
   {
     id: "settings",
-    label: "Settings",
+    label: "Cài đặt",
     icon: Settings,
     dividerAfter: true,
     children: [
-      { id: "user-profile", label: "User Profile", icon: User, href: "/user-profile" },
-      { id: "system-settings", label: "Settings", icon: Settings, href: "/settings" },
+      { id: "user-profile", label: "Hồ sơ người dùng", icon: User, href: "/user-profile" },
+      { id: "system-settings", label: "Cài đặt hệ thống", icon: Settings, href: "/settings" },
     ]
   },
 ];

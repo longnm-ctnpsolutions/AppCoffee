@@ -14,12 +14,12 @@ export function UserProfileHeader({ isPending }: UserProfileHeaderProps) {
     <div className="bg-white dark:bg-card shadow-sm rounded-lg border">
       <div className="flex items-center justify-between gap-4 p-3">
         <div>
-          <h1 className="text-xl font-bold">User Profile</h1>
-          <p className="text-sm text-muted-foreground">Manage your profile information.</p>
+          <h1 className="text-xl font-bold">Hồ sơ người dùng</h1>
+          <p className="text-sm text-muted-foreground">Quản lý thông tin hồ sơ của bạn.</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" type="button" disabled={isPending}>
-            Cancel
+            Hủy
           </Button>
           <Button type="submit" disabled={isPending}>
             {isPending ? (
@@ -27,7 +27,7 @@ export function UserProfileHeader({ isPending }: UserProfileHeaderProps) {
             ) : (
               <Save className="mr-2 h-4 w-4" />
             )}
-            Save
+            Lưu
           </Button>
         </div>
       </div>
