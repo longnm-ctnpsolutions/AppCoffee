@@ -1,4 +1,3 @@
-
 {
   "compilerOptions": {
     "target": "ES2017",
@@ -27,6 +26,7 @@
       "@/context/*": ["./src/shared/context/*"],
       "@/types/*": ["./src/shared/types/*"],
       "@/lib/*": ["./src/shared/lib/*"],
+      "@/conponents/*": ["./src/shared/components/*"],
       "@/services/*": ["./src/shared/api/services/*"],
       "@/layout/hooks/*": ["./src/shared/components/layout/hooks/*"],
       "@/layout/types/*": ["./src/shared/components/layout/types/*"]
