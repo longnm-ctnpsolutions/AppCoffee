@@ -1,26 +1,42 @@
-"use client"
+"use client";
 
-import { z } from "zod"
+import { z } from "zod";
+
+enum Gender {
+    Male = 0,
+    Female = 1,
+    Other = 2,
+}
 
 export const userProfileSchema = z.object({
-  // Basic Info
-  firstName: z.string().min(1, "Tên là bắt buộc."),
-  lastName: z.string().min(1, "Họ là bắt buộc."),
-  role: z.string(),
-  gender: z.enum(["male", "female", "other"]).optional(),
-  birthDate: z.date({
-    required_error: "Ngày sinh là bắt buộc.",
-  }).optional(),
-  
-  // Contact Info
-  email: z.string().email("Địa chỉ email không hợp lệ.").min(1, "Email là bắt buộc."),
-  phone: z.string().min(1, "Số điện thoại là bắt buộc."),
+    // Basic Info
+    userId: z.string(),
+    firstName: z.string().min(1, "First name is required."),
+    lastName: z.string().min(1, "Last name is required."),
+    role: z.array(z.string()).optional(),
+    gender: z.nativeEnum(Gender).nullable().optional(),
+    birthDate: z
+        .date({
+            required_error: "A date of birth is required.",
+        })
+        .optional(),
 
-  // Address Info
-  address: z.string().optional(),
-  country: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-})
+    // Contact Info
+    email: z
+        .string()
+        .email("Invalid email address.")
+        .min(1, "Email is required."),
+    //phone: z.string().min(1, "Phone number is required."),
+    phone: z.string().optional().nullable(),
 
-export type UserProfileSchema = z.infer<typeof userProfileSchema>
+    // Address Info
+    address: z.string().optional().nullable(),
+    country: z.string().optional().nullable(),
+    city: z.string().optional().nullable(),
+    province: z.string().optional().nullable(),
+    image: z.string().optional().nullable(),
+    connection: z.string().optional().nullable(),
+    bankAccount: z.string().optional().nullable(),
+});
+
+export type UserProfileSchema = z.infer<typeof userProfileSchema>;

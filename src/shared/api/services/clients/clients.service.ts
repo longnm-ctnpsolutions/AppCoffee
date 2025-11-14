@@ -1,110 +1,96 @@
 import type { Client } from '@/features/clients/types/client.types';
-import { clients as mockClients } from '@/features/clients/lib/data';
+import { apiCall } from '@/lib/response-handler';
 
-const API_BASE_URL = 'https://api.identity.dev.ctnp.com';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const MOCK_API_DELAY = 500;
+export type UpdateClientData = {
+  id: string;
+  name?: string;
+  audience: string;
+  issuer: string;
+  tokenExpired: number | string;
+  description?: string | null;
+  homePageUrl?: string | null;
+  logoUrl?: string | null;
+  callbackUrl?: string | null;
+  logoutUrl?: string | null;
+  clientId?: string;
+  status?: number | string;
+  identifier?: string;
+};
 
-async function handleResponse<T>(response: Response): Promise<T> {
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred' }));
-    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-  }
-  return response.json();
-}
+export const getClients = async (): Promise<Client[]> => {
+  const data = await apiCall<{ value: Client[] }>(`${API_BASE_URL}/clients`, {
+    method: 'GET',
+  });
+  return data.value;
+};
 
-const getMockClients = async (): Promise<Client[]> => {
-  console.log('Fetching mock clients...');
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(mockClients);
-    }, MOCK_API_DELAY);
+export const createClient = async (
+  newClientData: Omit<Client, 'id' | 'status'>
+): Promise<Client> => {
+  return await apiCall<Client>(`${API_BASE_URL}/clients`, {
+    method: 'POST',
+    body: JSON.stringify(newClientData),
   });
 };
 
-const createMockClient = async (newClientData: Omit<Client, 'id' | 'status'>): Promise<Client> => {
-    console.log('Creating mock client...', newClientData);
-    const newClient: Client = {
-        id: `client-${Date.now()}`,
-        status: 1,
-        ...newClientData,
-    };
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve(newClient);
-        }, MOCK_API_DELAY);
-    });
+export const accessClient = async (clientId: string): Promise<any> => {
+  const data = await apiCall<any>(`${API_BASE_URL}/clients/access?clientId=${clientId}`, {
+    method: 'GET',
+  });
+  return data;
 };
 
-const deleteMockClient = async (clientId: string): Promise<{ id: string }> => {
-    console.log(`Deleting mock client with id: ${clientId}`);
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve({ id: clientId });
-        }, MOCK_API_DELAY);
-    });
+export const updateClient = async (
+  clientId: string,
+  updateData: UpdateClientData
+): Promise<Client> => {
+  return await apiCall<Client>(`${API_BASE_URL}/clients/${clientId}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      id: clientId,
+      name: updateData.name,
+      audience: updateData.audience,
+      issuer: updateData.issuer,
+      tokenExpired: updateData.tokenExpired,
+      description: updateData.description,
+      logoUrl: updateData.logoUrl,
+      callbackUrl: updateData.callbackUrl,
+      logoutUrl: updateData.logoutUrl,
+      homePageUrl: updateData.homePageUrl,
+    }),
+  });
 };
 
-const deleteMultipleMockClients = async (clientIds: string[]): Promise<{ ids: string[] }> => {
-    console.log(`Deleting mock clients with ids: ${clientIds.join(', ')}`);
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve({ ids: clientIds });
-        }, MOCK_API_DELAY);
-    });
+export const deleteClient = async (clientId: string): Promise<void> => {
+  await apiCall<void>(`${API_BASE_URL}/clients/${clientId}`, {
+    method: 'DELETE',
+  });
 };
 
-
-// --- REAL API FUNCTIONS ---
-// These would be used in production to call a real backend.
-// Note: These are examples and will not work without a real API endpoint.
-
-export const getClients = async (): Promise<Client[]> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/clients`, {
-      method: 'GET',
-      credentials: 'include',
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data.value;
-  } catch (error) {
-    console.error('API call failed, falling back to mock data:', error);
-    return await getMockClients();
-  }
+export const deleteMultipleClients = async (clientIds: string[]): Promise<void> => {
+  await Promise.all(
+    clientIds.map(async (id) => {
+      await apiCall<void>(`${API_BASE_URL}/clients/${id}`, {
+        method: 'DELETE',
+      });
+    })
+  );
 };
 
-export const createClient = async (newClientData: Omit<Client, 'id' | 'status'>): Promise<Client> => {
-  // Using mock for now
-  return createMockClient(newClientData);
-  // const response = await fetch(`${API_BASE_URL}/users`, {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify(newClientData),
-  // });
-  // return handleResponse<Client>(response);
+export const updateClientStatus = async (clientId: string, status: number): Promise<Client> => {
+  return await apiCall<Client>(`${API_BASE_URL}/clients/${clientId}/status`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      id: clientId,
+      status: status,
+    }),
+  });
 };
 
-export const deleteClient = async (clientId: string): Promise<{ id: string }> => {
-  // Using mock for now
-  return deleteMockClient(clientId);
-  // const response = await fetch(`${API_BASE_URL}/users/${clientId}`, {
-  //   method: 'DELETE',
-  // });
-  // return handleResponse<{ id: string }>(response);
-};
-
-export const deleteMultipleClients = async (clientIds: string[]): Promise<{ ids: string[] }> => {
-  // Using mock for now
-  return deleteMultipleMockClients(clientIds);
-  // const response = await fetch(`${API_BASE_URL}/users/batch-delete`, {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ ids: clientIds }),
-  // });
-  // return handleResponse<{ ids: string[] }>(response);
+export const getClientById = async (clientId: string): Promise<Client> => {
+  return await apiCall<Client>(`${API_BASE_URL}/clients/${clientId}`, {
+    method: "GET",
+  });
 };

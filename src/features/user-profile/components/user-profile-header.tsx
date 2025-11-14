@@ -1,36 +1,70 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Loader2, Save } from "lucide-react"
+import * as React from "react";
+import { Loader2, Save, Pencil } from "lucide-react";
+import { CardTitle, CardDescription } from "@/shared/components/ui/card";
 
-import { Button } from "@/shared/components/ui/button"
+import { Button } from "@/shared/components/ui/button";
 
 interface UserProfileHeaderProps {
-  isPending: boolean
+    isPending: boolean;
+    isDirty: boolean;
+    isEditing: boolean;
+    onEdit: () => void;
+    onCancel: () => void;
+    isEditMode?: boolean;
+    onSave?: () => void;
+    canSave?: boolean;
 }
 
-export function UserProfileHeader({ isPending }: UserProfileHeaderProps) {
-  return (
-    <div className="bg-white dark:bg-card shadow-sm rounded-lg border">
-      <div className="flex items-center justify-between gap-4 p-3">
-        <div>
-          <h1 className="text-xl font-bold">Hồ sơ người dùng</h1>
-          <p className="text-sm text-muted-foreground">Quản lý thông tin hồ sơ của bạn.</p>
+export function UserProfileHeader({
+    isPending,
+    isDirty,
+    isEditing,
+    onEdit,
+    onCancel,
+}: UserProfileHeaderProps) {
+    return (
+        <div className="flex items-center justify-between">
+            <div>
+                <CardTitle className="text-2xl tracking-tight">
+                    User Profile
+                </CardTitle>
+                <CardDescription>
+                    Manage your profile information.
+                </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+                {!isEditing ? (
+                    <Button
+                        variant="outline"
+                        type="button"
+                        onClick={onEdit}
+                    >
+                        <Pencil className="mr-2 h-4 w-4" />
+                        Edit
+                    </Button>
+                ) : (
+                    <>
+                        <Button
+                            variant="outline"
+                            type="button"
+                            disabled={isPending}
+                            onClick={onCancel}
+                        >
+                            Cancel
+                        </Button>
+                        <Button type="submit" disabled={isPending}>
+                            {isPending ? (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            ) : (
+                                <Save className="mr-2 h-4 w-4" />
+                            )}
+                            Save
+                        </Button>
+                    </>
+                )}
+            </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" type="button" disabled={isPending}>
-            Hủy
-          </Button>
-          <Button type="submit" disabled={isPending}>
-            {isPending ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="mr-2 h-4 w-4" />
-            )}
-            Lưu
-          </Button>
-        </div>
-      </div>
-    </div>
-  )
+    );
 }

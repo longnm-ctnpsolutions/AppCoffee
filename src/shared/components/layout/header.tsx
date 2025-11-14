@@ -8,30 +8,30 @@ import { UserMenu } from "./user-menu"
 import { useMenuState } from "@/shared/components/layout/hooks/header-menu-state"
 import type { HeaderProps } from "@/shared/components/layout/types/header-menu.type"
 
-export function Header({ 
+export function Header({
   user,
   appName = "Portal Identity",
-  logoSrc = "/images/new-icon.png"
+  logoSrc = "/images/ctnp-logo.png"
 }: HeaderProps) {
-  const { menuState, menuActions } = useMenuState(user);
+  const { menuState, menuActions } = useMenuState();
 
   return (
-    <header className="flex h-16 w-full shrink-0 items-center gap-4 border-b bg-sidebar pr-6 pl-[10px]">
+    <header className="flex h-[68px] w-full shrink-0 items-center gap-4 border-b bg-sidebar pr-6 pl-[10px]">
       <SidebarTrigger />
-      
-      <AppLogo 
+
+      <AppLogo
         appName={appName}
         logoSrc={logoSrc}
         href="/"
       />
-      
+
       <div className="ml-auto flex items-center gap-4">
         <ThemeSwitcher />
-        <LanguageSwitcher 
+        <LanguageSwitcher
           menuState={menuState}
           menuActions={menuActions}
         />
-        <UserMenu user={user} />
+        <UserMenu />
       </div>
     </header>
   );

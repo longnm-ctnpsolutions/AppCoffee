@@ -1,434 +1,242 @@
 "use client"
 
 import * as React from "react"
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  getCoreRowModel,
-  useReactTable,
-  type PaginationState,
-} from "@tanstack/react-table"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
 
-import type { Client } from "@/features/clients/types/client.types"
-import { useToast } from "@/shared/hooks/use-toast"
-import { EnhancedClientTable } from "./enhanced-client-table"
-import { ClientActions } from "@/features/clients/components/client-actions"
-import { ClientPagination } from "@/features/clients/components/client-pagination"
-import { useSidebar } from "@/shared/components/ui/sidebar"
+import { useGenericDashboard } from "@/shared/hooks/use-generic-dashboard"
 import { ListLayout } from "@/shared/components/custom-ui/list-layout"
 
 import { useClientsActions } from "@/shared/context/clients-context"
 
-const addClientFormSchema = z.object({
-  name: z.string().min(1, { message: "Vui lòng nhập tên máy khách." }),
-  identifier: z.string().min(1, { message: "Vui lòng nhập định danh máy khách." }),
-  description: z.string(),
-  homepageurl: z.string(),
-  logo: z.any().optional(),
-})
+import { useClientTable } from "@/features/clients/hooks/use-client-table"
+import { useClientTableColumns } from "@/features/clients/components/client-list/client-table-columns"
+import { ClientActions } from "@/features/clients/components/client-actions"
+import { ClientEmptyState } from "./client-empty-state"
+import { TablePagination } from "@/shared/components/custom-ui/pagination"
+
+import { usePermissions } from "@/context/auth-context"
+import { CORE_PERMISSIONS } from '@/types/auth.types'
+import { Client } from "@/features/clients/types/client.types"
+import { clientDashboardConfig } from "../../config/client-dashboard.config"
+import { EnhancedClientTable } from "./enhanced-client-table"
+interface PaginationState {
+        pageIndex: number;
+        pageSize: number;
+}
 
 export function EnhancedClientDashboard() {
-  const { toast } = useToast()
-  const { state: sidebarState } = useSidebar()
-  
-  const {
-    clients,
-    isLoading,
-    isActionLoading,
-    error,
-    totalCount,
-    hasMore,
-    searchTerm,
-    isSearching,
-    setSearchTerm,
-    clearSearch,
-    fetchClients,
-    addClient,
-    removeClient,
-    removeMultipleClients,
-  } = useClientsActions()
+  const { hasPermission } = usePermissions()
 
-  // ✅ STABLE TABLE STATE
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
-  const [pagination, setPagination] = React.useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
+  const clientPermissions = React.useMemo(() => ({
+    canPermissionsRead: hasPermission(CORE_PERMISSIONS.CLIENT_PERMISSIONS_READ),
+    canChangeStatus: hasPermission(CORE_PERMISSIONS.CLIENTS_CHANGE_STATUS),
+    canEdit: hasPermission(CORE_PERMISSIONS.CLIENTS_EDIT),
+    canPermissionsCreate: hasPermission(CORE_PERMISSIONS.CLIENT_PERMISSIONS_CREATE),
+    canPermissionsDelete: hasPermission(CORE_PERMISSIONS.CLIENT_PERMISSIONS_DELETE),
+    canCreate: hasPermission(CORE_PERMISSIONS.CLIENTS_CREATE),
+    canDelete: hasPermission(CORE_PERMISSIONS.CLIENTS_DELETE),
+    canExport: hasPermission(CORE_PERMISSIONS.CLIENTS_EXPORT),
+  }), [hasPermission])
 
-  // ✅ SEPARATED LOADING STATES
-  const [isTableDataLoading, setIsTableDataLoading] = React.useState(false)
-  const [stablePaginationData, setStablePaginationData] = React.useState({
-    totalCount: 0,
-    currentPage: 0,
-    pageSize: 10
-  })
+  const clientContext = useClientsActions()
 
-  // ✅ UI STATE - TÁCH RIÊNG KHỎI DATA LOADING
-  const [isAddClientDialogOpen, setAddClientDialogOpen] = React.useState(false)
-  const [isMounted, setIsMounted] = React.useState(false)
-  const isSidebarExpanded = sidebarState === 'expanded'
-
-  // ✅ MOUNT STATE
-  React.useEffect(() => {
-    setIsMounted(true)
-  }, [])
-
-  // ✅ UPDATE STABLE PAGINATION DATA khi data load xong
-  React.useEffect(() => {
-    if (!isLoading) {
-      setStablePaginationData({
-        totalCount,
-        currentPage: pagination.pageIndex,
-        pageSize: pagination.pageSize
-      })
-      setIsTableDataLoading(false)
-    } else {
-      setIsTableDataLoading(true)
-    }
-  }, [isLoading, totalCount, pagination.pageIndex, pagination.pageSize])
-
-  // ✅ STABLE FORM INSTANCE
-  const addClientForm = useForm<z.infer<typeof addClientFormSchema>>({
-    resolver: zodResolver(addClientFormSchema),
-    defaultValues: { 
-      name: "",
-      identifier: "",
-      description: "",
-      homepageurl: "",
-      logo: null,
-    },
-  })
-
-  // ✅ MEMOIZED TABLE STATE
-  const tableState = React.useMemo(() => ({
-    pagination,
-    sorting,
-    columnFilters,
-    globalFilter: searchTerm,
-  }), [pagination, sorting, columnFilters, searchTerm])
-
-  // ✅ DATA FETCHING LOGIC
-  const hasInitialized = React.useRef(false);
-  const lastTableStateRef = React.useRef<string>('');
+  const [originalClientsData, setOriginalClientsData] = React.useState<Client[]>([])
 
   React.useEffect(() => {
-    if (!hasInitialized.current) {
-      hasInitialized.current = true;
-      console.log('🚀 Dashboard initialized, fetching initial data...');
-      fetchClients(tableState);
+    const allClients = clientContext.allClients;
+
+    if (allClients.length === 0) {
+      clientContext.fetchAllClients();
       return;
     }
 
-    const tableStateForComparison = {
-      pagination,
-      sorting,
-      columnFilters,
-    };
-    
-    const currentStateStr = JSON.stringify(tableStateForComparison);
-    
-    if (lastTableStateRef.current !== currentStateStr) {
-      console.log('📊 Table state changed (non-search):', {
-        previous: lastTableStateRef.current,
-        current: currentStateStr
-      });
-      
-      lastTableStateRef.current = currentStateStr;
-      fetchClients(tableState);
-    }
-  }, [fetchClients, pagination, sorting, columnFilters, tableState]);
+    setOriginalClientsData(prev => {
+      if (prev.length !== allClients.length) {
+        return [...allClients];
+      }
 
-  // ✅ STABLE CRUD HANDLERS
-  const handleAddClient = React.useCallback(async (values: z.infer<typeof addClientFormSchema>) => {
-    const newClientData = {
-      name: values.name,
-      clientId: values.identifier,
-      description: values.description,
-      logo: '/images/new-icon.png'
-    }
+      const prevIds = new Set(prev.map(c => c.id));
+      const currentIds = new Set(allClients.map(c => c.id));
+      const hasDeleted = [...prevIds].some(id => !currentIds.has(id));
 
-    const success = await addClient(newClientData)
+      if (hasDeleted) {
+        return [...allClients];
+      }
 
-    if (success) {
-      setAddClientDialogOpen(false)
-      addClientForm.reset()
-      toast({
-        title: "Đã thêm máy khách",
-        description: `${values.name} đã được thêm vào danh sách máy khách.`,
-      })
-    }
-  }, [addClient, addClientForm, toast])
-  
-  const handleDeleteRow = React.useCallback(async (clientId: string) => {
-    const success = await removeClient(clientId)
-    if (success) {
-      toast({
-        title: "Đã xóa máy khách",
-        description: `Máy khách đã được xóa.`,
-        variant: "destructive"
-      })
-    }
-  }, [removeClient, toast])
+      const newClients = allClients.filter(c => !prevIds.has(c.id));
+      if (newClients.length > 0) {
+        return [...prev, ...newClients];
+      }
 
-  const handleRefreshData = React.useCallback(() => {
-    console.log('🔄 Manual refresh triggered')
-    fetchClients(tableState)
-  }, [fetchClients, tableState])
+      return prev;
+    });
+  }, [clientContext.allClients]);
 
-  const handleSearchTermChange = React.useCallback((newSearchTerm: string) => {
-    console.log('🔍 Search term changing from Dashboard:', newSearchTerm)
-    setSearchTerm(newSearchTerm)
-  }, [setSearchTerm])
 
-  // ✅ ERROR HANDLING
+  const clientActions = React.useMemo(() => ({
+    entities: clientContext.clients,
+    isLoading: clientContext.isLoading,
+    isActionLoading: clientContext.isActionLoading,
+    error: clientContext.error,
+    totalCount: clientContext.totalCount,
+    hasMore: clientContext.hasMore,
+    searchTerm: clientContext.searchTerm,
+    isSearching: clientContext.isSearching,
+    setSearchTerm: clientContext.setSearchTerm,
+    clearSearch: clientContext.clearSearch,
+    fetchEntities: clientContext.fetchClients,
+    addEntity: clientContext.addClient,
+    removeEntity: clientContext.removeClient,
+    removeMultipleEntities: clientContext.removeMultipleClients,
+  }), [clientContext])
+        
+  // ✅ Generic dashboard logic
+  const dashboardState = useGenericDashboard(clientActions, clientDashboardConfig)
+
+  const {
+    entities: clients,
+    isLoading,
+    totalCount,
+    tableState,
+    stablePaginationData,
+    setStablePaginationData,
+    isAddDialogOpen,
+    setAddDialogOpen,
+    isMounted,
+    isSidebarExpanded,
+    form: addClientForm,
+    handleAdd,
+    handleDelete,
+    handleDeleteMultiple,
+    handleRefreshData,
+    handleSearchTermChange,
+    isEmpty,
+    searchTerm,
+    isActionLoading,
+  } = dashboardState
+
+  const {
+    sorting, setSorting,
+    columnFilters, setColumnFilters,
+    columnVisibility, setColumnVisibility,
+    rowSelection, setRowSelection,
+    pagination, setPagination,
+  } = tableState
+
   React.useEffect(() => {
-    if (error) {
-      toast({
-        title: "Đã xảy ra lỗi",
-        description: error,
-        variant: "destructive",
-      })
-    }
-  }, [error, toast])
+      if (columnFilters.length > 0) {
+          setPagination((prev: PaginationState) => ({ ...prev, pageIndex: 0 }));
+      }
+      }, [columnFilters, setPagination]);
+  
+  React.useEffect(() => {
+      if (searchTerm !== undefined && searchTerm !== '') {
+          setPagination((prev: PaginationState) => ({ ...prev, pageIndex: 0 }));
+      }
+  }, [searchTerm, setPagination]);
+  const columns = useClientTableColumns(handleDelete, originalClientsData)
 
-  // ✅ STABLE PAGINATION HANDLERS với immediate UI update
-  const handlePaginationChange = React.useCallback((updater: any) => {
-    setPagination(prev => {
-      const newPagination = typeof updater === 'function' ? updater(prev) : updater
-      
-      // ✅ CẬP NHẬT NGAY pagination UI (không đợi data load)
-      setStablePaginationData(current => ({
-        ...current,
-        currentPage: newPagination.pageIndex,
-        pageSize: newPagination.pageSize
-      }))
-      
-      return newPagination
-    })
-  }, [])
+  const tableStateValues = React.useMemo(() => ({
+    sorting,
+    columnFilters, 
+    columnVisibility,
+    rowSelection,
+    pagination
+  }), [sorting, columnFilters, columnVisibility, rowSelection, pagination])
 
-  // ✅ CREATE TABLE INSTANCE
-  const table = useReactTable({
-    data: clients,
-    columns: EnhancedClientTable.columns(handleDeleteRow),
-    pageCount: Math.ceil(stablePaginationData.totalCount / stablePaginationData.pageSize),
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-      pagination,
-    },
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    onPaginationChange: handlePaginationChange,
-    getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
-    manualSorting: true,
-    manualFiltering: true,
-    autoResetPageIndex: false,
-    meta: {
-      setPageIndex: (pageIndex: number) => {
-        setPagination(prev => {
-          const newPagination = { ...prev, pageIndex }
-          // ✅ CẬP NHẬT NGAY pagination UI
-          setStablePaginationData(current => ({
-            ...current,
-            currentPage: pageIndex
-          }))
-          return newPagination
-        })
-      },
-      setPageSize: (pageSize: number) => {
-        setPagination(prev => {
-          const newPagination = { ...prev, pageSize, pageIndex: 0 }
-          // ✅ CẬP NHẬT NGAY pagination UI
-          setStablePaginationData(current => ({
-            ...current,
-            pageSize,
-            currentPage: 0
-          }))
-          return newPagination
-        })
-      },
-    },
-  })
+  const tableSetters = React.useMemo(() => ({
+    setSorting,
+    setColumnFilters,
+    setColumnVisibility,
+    setRowSelection, 
+  }), [setSorting, setColumnFilters, setColumnVisibility, setRowSelection])
 
-  // ✅ HANDLE DELETE SELECTED
-  const handleDeleteSelected = React.useCallback(async () => {
-    const selectedIds = table.getSelectedRowModel().rows.map(row => row.original.id)
-    const success = await removeMultipleClients(selectedIds)
-    
-    if (success) {
-      setRowSelection({})
-      toast({
-        title: "Đã xóa máy khách",
-        description: `${selectedIds.length} máy khách đã được xóa.`,
-        variant: "destructive"
-      })
-    }
-  }, [removeMultipleClients, toast, table])
-
-  // ✅ EXTENDED TABLE with stable pagination data
-  const extendedTable = React.useMemo(() => ({
-    ...table,
-    setPageIndex: (pageIndex: number) => {
-      setPagination(prev => {
-        const newPagination = { ...prev, pageIndex }
-        setStablePaginationData(current => ({
-          ...current,
-          currentPage: pageIndex
-        }))
-        return newPagination
-      })
-    },
-    setPageSize: (pageSize: number) => {
-      setPagination(prev => {
-        const newPagination = { ...prev, pageSize, pageIndex: 0 }
-        setStablePaginationData(current => ({
-          ...current,
-          pageSize,
-          currentPage: 0
-        }))
-        return newPagination
-      })
-    },
-    getFilteredRowModel: () => ({
-      ...table.getFilteredRowModel(),
-      rows: table.getFilteredRowModel().rows.map((row, index) => ({
-        ...row,
-        globalIndex: stablePaginationData.currentPage * stablePaginationData.pageSize + index
-      }))
-    })
-  }), [table, stablePaginationData])
-
-  // ✅ COMPUTED VALUES
-  const isEmpty = React.useMemo(() => 
-    !isLoading && clients.length === 0 && totalCount === 0, 
-    [isLoading, clients.length, totalCount]
+  const { table, extendedTable } = useClientTable(
+    clients,
+    handleDelete,
+    stablePaginationData,
+    tableStateValues,
+    tableSetters,
+    setRowSelection, 
+    setPagination,
+    setStablePaginationData,
+    originalClientsData 
   )
 
-  // ✅ CLIENT ACTIONS - CHỈ re-render khi UI state thay đổi
-  const clientActionsComponent = React.useMemo(() => {
-    const shouldShowLoading = !isMounted || isActionLoading;
-    
+  const handleDeleteSelectedClients = React.useCallback(async () => {
+    const selectedIds = table.getSelectedRowModel().rows.map(row => row.original.id)
+    await handleDeleteMultiple(selectedIds)
+  }, [handleDeleteMultiple, table, rowSelection]) 
+
+  const emptyStateComponent = React.useMemo(() => {
+    if (!isEmpty) return undefined
+        
     return (
-      <ClientActions 
-        table={table}
-        isLoading={shouldShowLoading}
-        isAddClientDialogOpen={isAddClientDialogOpen}
-        setAddClientDialogOpen={setAddClientDialogOpen}
-        addClientForm={addClientForm}
-        searchTerm={searchTerm}
-        setSearchTerm={handleSearchTermChange}
-        onAddClient={handleAddClient}
-        onDeleteSelected={handleDeleteSelected}
-        onRefreshData={handleRefreshData}
-        isSidebarExpanded={isSidebarExpanded}
+      <ClientEmptyState
+        isSearching={clientContext.isSearching}
+        hasFilters={columnFilters.length > 0}
+        onAddClient={() => setAddDialogOpen(true)}
       />
-    );
-  }, [
+    )
+  }, [isEmpty, clientContext.isSearching, columnFilters.length, setAddDialogOpen])
+
+  const tableComponent = React.useMemo(() => (
+    <EnhancedClientTable 
+      table={table}
+      columns={columns}
+      isLoading={isLoading}
+      emptyState={emptyStateComponent}
+    />
+  ), [table, columns, isLoading, columnVisibility, rowSelection]) 
+
+  const actionsComponent = React.useMemo(() => (
+    <ClientActions 
+      table={table}
+      isLoading={!isMounted || isActionLoading}
+      isAddClientDialogOpen={isAddDialogOpen}
+      setAddClientDialogOpen={setAddDialogOpen}
+      searchTerm={searchTerm}
+      setSearchTerm={handleSearchTermChange}
+      onAddClient={handleAdd}
+      onDeleteSelected={handleDeleteSelectedClients}
+      onRefreshData={handleRefreshData}
+      isSidebarExpanded={isSidebarExpanded}
+      exportData={clients}
+      permissions={clientPermissions}
+    />
+  ), [
+    table,
     isMounted,
     isActionLoading,
-    table,
-    isAddClientDialogOpen,
+    isAddDialogOpen,
+    setAddDialogOpen,
     addClientForm,
     searchTerm,
     handleSearchTermChange,
-    handleAddClient,
-    handleDeleteSelected,
+    handleAdd,
+    handleDeleteSelectedClients,
     handleRefreshData,
-    isSidebarExpanded
+    isSidebarExpanded,
+    clients,
+    rowSelection, 
   ])
 
-  // ✅ TABLE CONTENT - CHỈ re-render khi table data loading
-  const tableContentComponent = React.useMemo(() => (
-    <EnhancedClientTable 
-      table={table} 
-      columns={EnhancedClientTable.columns(handleDeleteRow)}
-      isLoading={isTableDataLoading} // ✅ Sử dụng separated loading state
-    />
-  ), [table, handleDeleteRow, isTableDataLoading])
-
-  // ✅ STABLE PAGINATION - CHỈ dùng stable data, KHÔNG phụ thuộc isLoading
   const paginationComponent = React.useMemo(() => {
-    if (isEmpty) return null;
-    
+    if (isEmpty) return null
+        
     return (
-      <ClientPagination 
+      <TablePagination 
         table={extendedTable as any}
         totalCount={stablePaginationData.totalCount}
-        isTableLoading={isTableDataLoading} // ✅ Pass loading state for visual feedback
+        isTableLoading={isLoading}
       />
-    );
-  }, [
-    isEmpty,
-    stablePaginationData.totalCount, // ✅ Stable total count
-    stablePaginationData.currentPage, // ✅ Stable current page  
-    stablePaginationData.pageSize,   // ✅ Stable page size
-    extendedTable.getState,           // ✅ For handlers
-    isTableDataLoading               // ✅ For visual feedback only
-  ])
-
-  // ✅ EMPTY STATE
-  const emptyStateComponent = React.useMemo(() => {
-    if (!isEmpty) return undefined;
-
-    return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <div className="mx-auto max-w-md">
-          <svg
-            className="mx-auto h-12 w-12 text-gray-400"
-            stroke="currentColor"
-            fill="none"
-            viewBox="0 0 48 48"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M34 40h10v-4a6 6 0 00-10.712-3.714M34 40H14m20 0v-4a9.971 9.971 0 00-.712-3.714M14 40H4v-4a6 6 0 0110.712-3.714M14 40v-4a9.971 9.971 0 01.712-3.714M34 40v-4a9.971 9.971 0 01-.712-3.714M14 40v-4a9.971 9.971 0 00-.712-3.714"
-            />
-          </svg>
-          <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-            Không tìm thấy máy khách nào
-          </h3>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            {isSearching || columnFilters.length > 0 
-              ? "Hãy thử điều chỉnh tìm kiếm hoặc bộ lọc của bạn để tìm thấy những gì bạn đang tìm kiếm."
-              : "Bắt đầu bằng cách thêm máy khách đầu tiên của bạn vào hệ thống."
-            }
-          </p>
-          {(!isSearching && columnFilters.length === 0) && (
-            <button 
-              onClick={() => setAddClientDialogOpen(true)}
-              className="mt-4 inline-flex items-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              Thêm máy khách đầu tiên của bạn
-            </button>
-          )}
-        </div>
-      </div>
-    );
-  }, [isEmpty, isSearching, columnFilters.length])
+    )
+  }, [isEmpty, extendedTable, stablePaginationData.totalCount, isLoading])
 
   return (
     <ListLayout
-      actions={clientActionsComponent}
-      tableContent={tableContentComponent}
+      actions={actionsComponent}
+      tableContent={tableComponent}
       pagination={paginationComponent}
-      emptyState={emptyStateComponent}
     />
   )
 }

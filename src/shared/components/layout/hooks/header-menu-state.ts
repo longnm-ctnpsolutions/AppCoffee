@@ -3,6 +3,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { useRouter, usePathname } from 'next/navigation';
 import { SquareUser, LogOut } from "lucide-react";
+import { useAuthActions } from '@/context/auth-context'; // Import auth context
 import type { 
   MenuState, 
   MenuActions, 
@@ -25,7 +26,7 @@ export const useMenuState = (user?: User) => {
     isSidebarOpen: true,
     activeMenuItem: null,
     expandedSections: [],
-    currentLanguage: 'VI'
+    currentLanguage: 'EN'
   });
 
   const router = useRouter();
@@ -36,7 +37,7 @@ export const useMenuState = (user?: User) => {
     if (typeof window !== 'undefined') {
       const savedState = {
         isSidebarOpen: localStorage.getItem(STORAGE_KEYS.SIDEBAR_STATE) !== 'false',
-        currentLanguage: localStorage.getItem(STORAGE_KEYS.LANGUAGE) || 'VI',
+        currentLanguage: localStorage.getItem(STORAGE_KEYS.LANGUAGE) || 'EN',
         expandedSections: JSON.parse(localStorage.getItem(STORAGE_KEYS.EXPANDED_SECTIONS) || '[]')
       };
       
@@ -111,8 +112,8 @@ export const useHeaderTheme = () => {
   const { setTheme } = useTheme();
 
   const themeOptions: ThemeOption[] = [
-    { value: 'light', label: 'Sáng', icon: '☀️' },
-    { value: 'dark', label: 'Tối', icon: '🌙' },
+    { value: 'light', label: 'Light', icon: '☀️' },
+    { value: 'dark', label: 'Dark', icon: '🌙' },
   ];
 
   const handleThemeChange = useCallback((theme: ThemeOption['value']) => {
@@ -127,14 +128,14 @@ export const useHeaderTheme = () => {
 
 export const useHeaderLanguage = (menuState: MenuState, menuActions: MenuActions) => {
   const languageOptions: LanguageOption[] = [
-    { code: 'EN', label: 'Tiếng Anh', flag: '🇺🇸' },
-    { code: 'VI', label: 'Tiếng Việt', flag: '🇻🇳' }
+    { code: 'EN', label: 'English', flag: '/images/en.png' },
+    { code: 'VI', label: 'Vietnamese', flag: '/images/vi.png' }
   ];
   
   const handleLanguageChange = useCallback((languageCode: string) => {
     menuActions.setLanguage(languageCode);
     // Thêm logic i18n ở đây
-    console.log(`Ngôn ngữ đã đổi thành: ${languageCode}`);
+    console.log(`Language changed to: ${languageCode}`);
   }, [menuActions]);
   const cleanLanguage = menuState.currentLanguage.replace(/"/g, '')
   return {
@@ -144,21 +145,26 @@ export const useHeaderLanguage = (menuState: MenuState, menuActions: MenuActions
   };
 };
 
-export const useUserMenu = (user?: User) => {
+export const useUserMenu = () => {
   const router = useRouter();
+  // Lấy logout function từ auth context
+  const { logout: authLogout, isActionLoading } = useAuthActions();
 
-  const handleLogout = useCallback(() => {
-    // Thêm logic logout ở đây
-    console.log('Người dùng đã đăng xuất');
-    // router.push('/login');
-  }, [router]);
+  const handleLogout = useCallback(async () => {
+    try {
+      // Gọi logout từ auth context thay vì console.log
+      await authLogout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  }, [authLogout]);
 
   const handleSettings = useCallback(() => {
     router.push('/settings');
   }, [router]);
 
   const handleProfile = useCallback(() => {
-    router.push('/profile');
+    router.push('user-profile');
   }, [router]);
 
   const handleSupport = useCallback(() => {
@@ -168,16 +174,17 @@ export const useUserMenu = (user?: User) => {
   const userMenuActions: UserMenuAction[] = [
     {
       key: 'profile',
-      label: 'Hồ sơ',
+      label: 'Profile',
       icon: SquareUser,
       onClick: handleProfile
     },
     {
       key: 'logout',
-      label: 'Đăng xuất',
+      label: 'Logout',
       icon: LogOut,
       onClick: handleLogout,
-      separator: true
+      separator: true,
+      disabled: isActionLoading // Disable khi đang logout
     }
   ];
 
@@ -186,7 +193,8 @@ export const useUserMenu = (user?: User) => {
     handleLogout,
     handleSettings,
     handleProfile,
-    handleSupport
+    handleSupport,
+    isActionLoading // Export để component có thể sử dụng
   };
 };
 

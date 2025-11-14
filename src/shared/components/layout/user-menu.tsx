@@ -9,45 +9,50 @@ import {
 } from "@/shared/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
 import { useUserMenu } from "@/shared/components/layout/hooks/header-menu-state";
-import type { User } from "@/shared/components/layout/types/header-menu.type";
-import React from 'react';
+import { useAuthState } from "@/shared/context/auth-context";
+import React from "react";
 
+export function UserMenuInner() {
+  const { profile } = useAuthState()
+  const { userMenuActions } = useUserMenu(); // nếu hook cần profile thì truyền vào, không thì bỏ luôn
 
-interface UserMenuProps {
-  user?: User;
-}
-
-export function UserMenu({ user }: UserMenuProps) {
-  const { userMenuActions } = useUserMenu(user);
-
-  const getInitials = (name?: string) => {
-    if (!name) return 'U';
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  const getInitials = (firstName?: string | null, lastName?: string | null) => {
+    const initials = `${firstName?.[0] ?? ""}${lastName?.[0] ?? ""}`;
+    return initials.toUpperCase() || "U";
   };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-md" aria-label="Mở menu người dùng">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-md"
+          aria-label="Open user menu"
+        >
           <Avatar className="rounded-md cursor-pointer h-8 w-8">
-            <AvatarImage 
-              src={user?.avatar || "/images/personal.svg"} 
-              alt={user?.name || "Người dùng"}
-              data-ai-hint="avatar user"  
+            <AvatarImage
+              src={profile?.image || "/images/personal.svg"}
+              alt={`${profile?.firstName ?? ""} ${profile?.lastName ?? ""}`.trim() || "User"}
+              data-ai-hint="avatar user"
             />
-            <AvatarFallback>{getInitials(user?.name)}</AvatarFallback>
+            <AvatarFallback>
+              {getInitials(profile?.firstName, profile?.lastName)}
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>
-          {user?.name || 'Tên người dùng'}
+          {profile
+            ? `${profile.firstName ?? ""} ${profile.lastName ?? ""}`.trim()
+            : "User Name"}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {userMenuActions.map((action, index) => (
           <div key={action.key}>
             {action.separator && index > 0 && <DropdownMenuSeparator />}
-            <DropdownMenuItem 
+            <DropdownMenuItem
               onClick={action.onClick}
               className="flex items-center gap-2"
               disabled={action.disabled}
@@ -63,5 +68,11 @@ export function UserMenu({ user }: UserMenuProps) {
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+export function UserMenu() {
+  return (
+      <UserMenuInner />
   );
 }

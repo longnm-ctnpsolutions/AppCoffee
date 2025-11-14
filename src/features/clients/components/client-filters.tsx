@@ -33,12 +33,12 @@ export function ClientFilters({ table }: ClientFiltersProps) {
     <SelectTrigger
   className="no-ring-select w-auto gap-1 border-none bg-transparent hover:bg-accent outline-none"
 >
-  <SelectValue placeholder="Lọc theo trạng thái" />
+  <SelectValue placeholder="Filter by status" />
 </SelectTrigger>
       <SelectContent>
-        <SelectItem value="all">Tất cả</SelectItem>
-        <SelectItem value="Active">Đang hoạt động</SelectItem>
-        <SelectItem value="Inactive">Không hoạt động</SelectItem>
+        <SelectItem value="all">All</SelectItem>
+        <SelectItem value="Active">Active</SelectItem>
+        <SelectItem value="Inactive">Inactive</SelectItem>
       </SelectContent>
     </Select>
   );

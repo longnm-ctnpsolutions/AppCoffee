@@ -2,9 +2,9 @@
 
 import * as React from "react"
 import { Table } from "@tanstack/react-table"
-import { 
-  FileSpreadsheet, 
-  FileText, 
+import {
+  FileSpreadsheet,
+  FileText,
   Download,
   Settings,
   Loader2
@@ -32,12 +32,13 @@ import { Label } from "@/shared/components/ui/label"
 import { Checkbox } from "@/shared/components/ui/checkbox"
 import { Separator } from "@/shared/components/ui/separator"
 import { useToast } from "@/shared/hooks/use-toast"
-import { 
-  useUniversalExport, 
-  ExportFormat, 
-  ExportScope, 
-  ExportOptions 
+import {
+  useUniversalExport,
+  ExportFormat,
+  ExportScope,
+  ExportOptions
 } from "@/hooks/use-export"
+import { useRef } from 'react'
 
 type CheckedState = boolean | "indeterminate"
 
@@ -47,35 +48,38 @@ interface ExportDialogProps<T extends Record<string, any>> {
   trigger?: React.ReactNode
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  fetchAllData?: () => Promise<T[]>
 }
 
-export function ExportDialog<T extends Record<string, any>>({ 
-  table, 
+export function ExportDialog<T extends Record<string, any>>({
+  table,
   data,
   trigger,
   open: controlledOpen,
-  onOpenChange: controlledOnOpenChange
+  onOpenChange: controlledOnOpenChange,
+  fetchAllData
 }: ExportDialogProps<T>) {
-  const { exportData, isExporting, error } = useUniversalExport(table, data)
   const { toast } = useToast()
-  
+
   // Smart state: Controlled or uncontrolled
   const [internalOpen, setInternalOpen] = React.useState(false)
   const isControlled = controlledOpen !== undefined
   const open = isControlled ? controlledOpen : internalOpen
   const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen
-  
+
   const [format, setFormat] = React.useState<ExportFormat>('excel')
   const [scope, setScope] = React.useState<ExportScope>('all')
   const [filename, setFilename] = React.useState('')
   const [includeHeaders, setIncludeHeaders] = React.useState(true)
   const [boldHeaders, setBoldHeaders] = React.useState(true)
   const [selectedColumns, setSelectedColumns] = React.useState<string[]>([])
-  
+
+  const [fullData, setFullData] = React.useState<T[]>([]);
+
   // PDF options
   const [pdfTitle, setPdfTitle] = React.useState('')
-  const [pdfOrientation, setPdfOrientation] = React.useState<'portrait' | 'landscape'>('landscape')
-  
+  const [pdfOrientation, setPdfOrientation] = React.useState<'portrait' | 'landscape'>('portrait')
+
   // Excel options  
   const [sheetName, setSheetName] = React.useState('Sheet1')
   const [addTimestamp, setAddTimestamp] = React.useState(true)
@@ -86,8 +90,8 @@ export function ExportDialog<T extends Record<string, any>>({
       .filter(col => col.getCanHide() !== false)
       .map(col => ({
         id: col.id,
-        label: typeof col.columnDef.header === 'string' 
-          ? col.columnDef.header 
+        label: typeof col.columnDef.header === 'string'
+          ? col.columnDef.header
           : col.id
       }))
   }, [table])
@@ -104,12 +108,35 @@ export function ExportDialog<T extends Record<string, any>>({
 
   // Handle column selection
   const handleColumnToggle = (columnId: string) => {
-    setSelectedColumns(prev => 
+    setSelectedColumns(prev =>
       prev.includes(columnId)
         ? prev.filter(id => id !== columnId)
         : [...prev, columnId]
     )
   }
+
+  const isFirstRender = React.useRef(true);
+
+  React.useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    if (open && fetchAllData) {
+      const fetchData = async () => {
+        const dataset = await fetchAllData();
+        setFullData(dataset);
+      };
+      fetchData();
+    }
+  }, [open]);
+
+  const datasetToExport: T[] = scope === 'all'
+    ? Object.values(fullData)
+    : data ?? [];
+
+  const { exportData, isExporting, error } = useUniversalExport(table, datasetToExport);
 
   // Handle export
   const handleExport = async () => {
@@ -141,17 +168,17 @@ export function ExportDialog<T extends Record<string, any>>({
 
       console.log('Export options:', options)
       await exportData(options)
-      
+
       toast({
-        title: "Xuất dữ liệu thành công",
-        description: `Dữ liệu đã được xuất thành công dưới dạng ${format.toUpperCase()}.`,
+        title: "Export successful",
+        description: `Data has been successfully exported as ${format.toUpperCase()}.`,
       })
-      
+
       setOpen(false)
     } catch (err) {
       toast({
-        title: "Xuất dữ liệu thất bại",
-        description: error || "Đã xảy ra lỗi trong quá trình xuất dữ liệu.",
+        title: "Export failed",
+        description: error || "An error occurred during data export.",
         variant: "destructive",
       })
     }
@@ -159,23 +186,23 @@ export function ExportDialog<T extends Record<string, any>>({
 
   // Get selected row count
   const selectedRowsCount = table.getSelectedRowModel().rows.length
-  const totalRowsCount = table.getCoreRowModel().rows.length
+  const totalRowsCount = datasetToExport.length
   const filteredRowsCount = table.getFilteredRowModel().rows.length
 
   // Conditional rendering: With or without trigger
   const dialogContent = (
     <DialogContent className="w-[100vw] h-[100vh] max-w-none max-h-none rounded-none p-4 md:w-[95vw] md:max-w-lg md:max-h-[90vh] md:rounded-lg md:h-auto overflow-y-auto">
       <DialogHeader>
-        <DialogTitle>Xuất dữ liệu</DialogTitle>
+        <DialogTitle>Export Data</DialogTitle>
         <DialogDescription className="text-sm">
-          Cấu hình cài đặt xuất và tải xuống dữ liệu của bạn.
+          Configure export settings and download your data.
         </DialogDescription>
       </DialogHeader>
 
       <div className="space-y-4 py-2">
         {/* Format Selection */}
         <div className="space-y-2">
-          <Label htmlFor="format" className="text-sm font-medium">Định dạng xuất</Label>
+          <Label htmlFor="format" className="text-sm font-medium">Export Format</Label>
           <Select value={format} onValueChange={(value: ExportFormat) => setFormat(value)}>
             <SelectTrigger className="w-full">
               <SelectValue />
@@ -211,23 +238,23 @@ export function ExportDialog<T extends Record<string, any>>({
 
         {/* Scope Selection */}
         <div className="space-y-2">
-          <Label htmlFor="scope" className="text-sm font-medium">Phạm vi dữ liệu</Label>
+          <Label htmlFor="scope" className="text-sm font-medium">Data Scope</Label>
           <Select value={scope} onValueChange={(value: ExportScope) => setScope(value)}>
             <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">
-                Tất cả dữ liệu ({totalRowsCount} hàng)
+                All data ({totalRowsCount} rows)
               </SelectItem>
               <SelectItem value="filtered">
-                Dữ liệu đã lọc ({filteredRowsCount} hàng)
+                Filtered data ({filteredRowsCount} rows)
               </SelectItem>
               <SelectItem value="selected" disabled={selectedRowsCount === 0}>
-                Hàng đã chọn ({selectedRowsCount} hàng)
+                Selected rows ({selectedRowsCount} rows)
               </SelectItem>
               <SelectItem value="visible">
-                Dữ liệu hiển thị (trang hiện tại)
+                Visible data (current page)
               </SelectItem>
             </SelectContent>
           </Select>
@@ -235,19 +262,19 @@ export function ExportDialog<T extends Record<string, any>>({
 
         {/* Filename */}
         <div className="space-y-2">
-          <Label htmlFor="filename" className="text-sm font-medium">Tên tệp (tùy chọn)</Label>
+          <Label htmlFor="filename" className="text-sm font-medium">Filename (optional)</Label>
           <Input
             id="filename"
             value={filename}
             onChange={(e) => setFilename(e.target.value)}
-            placeholder="Để trống để tự động tạo tên"
+            placeholder="Leave blank for auto-generated name"
             className="w-full"
           />
         </div>
 
         {/* Column Selection - Improved for mobile */}
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Các cột để xuất</Label>
+          <Label className="text-sm font-medium">Columns to Export</Label>
           <div className="border rounded-lg p-3 max-h-28 overflow-y-auto">
             <div className="grid grid-cols-1 gap-2">
               {availableColumns.map((column) => (
@@ -257,8 +284,8 @@ export function ExportDialog<T extends Record<string, any>>({
                     checked={selectedColumns.includes(column.id)}
                     onCheckedChange={() => handleColumnToggle(column.id)}
                   />
-                  <Label 
-                    htmlFor={`col-${column.id}`} 
+                  <Label
+                    htmlFor={`col-${column.id}`}
                     className="text-sm font-normal cursor-pointer flex-1"
                   >
                     {column.label}
@@ -271,7 +298,7 @@ export function ExportDialog<T extends Record<string, any>>({
 
         {/* General Options */}
         <div className="space-y-3">
-          <div className="flex items-center space-x-2">
+          {/* <div className="flex items-center space-x-2">
             <Checkbox
               id="includeHeaders"
               checked={includeHeaders}
@@ -282,9 +309,9 @@ export function ExportDialog<T extends Record<string, any>>({
               }}
             />
             <Label htmlFor="includeHeaders" className="text-sm">
-              Bao gồm tiêu đề
+              Include headers
             </Label>
-          </div>
+          </div> */}
           <div className="flex items-center space-x-2">
             <Checkbox
               id="boldHeaders"
@@ -296,7 +323,7 @@ export function ExportDialog<T extends Record<string, any>>({
               }}
             />
             <Label htmlFor="boldHeaders" className="text-sm">
-              In đậm tiêu đề
+              Bold headers
             </Label>
           </div>
         </div>
@@ -306,10 +333,10 @@ export function ExportDialog<T extends Record<string, any>>({
           <>
             <Separator />
             <div className="space-y-3">
-              <Label className="text-sm font-semibold">Tùy chọn Excel</Label>
+              <Label className="text-sm font-semibold">Excel Options</Label>
               <div className="space-y-3">
                 <div>
-                  <Label htmlFor="sheetName" className="text-sm">Tên trang tính</Label>
+                  <Label htmlFor="sheetName" className="text-sm">Sheet Name</Label>
                   <Input
                     id="sheetName"
                     value={sheetName}
@@ -328,7 +355,7 @@ export function ExportDialog<T extends Record<string, any>>({
                     }}
                   />
                   <Label htmlFor="timestamp" className="text-sm">
-                    Thêm dấu thời gian vào tên tệp
+                    Add timestamp to filename
                   </Label>
                 </div>
               </div>
@@ -340,30 +367,30 @@ export function ExportDialog<T extends Record<string, any>>({
           <>
             <Separator />
             <div className="space-y-3">
-              <Label className="text-sm font-semibold">Tùy chọn PDF</Label>
+              <Label className="text-sm font-semibold">PDF Options</Label>
               <div className="space-y-3">
                 <div>
-                  <Label htmlFor="pdfTitle" className="text-sm">Tiêu đề tài liệu</Label>
+                  <Label htmlFor="pdfTitle" className="text-sm">Document Title</Label>
                   <Input
                     id="pdfTitle"
                     value={pdfTitle}
                     onChange={(e) => setPdfTitle(e.target.value)}
-                    placeholder="Tiêu đề tài liệu (tùy chọn)"
+                    placeholder="Document title (optional)"
                     className="mt-1 w-full"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="orientation" className="text-sm">Hướng trang</Label>
-                  <Select 
-                    value={pdfOrientation} 
+                  <Label htmlFor="orientation" className="text-sm">Page Orientation</Label>
+                  <Select
+                    value={pdfOrientation}
                     onValueChange={(value: 'portrait' | 'landscape') => setPdfOrientation(value)}
                   >
                     <SelectTrigger className="mt-1 w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="portrait">Dọc</SelectItem>
-                      <SelectItem value="landscape">Ngang</SelectItem>
+                      <SelectItem value="portrait">Portrait</SelectItem>
+                      <SelectItem value="landscape">Landscape</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -375,22 +402,22 @@ export function ExportDialog<T extends Record<string, any>>({
 
       <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
         <Button variant="outline" onClick={() => setOpen(false)} className="w-full sm:w-auto">
-          Hủy
+          Cancel
         </Button>
-        <Button 
-          onClick={handleExport} 
+        <Button
+          onClick={handleExport}
           disabled={isExporting || selectedColumns.length === 0}
           className="w-full sm:w-auto"
         >
           {isExporting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Đang xuất...
+              Exporting...
             </>
           ) : (
             <>
               <Download className="mr-2 h-4 w-4" />
-              Xuất dữ liệu
+              Export Data
             </>
           )}
         </Button>

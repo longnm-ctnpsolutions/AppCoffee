@@ -21,7 +21,7 @@ export interface ThemeOption {
 export interface LanguageOption {
   code: string;
   label: string;
-  flag?: string;
+  flag: string;
   isActive?: boolean;
 }
 

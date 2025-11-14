@@ -9,7 +9,7 @@ interface AppLogoProps {
 
 export function AppLogo({ 
   appName = "Portal Identity", 
-  logoSrc = "/images/new-icon.png",
+  logoSrc = "/images/ctnp-logo.png",
   href = "/"
 }: AppLogoProps) {
   const LogoContent = () => (

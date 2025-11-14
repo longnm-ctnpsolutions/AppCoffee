@@ -1,368 +1,340 @@
-
-"use client"
-
-import * as React from "react"
-import { Table } from "@tanstack/react-table"
-import { UseFormReturn } from "react-hook-form"
-import * as z from "zod"
-import { 
-  Trash2, 
-  UserPlus, 
-  Columns, 
-  FileUp, 
-  FileSpreadsheet, 
-  FileText, 
-  ChevronDown,
-  MoreVertical,
-  Search,
-  RefreshCw,
-} from "lucide-react"
-import { cn } from "@/shared/lib/utils"
-
-import type { User } from "@/features/users/types/user.types"
-import { Button } from "@/shared/components/ui/button"
-import { Checkbox } from "@/shared/components/ui/checkbox"
+import * as React from "react";
+import { Table } from "@tanstack/react-table";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuSubContent
-} from "@/shared/components/ui/dropdown-menu"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogClose,
-  DialogTrigger,
-} from "@/shared/components/ui/dialog"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/shared/components/ui/alert-dialog"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  useFormField,
-} from "@/shared/components/ui/form"
-import { Input } from "@/shared/components/ui/input"
-import { Label } from "@/shared/components/ui/label"
-import { Card, CardHeader, CardTitle, CardDescription } from "@/shared/components/ui/card"
-import { UserFilters } from "./user-filters"
-import { Popover, PopoverContent, PopoverTrigger } from "@/shared/components/ui/popover"
+    Trash2,
+    UserPlus,
+    Columns,
+    Search,
+    RefreshCw,
+    Download,
+} from "lucide-react";
 
-const addUserFormSchema = z.object({
-  email: z.string().email({ message: "Vui lòng nhập một địa chỉ email hợp lệ." }),
-})
+import { Input } from "@/shared/components/ui/input";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/shared/components/ui/card";
+
+import ActionBar from '@/shared/components/custom-ui/actions-bar';
+import { ActionItem } from '@/shared/hooks/use-responsive-actions';
+import { ExportDialog } from "@/shared/components/custom-ui/export-dialog";
+import { ColumnChooserDialog } from "@/shared/components/custom-ui/columns-chooser";
+import { User } from "../types/user.types";
+import { UserPermissions } from "@/shared/types/permissions.types";
+import { useUsersActions } from "@/shared/context/users-context";
+import { UserFilters } from "./user-filters";
+import AddUserDialog from "./add-user-dialog";
+import { ConfirmationDialog } from "@/shared/components/custom-ui/table/confirmation-dialog";
+import { getUsers } from "@/shared/api/services/users/users.service";
+
+
+
 
 interface UserActionsProps {
-  table: Table<User>
-  isAddUserDialogOpen: boolean
-  isSidebarExpanded: boolean
-  setAddUserDialogOpen: (isOpen: boolean) => void
-  addUserForm: UseFormReturn<z.infer<typeof addUserFormSchema>>
-  onAddUser: (values: z.infer<typeof addUserFormSchema>) => void
-  onDeleteSelected: () => void
+    table: Table<User>;
+    isLoading?: boolean;
+    isAddUserDialogOpen: boolean;
+    isSidebarExpanded: boolean;
+    setAddUserDialogOpen: (isOpen: boolean) => void;
+    onDeleteSelected: () => void;
+    onRefreshData?: () => void;
+    searchTerm: string;
+    setSearchTerm: (term: string) => void;
+    exportData?: User[];
+    onAddUser: any;
+    permissions: UserPermissions;
 }
 
-export function UserActions({ 
-  table,
-  isAddUserDialogOpen,
-  isSidebarExpanded,
-  setAddUserDialogOpen,
-  addUserForm,
-  onAddUser,
-  onDeleteSelected,
+/* ---------------- user ACTIONS ---------------- */
+export const UserActions = React.memo(function UserActions({
+    table,
+    isLoading,
+    isAddUserDialogOpen,
+    isSidebarExpanded,
+    setAddUserDialogOpen,
+    onDeleteSelected,
+    onRefreshData,
+    searchTerm,
+    setSearchTerm,
+    exportData,
+    permissions,
 }: UserActionsProps) {
-  
-  const AddUserDialog = (
-    <Dialog open={isAddUserDialogOpen} onOpenChange={setAddUserDialogOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <UserPlus className="mr-2 h-4 w-4" />
-          Thêm người dùng
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] max-sm:w-full max-sm:h-full max-sm:max-w-none max-sm:rounded-none max-sm:border-0">
-        <DialogHeader>
-          <DialogTitle>Tạo người dùng</DialogTitle>
-          <DialogDescription>
-            Điền vào các chi tiết dưới đây để thêm người dùng mới vào hệ thống.
-          </DialogDescription>
-        </DialogHeader>
-        <Form {...addUserForm}>
-          <form onSubmit={addUserForm.handleSubmit(onAddUser)} className="space-y-4 py-4">
-            <FormField
-              control={addUserForm.control}
-              name="email"
-              render={({ field, fieldState }) => (
-                <FormItem>
-                  <FormLabel>Email <span className="text-destructive">*</span></FormLabel>
-                  <FormControl>
-                      <Input 
-                        placeholder="Nhập email của bạn" 
-                        {...field} 
-                        error={!!fieldState.error}
-                      />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button type="button" variant="ghost">Hủy</Button>
-              </DialogClose>
-              <Button type="submit">Thêm người dùng</Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
-  );
+    const [isMounted, setIsMounted] = React.useState(false);
+    const [exportDialogOpen, setExportDialogOpen] = React.useState(false);
+    const [columnChooserOpen, setColumnChooserOpen] = React.useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+    const selectedRows = table.getFilteredSelectedRowModel().rows;
+    const selectedUsers = selectedRows.map(r => r.original);
 
-  const DeleteDialog = (
-     <AlertDialog>
-        <AlertDialogTrigger asChild>
-            <Button variant="outline" disabled={table.getFilteredSelectedRowModel().rows.length === 0}>
-            <Trash2 className="mr-2 h-4 w-4" />
-            Xóa
-            </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-            <AlertDialogHeader>
-            <AlertDialogTitle>Bạn có chắc chắn không?</AlertDialogTitle>
-            <AlertDialogDescription>
-                Hành động này không thể được hoàn tác. Điều này sẽ xóa vĩnh viễn (các) người dùng đã chọn.
-            </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-            <AlertDialogCancel>Hủy</AlertDialogCancel>
-            <AlertDialogAction onClick={onDeleteSelected} className="bg-red-600 hover:bg-red-700">Tiếp tục</AlertDialogAction>
-            </AlertDialogFooter>
-        </AlertDialogContent>
-    </AlertDialog>
-  )
+    const rowSelection = table.getState().rowSelection;
 
-  const ExportMenu = (
-    <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-10">
-            <FileUp className="h-4 w-4" />
-            <span>Xuất</span>
-            <ChevronDown className="ml-2 h-4 w-4 hidden lg:inline-flex" />
-            </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-            <FileSpreadsheet className="mr-2 h-4 w-4" />
-            <span>Xuất tất cả dữ liệu ra Excel</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-            <FileSpreadsheet className="mr-2 h-4 w-4" />
-            <span>Xuất các hàng đã chọn ra Excel</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-            <FileText className="mr-2 h-4 w-4" />
-            <span>Xuất tất cả dữ liệu ra PDF</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-            <FileText className="mr-2 h-4 w-4" />
-            <span>Xuất các hàng đã chọn ra PDF</span>
-            </DropdownMenuItem>
-        </DropdownMenuContent>
-    </DropdownMenu>
-  );
+    const { canCreate, canDelete, canExport } = permissions;
 
-  const ColumnChooser = (
-     <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-            <Columns className="h-4 w-4" />
-            </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuLabel className="font-bold">Chọn cột</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {table
-            .getAllColumns()
-            .filter((column) => column.getCanHide())
-            .map((column) => {
-                return (
-                <DropdownMenuItem key={column.id} onSelect={(e) => e.preventDefault()} className="gap-2">
-                    <Checkbox
-                    id={`col-toggle-${column.id}-lg`}
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
+    React.useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    const handleSearchChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        setSearchTerm(value);
+    }, [setSearchTerm]);
+
+    const handleExportClick = React.useCallback(() => {
+        if (canExport) {
+            setExportDialogOpen(true);
+        }
+    }, [canExport]);
+
+    const handleColumnChooserClick = React.useCallback(() => {
+        setColumnChooserOpen(true);
+    }, []);
+
+    const handleAddUserClick = React.useCallback(() => {
+
+        setAddUserDialogOpen(true);
+
+    }, []);
+
+    const { removeMultipleUsers } = useUsersActions();
+
+    const handleDeleteUserClick = React.useCallback(() => {
+        if (canDelete) {
+            const selectedRows = table.getFilteredSelectedRowModel().rows;
+            const ids = selectedRows.map((row) => row.original.id);
+            if (ids.length > 0) {
+                removeMultipleUsers(ids);
+            }
+        }
+    }, [table, removeMultipleUsers, canDelete]);
+
+    // Get hidden columns count for badge
+    const hiddenColumnsCount = table.getAllColumns()
+        .filter(col => col.getCanHide() && !col.getIsVisible()).length;
+
+    const fetchAllData = async () => {
+        try {
+            const res = await getUsers();
+            return res;
+        } catch (err) {
+            console.error("Failed to fetch full data", err);
+            return [];
+        }
+    };
+
+    // Actions array with permission checks
+    const actions: ActionItem[] = React.useMemo(() => {
+        const actionsList: ActionItem[] = [];
+
+        // Add user action - only if user has create permission
+
+        if (canCreate) {
+            actionsList.push({
+                id: 'add-user',
+                label: 'Add user',
+                icon: UserPlus,
+                type: 'button',
+                priority: 5,
+                variant: 'default',
+                onClick: handleAddUserClick,
+                hideAt: {
+                    minWidth: 1150,
+                    condition: ({ isSidebarExpanded, windowWidth }) => {
+                        const threshold = isSidebarExpanded ? 1345 : 1150;
+                        return windowWidth < threshold;
                     }
-                    />
-                    <Label htmlFor={`col-toggle-${column.id}-lg`} className="capitalize cursor-pointer w-full">{column.id}</Label>
-                </DropdownMenuItem>
-                )
-            })}
-        </DropdownMenuContent>
-    </DropdownMenu>
-  );
-  
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <CardTitle>Người dùng</CardTitle>
-            <CardDescription>Giao diện cho quản trị viên quản lý danh tính.</CardDescription>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1 md:grow-0">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Tìm kiếm người dùng"
-                  value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-                  onChange={(event) =>
-                    table.getColumn("email")?.setFilterValue(event.target.value)
-                  }
-                  className="pl-9 w-full md:w-[150px] lg:w-[250px]"
-                />
-            </div>
-            
-            <div className="items-center gap-2 hidden sm:flex">
-                 <UserFilters table={table} />
-            </div>
+                }
+            });
+        }
 
-            <Button variant="ghost" size="icon"><RefreshCw className="h-4 w-4" /></Button>
-            
-            <div className={cn("hidden items-center gap-2 xl:flex", isSidebarExpanded && "xl:hidden")}>
-                {AddUserDialog}
-            </div>
+        // Delete action - only if user has delete permission
+        if (canDelete) {
+            actionsList.push({
+                id: "delete",
+                label: "Delete",
+                icon: Trash2,
+                type: "button",
+                variant: 'destructive',
+                priority: 4,
+                disabled: selectedUsers.length === 0,
+                onClick: () => setDeleteDialogOpen(true),
+                hideAt: {
+                    minWidth: 1024,
+                    condition: ({ windowWidth }) => windowWidth < 1024
+                },
+                value: selectedUsers
+            });
+        }
 
-            <div className={cn("hidden items-center gap-2 lg:flex", isSidebarExpanded && "lg:hidden")}>
-              {DeleteDialog}
-            </div>
 
-            <div className={cn("hidden items-center gap-2 md-lg:flex", isSidebarExpanded && "md-lg:hidden")}>
-              {ExportMenu}
-              {ColumnChooser}
-            </div>
+        // Refresh action - always available if onRefreshData is provided
+        if (onRefreshData) {
+            actionsList.push({
+                id: 'refresh',
+                label: 'Refresh Data',
+                icon: RefreshCw,
+                type: 'button',
+                variant: 'ghost',
+                size: 'icon',
+                onClick: onRefreshData,
+                priority: 1,
+                hideAt: {
+                    minWidth: 640,
+                    condition: ({ windowWidth }) => windowWidth < 640
+                }
+            });
+        }
 
-            <div className={cn("flex xl:hidden", isSidebarExpanded && "flex")}>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <MoreVertical className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem onSelect={() => setAddUserDialogOpen(true)} className={cn(isSidebarExpanded ? 'flex' : 'hidden', 'xl:hidden')}>
-                           <UserPlus className="mr-2 h-4 w-4" /> Thêm người dùng
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onSelect={(e) => e.preventDefault()} className={cn(isSidebarExpanded ? 'flex' : 'hidden', 'lg:hidden')}>
-                          <div onClick={(e) => {
-                            e.stopPropagation();
-                            const trigger = document.getElementById('delete-dialog-trigger');
-                            if(trigger) trigger.click();
-                          }}>
-                           <AlertDialog>
-                              <AlertDialogTrigger asChild id="delete-dialog-trigger">
-                                  <div className="flex items-center">
-                                    <Trash2 className="mr-2 h-4 w-4" /> Xóa
-                                  </div>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                  <AlertDialogTitle>Bạn có chắc chắn không?</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                      Hành động này không thể được hoàn tác. Điều này sẽ xóa vĩnh viễn (các) người dùng đã chọn.
-                                  </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                  <AlertDialogCancel>Hủy</AlertDialogCancel>
-                                  <AlertDialogAction onClick={onDeleteSelected} className="bg-red-600 hover:bg-red-700">Tiếp tục</AlertDialogAction>
-                                  </AlertDialogFooter>
-                              </AlertDialogContent>
-                          </AlertDialog>
-                          </div>
-                        </DropdownMenuItem>
-                        <DropdownMenuSub className={cn(isSidebarExpanded ? 'flex' : 'hidden', 'md-lg:hidden')}>
-                            <DropdownMenuSubTrigger>
-                                <FileUp className="mr-2 h-4 w-4" />
-                            </DropdownMenuSubTrigger>
-                            <DropdownMenuSubContent>
-                                <DropdownMenuItem>
-                                <FileSpreadsheet className="mr-2 h-4 w-4" />
-                                <span>Xuất tất cả dữ liệu ra Excel</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                <FileSpreadsheet className="mr-2 h-4 w-4" />
-                                <span>Xuất các hàng đã chọn ra Excel</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                <FileText className="mr-2 h-4 w-4" />
-                                <span>Xuất tất cả dữ liệu ra PDF</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                <FileText className="mr-2 h-4 w-4" />
-                                <span>Xuất các hàng đã chọn ra PDF</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuSubContent>
-                        </DropdownMenuSub>
-                        <DropdownMenuSub className={cn(isSidebarExpanded ? 'flex' : 'hidden', 'md-lg:hidden')}>
-                            <DropdownMenuSubTrigger>
-                                <Columns className="mr-2 h-4 w-4" />
-                                <span>Chọn cột</span>
-                            </DropdownMenuSubTrigger>
-                            <DropdownMenuSubContent>
-                                {table
-                                .getAllColumns()
-                                .filter((column) => column.getCanHide())
-                                .map((column) => {
-                                    return (
-                                    <DropdownMenuItem key={column.id} onSelect={(e) => e.preventDefault()} className="gap-2">
-                                        <Checkbox
-                                        id={`col-toggle-${column.id}-sm`}
-                                        checked={column.getIsVisible()}
-                                        onCheckedChange={(value) =>
-                                            column.toggleVisibility(!!value)
-                                        }
-                                        />
-                                        <Label htmlFor={`col-toggle-${column.id}-sm`} className="capitalize cursor-pointer w-full">{column.id}</Label>
-                                    </DropdownMenuItem>
-                                    )
-                                })}
-                            </DropdownMenuSubContent>
-                        </DropdownMenuSub>
-                        <div className="flex sm:hidden">
-                            <DropdownMenuSeparator />
+        // Column chooser - always available
+        actionsList.push({
+            id: 'column-chooser',
+            label: 'Column Visibility',
+            icon: Columns,
+            type: 'button',
+            variant: 'ghost',
+            size: 'icon',
+            onClick: handleColumnChooserClick,
+            priority: 2,
+            hideAt: {
+                minWidth: 768,
+                condition: ({ windowWidth }) => windowWidth < 768
+            },
+        });
+
+        // Export action - only if user has export permission
+        if (canExport) {
+            actionsList.push({
+                id: 'export-dropdown',
+                label: 'Export Data',
+                icon: Download,
+                type: 'button',
+                onClick: handleExportClick,
+                priority: 3,
+                hideAt: {
+                    minWidth: 900,
+                    condition: ({ windowWidth }) => windowWidth < 900
+                }
+            });
+        }
+
+        return actionsList;
+    }, [
+        table,
+        onRefreshData,
+        isSidebarExpanded,
+        handleExportClick,
+        handleColumnChooserClick,
+        hiddenColumnsCount,
+        handleAddUserClick,
+        rowSelection,
+        handleDeleteUserClick,
+        canCreate,
+        canDelete,
+        canExport
+    ]);
+
+    if (!isMounted || isLoading) {
+        return (
+            <Card>
+                <CardHeader>
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                            <CardTitle>Users</CardTitle>
+                            <CardDescription>Manage your application users.</CardDescription>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <div className="relative flex-1 md:grow-0">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                <Input placeholder="Search users..." value="" className="pl-9 w-full md:w-[150px] lg:w-[250px]" disabled />
+                            </div>
+                            <div className="items-center gap-2 hidden sm:flex">
+                                <div className="w-20 h-8 bg-gray-200 rounded animate-pulse"></div>
+                            </div>
+                            <div className="flex gap-2">
+                                <div className="w-10 h-10 bg-gray-200 rounded animate-pulse"></div>
+                                <div className="w-10 h-10 bg-gray-200 rounded animate-pulse"></div>
+                                <div className="w-10 h-10 bg-gray-200 rounded animate-pulse"></div>
+                            </div>
+                        </div>
+                    </div>
+                </CardHeader>
+            </Card>
+        );
+    }
+
+    return (
+        <Card>
+            <CardHeader>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <CardTitle>Users</CardTitle>
+                        <CardDescription>Manage your application users.</CardDescription>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="relative flex-1 md:grow-0">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                                placeholder="Search users..."
+                                value={searchTerm}
+                                onChange={handleSearchChange}
+                                className="pl-9 w-full md:w-[150px] lg:w-[250px]"
+                            />
+                        </div>
+                        <div className="items-center gap-2 hidden sm:flex">
                             <UserFilters table={table} />
                         </div>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
+                        <ActionBar
+                            actions={actions}
+                            isSidebarExpanded={isSidebarExpanded}
+                            enableDropdown={true}
+                            dropdownThreshold={1}
+                            spacing="md"
+                        />
+                    </div>
+                </div>
+            </CardHeader>
+
+            {canExport && (
+                <ExportDialog
+                    table={table}
+                    data={exportData}
+                    open={exportDialogOpen}
+                    onOpenChange={setExportDialogOpen}
+                    fetchAllData={fetchAllData}
+                />
+            )}
+
+            <ColumnChooserDialog
+                table={table}
+                open={columnChooserOpen}
+                onOpenChange={setColumnChooserOpen}
+            />
 
 
-          </div>
-        </div>
-      </CardHeader>
-    </Card>
-  )
-}
+            <AddUserDialog
+                isOpen={isAddUserDialogOpen}
+                onOpenChange={setAddUserDialogOpen}
+            />
 
-    
+            <ConfirmationDialog
+                trigger={null}
+                title="Confirm Delete"
+                description={
+                    selectedUsers.length === 1 ? (
+                        <>Are you sure you want to delete <b>{selectedUsers[0].email}</b>?</>
+                    ) : (
+                        <>
+                            Are you sure you want to delete this:{" "}
+                            <b>{selectedUsers.map(r => r.email).join(", ")}</b>?
+                        </>
+                    )
+                }
+                actionLabel="Delete"
+                variant="destructive"
+                onConfirm={handleDeleteUserClick}
+                open={deleteDialogOpen}
+                onOpenChange={setDeleteDialogOpen}
+            />
+
+        </Card>
+    );
+});
+
+UserActions.displayName = 'UserActions';

@@ -46,7 +46,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function DashboardLayout({
+export default function LocaleLayout({
   children,
 }: {
   children: React.ReactNode;

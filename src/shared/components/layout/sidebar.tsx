@@ -3,24 +3,29 @@
 import * as React from "react";
 import { SidebarContent, SidebarMenu, useSidebar } from "@/shared/components/ui/sidebar";
 import { cn } from "@/shared/lib/utils";
+
 import { menuConfig } from "@/layout/types/sidebar-menu.type";
 import { useMenuState } from "@/layout/hooks/use-menu-state";
 import { MenuItem } from "./nav-item";
+import { useFilteredMenu } from "@/shared/hooks/use-filtered-menu";
 
 export function SidebarNav() {
   const { state, isMobile, openMobile, setCloseAllSubmenus } = useSidebar();
   const effectiveState = isMobile && openMobile ? 'expanded' : state;
   
-  // Use the existing useMenuState hook
-  const { openState, toggleMenu } = useMenuState(menuConfig);
+  // ✨ THÊM MỚI: Filter menu items based on permissions
+  const filteredMenuConfig = useFilteredMenu(menuConfig);
+  
+  // ✨ THAY ĐỔI: Use filtered menu instead of original menuConfig
+  const { openState, toggleMenu } = useMenuState(filteredMenuConfig);
 
   // Create a function to close all submenus and register it with sidebar context
   const closeAllSubmenus = React.useCallback(() => {
     // Get all currently open submenus
     const openMenus = Object.keys(openState).filter(key => openState[key]);
-    
+        
     if (openMenus.length === 0) return;
-    
+        
     // Close all submenus immediately to prevent flash on mobile
     openMenus.forEach(key => {
       toggleMenu(key);
@@ -35,7 +40,8 @@ export function SidebarNav() {
   return (
     <div className="flex flex-col h-full">
       <SidebarContent className="flex-1">
-        {menuConfig.map((item, index) => (
+        {/* ✨ THAY ĐỔI: Use filteredMenuConfig instead of menuConfig */}
+        {filteredMenuConfig.map((item, index) => (
           <React.Fragment key={item.id}>
             <SidebarMenu className={cn("pr-4", index === 0 && "pt-2")}>
               <MenuItem

@@ -1,10 +1,12 @@
-import type {Metadata} from 'next';
+import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/shared/components/ui/toaster"
 import { ThemeProvider } from "@/shared/components/theme-provider"
-
+import { FilesProvider } from "@/shared/context/files-context"
+import { AuthProvider } from "@/shared/context/auth-context"
+import { AuthGuard } from '@/shared/components/custom-ui/auth-guard';
 export const metadata: Metadata = {
-  title: 'AuthAdminLite',
+  title: 'Portal Identity',
   description: 'Manage your application users with ease.',
 };
 
@@ -18,19 +20,25 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"></link>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"></link>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster />
-        </ThemeProvider>
+        <AuthProvider>
+          <AuthGuard>
+            <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <FilesProvider>
+              {children}
+            </FilesProvider>
+            <Toaster />
+          </ThemeProvider>
+          </AuthGuard>       
+        </AuthProvider>
       </body>
     </html>
   );

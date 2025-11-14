@@ -17,10 +17,4 @@ export const users: User[] = [
   { id: 'user-13', email: 'amelia.taylor@email.com', status: 1, connection: 'SAML' },
   { id: 'user-14', email: 'lucas.anderson@email.com', status: 1, connection: 'Google' },
   { id: 'user-15', email: 'mia.thomas@email.com', status: 1, connection: 'Database' },
-  { id: 'user-16', email: 'admin@bstvn.com', status: 1, connection: 'Database' },
-  { id: 'user-17', email: 'cs@bstvn.com', status: 1, connection: 'Database' },
-  { id: 'user-18', email: 'dealer@gmail.com', status: 1, connection: 'Email' },
-  { id: 'user-19', email: 'haunt@ctnpsolutions.com', status: 1, connection: 'Google' },
-  { id: 'user-20', email: 'longnmaws@gmail.com', status: 'inactive', connection: 'Email' },
-  { id: 'user-21', email: 'longnmse@gmail.com', status: 1, connection: 'Google' },
 ];

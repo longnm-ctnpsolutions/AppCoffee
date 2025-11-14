@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -22,15 +21,35 @@ export function TableFilterDropdown<T>({ column }: TableFilterDropdownProps<T>) 
   );
   const [isOpen, setIsOpen] = React.useState(false);
 
+  // Vì bạn dùng manual filtering, cần tự extract unique values từ current data
   const uniqueValues = React.useMemo(() => {
     const values = new Set<string>();
-    column.getFacetedUniqueValues().forEach((value, key) => {
-        if(key !== undefined && key !== null) {
-            values.add(key as string);
+    const table = (column as any).table;
+    if (!table) return [];
+    
+    const rows = table.getCoreRowModel().rows;
+    const columnId = column.id;
+    
+    rows.forEach((row: any) => {
+      const cellValue = row.getValue(columnId);
+      if (cellValue !== undefined && cellValue !== null && cellValue !== '') {
+        // Xử lý đặc biệt cho status column
+        if (columnId === 'status') {
+          const status = (cellValue === 1 || cellValue === "1") ? 'active' : 'inactive';
+          values.add(status);
+        } else {
+          values.add(String(cellValue));
         }
+      }
     });
+
     return Array.from(values).sort();
-  }, [column.getFacetedUniqueValues()]);
+  }, [column]);
+
+  // Debug log
+  React.useEffect(() => {
+    console.log(`Column ${column.id} unique values:`, uniqueValues);
+  }, [column.id, uniqueValues]);
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -49,7 +68,7 @@ export function TableFilterDropdown<T>({ column }: TableFilterDropdownProps<T>) 
   };
 
   const handleOk = () => {
-    if (selectedValues.length === 0) {
+    if (selectedValues.length === 0 || selectedValues.length === uniqueValues.length) {
       column.setFilterValue(undefined);
     } else {
       column.setFilterValue(selectedValues);
@@ -62,29 +81,54 @@ export function TableFilterDropdown<T>({ column }: TableFilterDropdownProps<T>) 
     setIsOpen(false);
   };
 
+  const handleClearFilter = () => {
+    setSelectedValues([]);
+    column.setFilterValue(undefined);
+    setIsOpen(false);
+  };
+
   const isAllSelected = selectedValues.length === uniqueValues.length;
+  const isFiltered = column.getFilterValue() !== undefined;
+
+  // Không hiển thị nếu không có data
+  if (uniqueValues.length === 0) {
+    return null;
+  }
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-6 w-6 ml-2">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className={`h-6 w-6 ml-2 ${isFiltered ? 'text-blue-600' : ''}`}
+          title={`Filter ${column.id}`}
+        >
           <Filter className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-60 p-0" align="start">
         <div className="p-2">
-           <div className="flex items-center space-x-2 px-2 py-1">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2 px-2 py-1">
               <Checkbox
                 id="select-all"
                 checked={isAllSelected}
                 onCheckedChange={(checked) => handleSelectAll(!!checked)}
               />
-              <Label htmlFor="select-all" className="font-medium">Chọn tất cả</Label>
+              <Label htmlFor="select-all" className="font-medium">Select All</Label>
             </div>
-            <Separator className="my-2" />
+            {isFiltered && (
+              <Button variant="ghost" size="sm" onClick={handleClearFilter}>
+                Clear
+              </Button>
+            )}
+          </div>
+          <Separator className="my-2" />
         </div>
+        
         <ScrollArea className="h-48">
-           <div className="space-y-1 p-2">
+          <div className="space-y-1 p-2">
             {uniqueValues.map((value) => (
               <div key={value} className="flex items-center space-x-2 px-2 py-1">
                 <Checkbox
@@ -92,17 +136,24 @@ export function TableFilterDropdown<T>({ column }: TableFilterDropdownProps<T>) 
                   checked={selectedValues.includes(value)}
                   onCheckedChange={(checked) => handleValueChange(value, !!checked)}
                 />
-                <Label htmlFor={value} className="font-normal">{value}</Label>
+                <Label htmlFor={value} className="font-normal text-sm truncate">
+                  {value}
+                </Label>
               </div>
             ))}
           </div>
         </ScrollArea>
-         <Separator className="my-2" />
+
+        <Separator className="my-2" />
         <div className="flex justify-end gap-2 p-2">
-          <Button variant="ghost" size="sm" onClick={handleCancel}>Hủy</Button>
-          <Button size="sm" onClick={handleOk}>OK</Button>
+          <Button variant="ghost" size="sm" onClick={handleCancel}>
+            Cancel
+          </Button>
+          <Button size="sm" onClick={handleOk}>
+            OK
+          </Button>
         </div>
       </PopoverContent>
     </Popover>
   );
-};
+}

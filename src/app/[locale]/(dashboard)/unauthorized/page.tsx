@@ -16,13 +16,13 @@ export default function UnauthorizedPage() {
             <Button variant="ghost" size="icon" onClick={() => router.back()}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <CardTitle className="text-xl">Không được phép</CardTitle>
+            <CardTitle className="text-xl">Unauthorized</CardTitle>
           </div>
         </CardHeader>
       </Card>
       <Card>
         <CardContent className="p-6">
-          <p className="text-muted-foreground">Bạn không có quyền xem trang này.</p>
+          <p className="text-muted-foreground">You do not have permission to view this page.</p>
         </CardContent>
       </Card>
     </div>

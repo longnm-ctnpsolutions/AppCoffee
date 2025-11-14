@@ -1,4 +1,5 @@
 import { ChevronDown } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/shared/components/ui/button";
 import {
   DropdownMenu,
@@ -12,19 +13,37 @@ import type { MenuState, MenuActions } from "@/shared/components/layout/types/he
 interface LanguageSwitcherProps {
   menuState: MenuState;
   menuActions: MenuActions;
+  visible?: boolean;
 }
 
-export function LanguageSwitcher({ menuState, menuActions }: LanguageSwitcherProps) {
+export function LanguageSwitcher({ 
+  menuState, 
+  menuActions, 
+  visible = false 
+}: LanguageSwitcherProps) {
   const { currentLanguage, languageOptions, handleLanguageChange } = useHeaderLanguage(menuState, menuActions);
+  const currentOption = languageOptions.find(opt => opt.code === currentLanguage);
+  const currentFlag = currentOption?.flag || '/images/en.png';
 
-  const activeLanguage = languageOptions.find(lang => lang.code === currentLanguage);
+  if (!visible) {
+    return null;
+  }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="flex items-center gap-2">
-          <span className="font-bold">{activeLanguage?.code || 'VI'}</span>
-          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+        <Button variant="ghost" className="flex items-center gap-1 text-sm text-muted-foreground">
+          <Image
+            src={currentFlag}
+            alt={`${currentLanguage} Flag`}
+            width={20}
+            height={20}
+            className="rounded-full object-cover"
+            style={{width: '20px', height: '20px', borderRadius: '50%' }}
+            data-ai-hint="flag"
+          />
+          <span>{currentLanguage}</span>
+          <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -32,9 +51,17 @@ export function LanguageSwitcher({ menuState, menuActions }: LanguageSwitcherPro
           <DropdownMenuItem 
             key={option.code}
             onClick={() => handleLanguageChange(option.code)}
-            className="flex items-center gap-2"
+            className="flex items-center gap-1"
           >
-            {option.flag && <span>{option.flag}</span>}
+            <Image
+              src={option.flag} 
+              alt={`${option.label} Flag`}
+              width={20}
+              height={20}
+              className="mr-2 rounded-full object-cover"
+              style={{width: '20px', height: '20px', borderRadius: '50%' }}
+              data-ai-hint="flag"
+            />
             <span>{option.label}</span>
           </DropdownMenuItem>
         ))}
