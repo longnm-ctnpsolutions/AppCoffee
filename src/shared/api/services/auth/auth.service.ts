@@ -23,14 +23,14 @@ class AuthService {
 
         const pathname = window.location.pathname;
         const publicRoutes = [
-            "/en/auth/login",
-            "/en/auth/register",
-            "/en/auth/forgot-password",
-            "/en/auth/reset-password",
-            "/en/auth/verify-email",
-            "/en/auth/create-new-password",
-            "/en/signout",
-            "/en/auth/authenticator",
+            "/vi/auth/login",
+            "/vi/auth/register",
+            "/vi/auth/forgot-password",
+            "/vi/auth/reset-password",
+            "/vi/auth/verify-email",
+            "/vi/auth/create-new-password",
+            "/vi/signout",
+            "/vi/auth/authenticator",
         ];
         return publicRoutes.some((route) => pathname.startsWith(route));
     }
@@ -172,7 +172,7 @@ class AuthService {
         const returnUrl = encodeURIComponent(currentPath);
 
         // ✅ Sử dụng replace thay vì href để tránh history pollution
-        window.location.replace(`/en/auth/login?returnUrl=${returnUrl}`);
+        window.location.replace(`/vi/auth/login?returnUrl=${returnUrl}`);
     }
 
     /**
@@ -181,7 +181,7 @@ class AuthService {
     private handleNetworkError(error: unknown, operation: string): never {
         if (error instanceof TypeError && error.message.includes("fetch")) {
             const networkError = new Error(
-                `Unable to connect to the server. Please check your network connection.`
+                `Không thể kết nối đến máy chủ. Vui lòng kiểm tra lại đường truyền mạng.`
             ) as any;
             networkError.type = "network";
             networkError.originalError = error;
@@ -197,7 +197,7 @@ class AuthService {
     ): Promise<T> {
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({
-                message: "An error occurred",
+                message: "Đã có lỗi xảy ra",
             }));
 
             const getErrorMessage = (
@@ -206,31 +206,31 @@ class AuthService {
             ): string => {
                 switch (status) {
                     case 400:
-                        return "Invalid request data. Please check your input.";
+                        return "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.";
                     case 401:
                         this.clearAuthData(); // Clear auth data on 401
                         this.redirectToLogin(); // Redirect to login
-                        return "Invalid username or password";
+                        return "Tên đăng nhập hoặc mật khẩu không đúng";
                     case 403:
-                        return "You do not have permission to perform this action.";
+                        return "Bạn không có quyền thực hiện hành động này.";
                     case 404:
-                        return "The requested resource was not found.";
+                        return "Không tìm thấy tài nguyên được yêu cầu.";
                     case 409:
-                        return "A conflict occurred. The resource may already exist.";
+                        return "Đã có xung đột xảy ra. Tài nguyên có thể đã tồn tại.";
                     case 422:
-                        return "The provided data is invalid.";
+                        return "Dữ liệu được cung cấp không hợp lệ.";
                     case 429:
-                        return "Too many requests. Please try again later.";
+                        return "Quá nhiều yêu cầu. Vui lòng thử lại sau.";
                     case 500:
-                        return "Internal server error. Please try again later.";
+                        return "Lỗi máy chủ nội bộ. Vui lòng thử lại sau.";
                     case 502:
                     case 503:
                     case 504:
-                        return "Service temporarily unavailable. Please try again later.";
+                        return "Dịch vụ tạm thời không khả dụng. Vui lòng thử lại sau.";
                     default:
                         return (
                             serverMessage ||
-                            `${operation} failed (${status}). Please try again.`
+                            `${operation} thất bại (${status}). Vui lòng thử lại.`
                         );
                 }
             };
@@ -310,59 +310,93 @@ class AuthService {
         clientId: string,
         useSessionStorage: boolean = false
     ): Promise<TokenResponseBase> => {
-        const endpoint = `/login/v2?clientId=core&redirect=true`;
+        console.log("MOCK LOGIN: Simulating login for", email);
 
-        try {
-            const response = await fetch(`${this.endpoint}${endpoint}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password,
+        // Tạo dữ liệu giả
+        const mockTokenData: TokenResponseBase = {
+            accessToken: "mock-access-token-" + Date.now(),
+            refreshToken: "mock-refresh-token-" + Date.now(),
+            tokenType: "Bearer",
+            expiresIn: 3600, // 1 giờ
+            user: {
+                id: "mock-user-id-123",
+                email: email,
+                name: "Người dùng Mock",
+                firstName: "Người dùng",
+                lastName: "Mock",
+                roles: ["Admin", "User"], // Cung cấp vai trò Admin để có full quyền
+                permissions: Object.values({ // Cung cấp tất cả quyền để truy cập mọi tính năng
+                    // User management
+                    USERS_READ: "users:read",
+                    USERS_CREATE: "users:create",
+                    USERS_EDIT: "users:edit",
+                    USERS_DELETE: "users:delete",
+                    USERS_EXPORT: "users:export",
+                    USERS_CHANGE_STATUS: "users:status:change",
+                    USERS_CHANGE_PASSWORD: "users:password:change",
+
+                    // Role management
+                    ROLES_READ: "roles:read",
+                    ROLES_CREATE: "roles:create",
+                    ROLES_EDIT: "roles:edit",
+                    ROLES_DELETE: "roles:delete",
+                    ROLES_EXPORT: "roles:export",
+
+                    // Client management
+                    CLIENTS_READ: "clients:read",
+                    CLIENTS_CREATE: "clients:create",
+                    CLIENTS_EDIT: "clients:edit",
+                    CLIENTS_DELETE: "clients:delete",
+                    CLIENTS_EXPORT: "clients:export",
+                    CLIENTS_CHANGE_STATUS: "clients:status:change",
+
+                    // Profile management
+                    USER_PROFILE_VIEW: "user-profile:view",
+                    USER_PROFILE_EDIT: "user-profile:edit",
+
+                    // Permissions and roles assignment
+                    USER_PERMISSIONS_READ: "user-permissions:read",
+                    USER_PERMISSIONS_ASSIGN: "user-permissions:assign",
+                    USER_PERMISSIONS_DELETE: "user-permissions:delete",
+                    USER_ROLES_READ: "user-roles:read",
+                    USER_ROLES_ASSIGN: "user-roles:assign",
+                    USER_ROLES_DELETE: "user-roles:delete",
+
+                    // Role permissions
+                    ROLE_PERMISSIONS_READ: "role-permissions:read",
+                    ROLE_PERMISSIONS_ASSIGN: "role-permissions:assign",
+                    ROLE_PERMISSIONS_DELETE: "role-permissions:delete",
+
+                    // Role users
+                    ROLE_USERS_READ: "role-users:read",
+                    ROLE_USERS_ASSIGN: "role-users:assign",
+                    ROLE_USERS_DELETE: "role-users:delete",
+
+                    // Client permissions
+                    CLIENT_PERMISSIONS_READ: "client-permissions:read",
+                    CLIENT_PERMISSIONS_CREATE: "client-permissions:create",
+                    CLIENT_PERMISSIONS_EDIT: "client-permissions:edit",
+                    CLIENT_PERMISSIONS_DELETE: "client-permissions:delete",
+
+                    SYSTEM_SETTINGS: "system-settings",
+                    // Audit permissions
+                    AUDIT_PERMISSIONS_READ: "auditlogs:read",
                 }),
-            });
+                isActive: true,
+                emailConfirmed: true,
+            },
+            clients: [
+                { id: "core", name: "Core" },
+                { id: "app-1", name: "Ứng dụng 1" },
+            ],
+            requires2FA: false,
+        };
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw errorData;
-            }
-
-            const tokenData =
-                await this.handleSimpleResponse<TokenResponseBase>(
-                    response,
-                    "Login"
-                );
-
-            if (tokenData.requires2FA) {
-                const params = new URLSearchParams(window.location.search);
-                const redirect = params.get("redirect");
-                const clientId = params.get("clientId");
-
-                const returnUrl = params.get("returnUrl");
-
-                let redirectUrl = `${window.location.origin}/en/auth/authenticator?token=${tokenData.twoFactorToken}`;
-
-                if (redirect && clientId) {
-                    redirectUrl += `&redirect=${redirect}&clientId=${clientId}`;
-                }
-
-                if (returnUrl) {
-                    redirectUrl += `&returnUrl=${encodeURIComponent(returnUrl)}`;
-                }
-
-                window.location.href = redirectUrl;
-                return tokenData;
-            }
-
-            this.storeTokens(tokenData, useSessionStorage);
-
-            return tokenData;
-        } catch (error: unknown) {
-            this.handleNetworkError(error, "Login");
-        }
+        // Lưu token giả và trả về
+        this.storeTokens(mockTokenData, useSessionStorage);
+        return mockTokenData;
     };
+
 
     public loginWithGoogle = (clientId: string, baseUrl?: string): void => {
         try {
@@ -389,7 +423,7 @@ class AuthService {
                     "?redirect=true&clientId=" +
                     redirectClientId;
             }
-            const oauthReturnUrl = `${currentBaseUrl}/en/auth/login?returnUrl=${encodeURIComponent(
+            const oauthReturnUrl = `${currentBaseUrl}/vi/auth/login?returnUrl=${encodeURIComponent(
                 finalReturnUrl
             )}`;
             const googleOAuthUrl = `${
@@ -399,7 +433,7 @@ class AuthService {
             )}&clientId=${clientId}&useCookies=false`;
             window.location.href = googleOAuthUrl;
         } catch (error) {
-            throw new Error("Failed to initiate Google OAuth login");
+            throw new Error("Không thể khởi tạo đăng nhập Google OAuth");
         }
     };
 
@@ -427,7 +461,7 @@ class AuthService {
                     "?redirect=true&clientId=" +
                     redirectClientId;
             }
-            const oauthReturnUrl = `${currentBaseUrl}/en/auth/login?returnUrl=${encodeURIComponent(
+            const oauthReturnUrl = `${currentBaseUrl}/vi/auth/login?returnUrl=${encodeURIComponent(
                 finalReturnUrl
             )}`;
             const microsoftOAuthUrl = `${
@@ -437,7 +471,7 @@ class AuthService {
             )}&clientId=${clientId}&useCookies=false`;
             window.location.href = microsoftOAuthUrl;
         } catch (error) {
-            throw new Error("Failed to initiate Microsoft OAuth login");
+            throw new Error("Không thể khởi tạo đăng nhập Microsoft OAuth");
         }
     };
 
@@ -461,10 +495,10 @@ class AuthService {
 
             return await this.handleSimpleResponse<MfaStatusResponse>(
                 response,
-                "MFA Status"
+                "Trạng thái MFA"
             );
         } catch (error) {
-            this.handleNetworkError(error, "MFA Status");
+            this.handleNetworkError(error, "Trạng thái MFA");
         }
     };
 
@@ -486,10 +520,10 @@ class AuthService {
 
             return await this.handleSimpleResponse<SetupMfaResponse>(
                 response,
-                "MFA Setup"
+                "Thiết lập MFA"
             );
         } catch (error) {
-            this.handleNetworkError(error, "MFA Setup");
+            this.handleNetworkError(error, "Thiết lập MFA");
         }
     };
 
@@ -518,7 +552,7 @@ class AuthService {
 
             if (!response.ok) {
                 if (response.status === 401) {
-                    throw new Error("Invalid verification code.");
+                    throw new Error("Mã xác thực không hợp lệ.");
                 } else {
                     const errorData = await response.json();
                     throw errorData;
@@ -535,7 +569,7 @@ class AuthService {
 
             return tokenData;
         } catch (error: unknown) {
-            this.handleNetworkError(error, "Login");
+            this.handleNetworkError(error, "Đăng nhập");
         }
     };
 
@@ -581,7 +615,7 @@ class AuthService {
                 });
                 return await this.handleSimpleResponse<UserInfo>(
                     response,
-                    "Get user info"
+                    "Lấy thông tin người dùng"
                 );
             }
 
@@ -589,7 +623,7 @@ class AuthService {
                 method: "GET",
             });
         } catch (error: unknown) {
-            this.handleNetworkError(error, "Get user info");
+            this.handleNetworkError(error, "Lấy thông tin người dùng");
         }
     };
 
@@ -607,7 +641,7 @@ class AuthService {
                 });
                 return await this.handleSimpleResponse<UserProfile>(
                     response,
-                    "Get user profile"
+                    "Lấy hồ sơ người dùng"
                 );
             }
 
@@ -618,7 +652,7 @@ class AuthService {
                 }
             );
         } catch (error: unknown) {
-            this.handleNetworkError(error, "Get user profile");
+            this.handleNetworkError(error, "Lấy hồ sơ người dùng");
         }
     };
 
@@ -638,7 +672,7 @@ class AuthService {
                 });
                 return await this.handleSimpleResponse<UserProfile>(
                     response,
-                    "Update profile"
+                    "Cập nhật hồ sơ"
                 );
             }
 
@@ -650,7 +684,7 @@ class AuthService {
                 }
             );
         } catch (error: unknown) {
-            this.handleNetworkError(error, "Update profile");
+            this.handleNetworkError(error, "Cập nhật hồ sơ");
         }
     };
 
@@ -670,7 +704,7 @@ class AuthService {
         try {
             const token = refreshToken || this.getRefreshToken();
             if (!token) {
-                throw new Error("No refresh token available");
+                throw new Error("Không có refresh token");
             }
 
             const response = await fetch(`${this.endpoint}/refresh`, {
@@ -683,14 +717,14 @@ class AuthService {
 
             const result = await this.handleSimpleResponse<TokenResponseBase>(
                 response,
-                "Refresh token"
+                "Làm mới token"
             );
             this.storeTokens(result);
 
             return result;
         } catch (error) {
             this.clearAuthData();
-            this.handleNetworkError(error, "Refresh token");
+            this.handleNetworkError(error, "Làm mới token");
         }
     };
 
@@ -704,9 +738,9 @@ class AuthService {
                 body: JSON.stringify({ email }),
             });
 
-            return await this.handleSimpleResponse(response, "Forgot password");
+            return await this.handleSimpleResponse(response, "Quên mật khẩu");
         } catch (error) {
-            this.handleNetworkError(error, "Forgot password");
+            this.handleNetworkError(error, "Quên mật khẩu");
         }
     };
 
@@ -733,9 +767,9 @@ class AuthService {
                 throw errorData;
             }
 
-            return await this.handleSimpleResponse(response, "Reset password");
+            return await this.handleSimpleResponse(response, "Đặt lại mật khẩu");
         } catch (error) {
-            this.handleNetworkError(error, "Reset password");
+            this.handleNetworkError(error, "Đặt lại mật khẩu");
         }
     };
 
