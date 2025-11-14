@@ -5,6 +5,7 @@ import {
     Shield,
     SquareUser,
     FileText,
+    ShoppingCart,
 } from "lucide-react";
 import { CORE_PERMISSIONS } from "@/types/auth.types";
 
@@ -55,6 +56,13 @@ export const menuConfig: MenuItem[] = [
         label: "Applications",
         icon: BriefcaseBusiness,
         href: "/applications",
+        dividerAfter: true,
+    },
+     {
+        id: "pos",
+        label: "POS",
+        icon: ShoppingCart,
+        href: "/pos",
         dividerAfter: true,
     },
     {
