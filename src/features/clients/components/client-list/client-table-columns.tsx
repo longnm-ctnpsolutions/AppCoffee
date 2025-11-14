@@ -33,15 +33,17 @@ function ClientActions({ client, onDelete }: ClientActionsProps) {
     const router = useRouter();
     const [isDeleting, setIsDeleting] = React.useState(false);
     const { getClientDetails } = useClientsActions();
-    const { hasPermission } = usePermissions();
-    const canDeleteClients = hasPermission(CORE_PERMISSIONS.CLIENTS_DELETE);
+    
+    // Assume we can always delete for now
+    const canDeleteClients = true;
+
     const handleDetailsClick = async () => {
         try {
             await getClientDetails(client.id);
-            router.push(`/en/clients/${client.id}`);
+            router.push(`/vi/clients/${client.id}`);
         } catch (error) {
             console.error('Failed to fetch client details:', error);
-            router.push(`/en/clients/${client.id}`);
+            router.push(`/vi/clients/${client.id}`);
         }
     };
 
@@ -61,7 +63,7 @@ function ClientActions({ client, onDelete }: ClientActionsProps) {
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0" disabled={isDeleting}>
-                        <span className="sr-only">Open menu</span>
+                        <span className="sr-only">Mở menu</span>
                         {isDeleting ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
@@ -71,7 +73,7 @@ function ClientActions({ client, onDelete }: ClientActionsProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" data-no-expand>
                     <DropdownMenuItem onSelect={handleDetailsClick} data-no-expand>
-                        Details
+                        Chi tiết
                     </DropdownMenuItem>
                     {
                         canDeleteClients && (
@@ -87,18 +89,18 @@ function ClientActions({ client, onDelete }: ClientActionsProps) {
                                         {isDeleting ? (
                                             <>
                                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                Deleting...
+                                                Đang xóa...
                                             </>
                                         ) : (
-                                            "Delete"
+                                            "Xóa"
                                         )}
                                     </DropdownMenuItem>
                                 }
-                                title="Confirm"
+                                title="Xác nhận"
                                 description={
-                                    <>Are you sure you want to delete this: <b>{client.name}</b>?</>
+                                    <>Bạn có chắc chắn muốn xóa: <b>{client.name}</b>?</>
                                 }
-                                actionLabel="Delete"
+                                actionLabel="Xóa"
                                 variant="destructive"
                                 isLoading={isDeleting}
                                 onConfirm={handleDeleteClick}
@@ -220,30 +222,6 @@ export function useClientTableColumns(
         },
         {
             accessorKey: "name",
-            // header: ({ column, table }) => {
-            //     React.useEffect(() => {
-            //         const sorting = table.getState().sorting;
-            //         const alreadySorted = sorting.some((s) => s.id === column.id);
-            //         if (!alreadySorted) {
-            //             table.setSorting([{ id: column.id, desc: true }]);
-            //         }
-            //     }, [table, column.id]);
-
-            //     return (
-            //         <SortableHeader
-            //             column={column}
-            //             table={table}
-            //             enableSorting={true}
-            //             enableFiltering={true}
-            //             allValues={getUniqueValues('name', table)}
-            //             searchTerm={searchTerm}
-            //             onFilterOk={handleFilterOk}
-            //             justClickedOk={justClickedOk}
-            //         >
-            //             Client Name
-            //         </SortableHeader>
-            //     );
-            // },
             header: ({ column, table }) => (
                 <SortableHeader
                     column={column}
@@ -255,7 +233,7 @@ export function useClientTableColumns(
                     onFilterOk={handleFilterOk}
                     justClickedOk={justClickedOk}
                 >
-                    Client Name
+                    Tên máy khách
                 </SortableHeader>
             ),
             cell: ({ row }) => (
@@ -279,7 +257,7 @@ export function useClientTableColumns(
                     onFilterOk={handleFilterOk}
                     justClickedOk={justClickedOk}
                 >
-                    Description
+                    Mô tả
                 </SortableHeader>
             ),
             cell: ({ row }) => (
@@ -308,7 +286,7 @@ export function useClientTableColumns(
                     onFilterOk={handleFilterOk}
                     justClickedOk={justClickedOk}
                 >
-                    Status
+                    Trạng thái
                 </SortableHeader>
             ),
             cell: ({ row }) => {

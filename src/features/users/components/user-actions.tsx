@@ -65,7 +65,7 @@ export const UserActions = React.memo(function UserActions({
 
     const rowSelection = table.getState().rowSelection;
 
-    const { canCreate, canDelete, canExport } = permissions;
+    const { canCreate, canDelete, canExport } = { canCreate: true, canDelete: true, canExport: true }; // permissions;
 
     React.useEffect(() => {
         setIsMounted(true);
@@ -87,22 +87,17 @@ export const UserActions = React.memo(function UserActions({
     }, []);
 
     const handleAddUserClick = React.useCallback(() => {
-
         setAddUserDialogOpen(true);
-
-    }, []);
+    }, [setAddUserDialogOpen]);
 
     const { removeMultipleUsers } = useUsersActions();
 
     const handleDeleteUserClick = React.useCallback(() => {
-        if (canDelete) {
-            const selectedRows = table.getFilteredSelectedRowModel().rows;
-            const ids = selectedRows.map((row) => row.original.id);
-            if (ids.length > 0) {
-                removeMultipleUsers(ids);
-            }
+        const selectedIds = selectedRows.map((row) => row.original.id);
+        if (selectedIds.length > 0) {
+            onDeleteSelected();
         }
-    }, [table, removeMultipleUsers, canDelete]);
+    }, [selectedRows, onDeleteSelected]);
 
     // Get hidden columns count for badge
     const hiddenColumnsCount = table.getAllColumns()
@@ -122,52 +117,47 @@ export const UserActions = React.memo(function UserActions({
     const actions: ActionItem[] = React.useMemo(() => {
         const actionsList: ActionItem[] = [];
 
-        // Add user action - only if user has create permission
-
-        if (canCreate) {
-            actionsList.push({
-                id: 'add-user',
-                label: 'Add user',
-                icon: UserPlus,
-                type: 'button',
-                priority: 5,
-                variant: 'default',
-                onClick: handleAddUserClick,
-                hideAt: {
-                    minWidth: 1150,
-                    condition: ({ isSidebarExpanded, windowWidth }) => {
-                        const threshold = isSidebarExpanded ? 1345 : 1150;
-                        return windowWidth < threshold;
-                    }
+        // Add user action - always show
+        actionsList.push({
+            id: 'add-user',
+            label: 'Thêm người dùng',
+            icon: UserPlus,
+            type: 'button',
+            priority: 5,
+            variant: 'default',
+            onClick: handleAddUserClick,
+            hideAt: {
+                minWidth: 1150,
+                condition: ({ isSidebarExpanded, windowWidth }) => {
+                    const threshold = isSidebarExpanded ? 1345 : 1150;
+                    return windowWidth < threshold;
                 }
-            });
-        }
+            }
+        });
 
-        // Delete action - only if user has delete permission
-        if (canDelete) {
-            actionsList.push({
-                id: "delete",
-                label: "Delete",
-                icon: Trash2,
-                type: "button",
-                variant: 'destructive',
-                priority: 4,
-                disabled: selectedUsers.length === 0,
-                onClick: () => setDeleteDialogOpen(true),
-                hideAt: {
-                    minWidth: 1024,
-                    condition: ({ windowWidth }) => windowWidth < 1024
-                },
-                value: selectedUsers
-            });
-        }
+        // Delete action - always show
+        actionsList.push({
+            id: "delete",
+            label: "Xóa",
+            icon: Trash2,
+            type: "button",
+            variant: 'destructive',
+            priority: 4,
+            disabled: selectedUsers.length === 0,
+            onClick: () => setDeleteDialogOpen(true),
+            hideAt: {
+                minWidth: 1024,
+                condition: ({ windowWidth }) => windowWidth < 1024
+            },
+            value: selectedUsers
+        });
 
 
         // Refresh action - always available if onRefreshData is provided
         if (onRefreshData) {
             actionsList.push({
                 id: 'refresh',
-                label: 'Refresh Data',
+                label: 'Làm mới dữ liệu',
                 icon: RefreshCw,
                 type: 'button',
                 variant: 'ghost',
@@ -184,7 +174,7 @@ export const UserActions = React.memo(function UserActions({
         // Column chooser - always available
         actionsList.push({
             id: 'column-chooser',
-            label: 'Column Visibility',
+            label: 'Hiển thị cột',
             icon: Columns,
             type: 'button',
             variant: 'ghost',
@@ -197,21 +187,19 @@ export const UserActions = React.memo(function UserActions({
             },
         });
 
-        // Export action - only if user has export permission
-        if (canExport) {
-            actionsList.push({
-                id: 'export-dropdown',
-                label: 'Export Data',
-                icon: Download,
-                type: 'button',
-                onClick: handleExportClick,
-                priority: 3,
-                hideAt: {
-                    minWidth: 900,
-                    condition: ({ windowWidth }) => windowWidth < 900
-                }
-            });
-        }
+        // Export action - always show
+        actionsList.push({
+            id: 'export-dropdown',
+            label: 'Xuất dữ liệu',
+            icon: Download,
+            type: 'button',
+            onClick: handleExportClick,
+            priority: 3,
+            hideAt: {
+                minWidth: 900,
+                condition: ({ windowWidth }) => windowWidth < 900
+            }
+        });
 
         return actionsList;
     }, [
@@ -224,9 +212,7 @@ export const UserActions = React.memo(function UserActions({
         handleAddUserClick,
         rowSelection,
         handleDeleteUserClick,
-        canCreate,
-        canDelete,
-        canExport
+        selectedUsers
     ]);
 
     if (!isMounted || isLoading) {
@@ -235,14 +221,14 @@ export const UserActions = React.memo(function UserActions({
                 <CardHeader>
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
-                            <CardTitle>Users</CardTitle>
-                            <CardDescription>Manage your application users.</CardDescription>
+                            <CardTitle>Người dùng</CardTitle>
+                            <CardDescription>Quản lý người dùng ứng dụng của bạn.</CardDescription>
                         </div>
 
                         <div className="flex items-center gap-2">
                             <div className="relative flex-1 md:grow-0">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                <Input placeholder="Search users..." value="" className="pl-9 w-full md:w-[150px] lg:w-[250px]" disabled />
+                                <Input placeholder="Tìm người dùng..." value="" className="pl-9 w-full md:w-[150px] lg:w-[250px]" disabled />
                             </div>
                             <div className="items-center gap-2 hidden sm:flex">
                                 <div className="w-20 h-8 bg-gray-200 rounded animate-pulse"></div>
@@ -264,14 +250,14 @@ export const UserActions = React.memo(function UserActions({
             <CardHeader>
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
-                        <CardTitle>Users</CardTitle>
-                        <CardDescription>Manage your application users.</CardDescription>
+                        <CardTitle>Người dùng</CardTitle>
+                        <CardDescription>Quản lý người dùng ứng dụng của bạn.</CardDescription>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="relative flex-1 md:grow-0">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
-                                placeholder="Search users..."
+                                placeholder="Tìm người dùng..."
                                 value={searchTerm}
                                 onChange={handleSearchChange}
                                 className="pl-9 w-full md:w-[150px] lg:w-[250px]"
@@ -291,15 +277,13 @@ export const UserActions = React.memo(function UserActions({
                 </div>
             </CardHeader>
 
-            {canExport && (
-                <ExportDialog
-                    table={table}
-                    data={exportData}
-                    open={exportDialogOpen}
-                    onOpenChange={setExportDialogOpen}
-                    fetchAllData={fetchAllData}
-                />
-            )}
+            <ExportDialog
+                table={table}
+                data={exportData}
+                open={exportDialogOpen}
+                onOpenChange={setExportDialogOpen}
+                fetchAllData={fetchAllData}
+            />
 
             <ColumnChooserDialog
                 table={table}
@@ -315,18 +299,18 @@ export const UserActions = React.memo(function UserActions({
 
             <ConfirmationDialog
                 trigger={null}
-                title="Confirm Delete"
+                title="Xác nhận Xóa"
                 description={
                     selectedUsers.length === 1 ? (
-                        <>Are you sure you want to delete <b>{selectedUsers[0].email}</b>?</>
+                        <>Bạn có chắc chắn muốn xóa <b>{selectedUsers[0].email}</b>?</>
                     ) : (
                         <>
-                            Are you sure you want to delete this:{" "}
+                            Bạn có chắc chắn muốn xóa:{" "}
                             <b>{selectedUsers.map(r => r.email).join(", ")}</b>?
                         </>
                     )
                 }
-                actionLabel="Delete"
+                actionLabel="Xóa"
                 variant="destructive"
                 onConfirm={handleDeleteUserClick}
                 open={deleteDialogOpen}

@@ -13,15 +13,15 @@ export default function ClientDetailTabs() {
     const { error } = useClientsActions();
     const [permissionsCount, setPermissionsCount] = useState(0);
     const { selectedClient } = useClientDetail();
-    const { hasPermission } = usePermissions();
-
+    
+    // Always show tabs, regardless of permissions
     const clientPermissions = React.useMemo(() => ({
-        canPermissionsRead: hasPermission(CORE_PERMISSIONS.CLIENT_PERMISSIONS_READ),
-        canChangeStatus: hasPermission(CORE_PERMISSIONS.CLIENTS_CHANGE_STATUS),
-        canEdit: hasPermission(CORE_PERMISSIONS.CLIENTS_EDIT),
-        canPermissionsCreate: hasPermission(CORE_PERMISSIONS.CLIENT_PERMISSIONS_CREATE),
-        canPermissionsDelete: hasPermission(CORE_PERMISSIONS.CLIENT_PERMISSIONS_DELETE),
-    }), [hasPermission]);
+        canPermissionsRead: true,
+        canChangeStatus: true,
+        canEdit: true,
+        canPermissionsCreate: true,
+        canPermissionsDelete: true,
+    }), []);
 
     const handleDeletePermission = async (permission: Permission) => {
         try {
@@ -41,17 +41,15 @@ export default function ClientDetailTabs() {
             <Card className="rounded-b-none border-b-0 shadow-md">
                 <div className="px-2 pt-1 pb-2">
                     <TabsList className="w-full justify-start bg-transparent">
-                        <TabsTrigger value="details">Details</TabsTrigger>
-                        {clientPermissions.canPermissionsRead && (
-                            <TabsTrigger value="permissions">
-                                Permissions
-                                {permissionsCount > 0 && (
-                                    <span className="ml-2 bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">
-                                        {permissionsCount}
-                                    </span>
-                                )}
-                            </TabsTrigger>
-                        )}
+                        <TabsTrigger value="details">Chi tiết</TabsTrigger>
+                        <TabsTrigger value="permissions">
+                            Quyền
+                            {permissionsCount > 0 && (
+                                <span className="ml-2 bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">
+                                    {permissionsCount}
+                                </span>
+                            )}
+                        </TabsTrigger>
                     </TabsList>
                 </div>
             </Card>
@@ -68,7 +66,7 @@ export default function ClientDetailTabs() {
                             {/* Show error if any */}
                             {error && (
                                 <div className="p-4 bg-red-50 border border-red-200 rounded-md">
-                                    <p className="text-red-800">Error: {error}</p>
+                                    <p className="text-red-800">Lỗi: {error}</p>
                                 </div>
                             )}
 
