@@ -1,10 +1,14 @@
+
 import type { Permission } from "@/types/permissions.types";
 import type { ODataResponse, TableState } from "@/types/odata.types";
-import { ODataQueryBuilder } from "@/lib/odata-builder";
-import { odataApiCall } from '@/lib/response-handler';
 
-const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL;
+const mockPermissions: Permission[] = Array.from({ length: 30 }, (_, i) => ({
+    id: `perm-${i + 1}`,
+    name: `permissions:action${i+1}`,
+    description: `Mô tả cho quyền ${i + 1}`,
+    clientName: `Client ${i % 5 + 1}`
+}));
+
 
 export interface PermissionsQueryResult {
     permissions: Permission[];
@@ -12,90 +16,56 @@ export interface PermissionsQueryResult {
     hasMore: boolean;
 }
 
+const applyFilteringAndSorting = (permissions: Permission[], tableState: any, searchTerm?: string): Permission[] => {
+     let filteredData = [...permissions];
+
+    if (searchTerm) {
+        const lowercasedFilter = searchTerm.toLowerCase();
+        filteredData = filteredData.filter(p =>
+            p.name?.toLowerCase().includes(lowercasedFilter) ||
+            p.description?.toLowerCase().includes(lowercasedFilter)
+        );
+    }
+
+    if (tableState.sorting.length > 0) {
+        const sorter = tableState.sorting[0];
+        filteredData.sort((a, b) => {
+            const valA = (a as any)[sorter.id] || '';
+            const valB = (b as any)[sorter.id] || '';
+            if (valA < valB) return sorter.desc ? 1 : -1;
+            if (valA > valB) return sorter.desc ? -1 : 1;
+            return 0;
+        });
+    }
+
+    return filteredData;
+}
+
+
 export const getPermissionsWithOData = async (
     clientId: string,
     tableState: TableState,
     searchTerm?: string
 ): Promise<PermissionsQueryResult> => {
-    try {
-        const queryBuilder = new ODataQueryBuilder();
+     console.log("Mocking getPermissionsWithOData", { clientId, tableState, searchTerm });
+     return new Promise(resolve => {
+        setTimeout(() => {
+            const clientPermissions = mockPermissions.filter(p => p.clientName === `Client for ${clientId}`);
+            const filteredData = applyFilteringAndSorting(clientPermissions, tableState, searchTerm);
+            
+            const pageIndex = tableState.pagination.pageIndex;
+            const pageSize = tableState.pagination.pageSize;
+            const start = pageIndex * pageSize;
+            const end = start + pageSize;
+            const paginatedData = filteredData.slice(start, end);
 
-        const filterConditions: string[] = [];
-
-        if (searchTerm && searchTerm.trim()) {
-            const searchConditions = [
-                // ODataQueryBuilder.equals("id", searchTerm),
-                ODataQueryBuilder.contains("name", searchTerm),
-                ODataQueryBuilder.contains("description", searchTerm),
-            ].filter(Boolean);
-
-            if (searchConditions.length > 0) {
-                filterConditions.push(`(${searchConditions.join(" or ")})`);
-            }
-        }
-
-        // Xử lý columnFilters từ tableState
-        tableState.columnFilters.forEach((filter) => {
-            const { id, value } = filter;
-
-            if (value === undefined || value === null || value === '') return;
-
-            // multi-select array
-            if (Array.isArray(value)) {
-                if (value.length === 0) return;
-                filterConditions.push(ODataQueryBuilder.equalsOr(id, value));
-                return;
-            }
-
-            // single value
-            switch (id) {
-                case "name":
-                    filterConditions.push(ODataQueryBuilder.contains("name", value));
-                    break;
-                case "description":
-                    filterConditions.push(ODataQueryBuilder.contains("description", value));
-                    break;
-                default:
-                    filterConditions.push(ODataQueryBuilder.contains(id, String(value)));
-                    break;
-            }
-        });
-
-        // Kết hợp tất cả filterConditions
-        if (filterConditions.length > 0) {
-            queryBuilder.filter(filterConditions);
-        }
-
-        // Xử lý sorting
-        if (tableState.sorting.length > 0) {
-            const sort = tableState.sorting[0];
-            queryBuilder.orderBy(sort.id, sort.desc ? "desc" : "asc");
-        }
-
-        // Xử lý pagination
-        const skip =
-            tableState.pagination.pageIndex * tableState.pagination.pageSize;
-        queryBuilder.skip(skip).top(tableState.pagination.pageSize);
-
-        // Thêm count
-        queryBuilder.count(true);
-
-        // Xây dựng và gọi API
-        const queryString = queryBuilder.build();
-        const url = `${API_BASE_URL}/clients/${clientId}/permissions/${
-            queryString ? `?${queryString}` : ""
-        }`;
-        const data: ODataResponse<Permission> = await odataApiCall<Permission>(url);
-        
-            return {
-              permissions: data.value || [],
-              totalCount: data['@odata.count'] || data.value?.length || 0,
-              hasMore: !!data['@odata.nextLink'],
-            };
-          } catch (error) {
-            console.error('OData API call failed:', error);
-            throw error;
-          }
+            resolve({
+                permissions: paginatedData,
+                totalCount: filteredData.length,
+                hasMore: end < filteredData.length,
+            });
+        }, 500);
+    });
 };
 
 export const searchClientPermissionByFieldWithOData = async (
@@ -103,36 +73,21 @@ export const searchClientPermissionByFieldWithOData = async (
     searchTerm?: string,
     clientId?: string
 ): Promise<PermissionsQueryResult> => {
-    try {
-        const queryBuilder = new ODataQueryBuilder();
-
-        if (field) {
-            queryBuilder.select([field]);
-        }
-
-        if (field && searchTerm) {
-            if (Array.isArray(searchTerm)) {
-                queryBuilder.filter([ODataQueryBuilder.equalsOr(field, searchTerm)]);
-            } else {
-                queryBuilder.filter([ODataQueryBuilder.equals(field, searchTerm)]);
+    console.log("Mocking searchClientPermissionByFieldWithOData", { field, searchTerm, clientId });
+    return new Promise(resolve => {
+        setTimeout(() => {
+             let results = mockPermissions.filter(p => p.clientName === `Client for ${clientId}`);
+            if (field && searchTerm) {
+                 results = results.filter(p => {
+                    const pField = (p as any)[field];
+                    return pField?.toLowerCase().includes(searchTerm.toLowerCase());
+                });
             }
-        }
-
-        // Xây dựng và gọi API
-        const queryString = queryBuilder.build();
-        const url = `${API_BASE_URL}/clients/${clientId}/permissions/${
-            queryString ? `?${queryString}` : ""
-        }`;
-
-        const data: ODataResponse<Permission> = await odataApiCall<Permission>(url);
-        
-        return {
-              permissions: data.value || [],
-              totalCount: data['@odata.count'] || data.value?.length || 0,
-              hasMore: !!data['@odata.nextLink'],
-            };
-        } catch (error) {
-            console.error('OData API call failed:', error);
-            throw error;
-        }
+            resolve({
+                permissions: results,
+                totalCount: results.length,
+                hasMore: false,
+            });
+        }, 300);
+    });
 };

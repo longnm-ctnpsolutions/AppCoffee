@@ -1,11 +1,28 @@
+
 import type { Role, RoleUser } from "@/features/roles/types/role.types";
 import type { ODataResponse, TableState } from "@/types/odata.types";
-import { ODataQueryBuilder } from "@/lib/odata-builder";
 import type { Permission } from "@/types/permissions.types";
-import { odataApiCall } from "@/lib/response-handler";
 
-const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL;
+const mockRoles: Role[] = Array.from({ length: 15 }, (_, i) => ({
+    id: `role-${i+1}`,
+    name: `Vai trò ${i+1}`,
+    description: `Mô tả chi tiết cho vai trò thứ ${i+1} của hệ thống.`
+}));
+
+const mockRoleUsers: RoleUser[] = Array.from({ length: 25 }, (_, i) => ({
+    id: `user-in-role-${i + 1}`,
+    email: `user${i+1}@example.com`,
+    connection: i % 3 === 0 ? 'Google' : i % 3 === 1 ? 'Database' : 'Microsoft',
+    lockoutEnabled: i % 5 === 0
+}));
+
+const mockRolePermissions: Permission[] = Array.from({ length: 10 }, (_, i) => ({
+    id: `perm-in-role-${i + 1}`,
+    name: `role-permission:${i+1}`,
+    description: `Mô tả quyền trong vai trò ${i + 1}`,
+    clientName: `Client ${i % 2 + 1}`
+}));
+
 
 export interface RolesQueryResult {
     roles: Role[];
@@ -25,198 +42,101 @@ export interface RolePermissionsQueryResult {
     hasMore: boolean;
 }
 
+const applyFilteringAndSorting = (data: any[], tableState: TableState, searchTerm?: string, textFields: string[] = ['name', 'description']) => {
+    let filteredData = [...data];
+
+    if (searchTerm) {
+        const lowercasedFilter = searchTerm.toLowerCase();
+        filteredData = filteredData.filter(item =>
+            textFields.some(field => item[field]?.toLowerCase().includes(lowercasedFilter))
+        );
+    }
+    
+    if (tableState.sorting.length > 0) {
+        const sorter = tableState.sorting[0];
+        filteredData.sort((a, b) => {
+            const valA = (a as any)[sorter.id] || '';
+            const valB = (b as any)[sorter.id] || '';
+            if (valA < valB) return sorter.desc ? 1 : -1;
+            if (valA > valB) return sorter.desc ? -1 : 1;
+            return 0;
+        });
+    }
+
+    return filteredData;
+};
+
+
 export const getRolesWithOData = async (
     tableState: TableState,
     searchTerm?: string
 ): Promise<RolesQueryResult> => {
-    try {
-        const queryBuilder = new ODataQueryBuilder();
-        const filterConditions: string[] = [];
+     console.log("Mocking getRolesWithOData", { tableState, searchTerm });
+     return new Promise(resolve => {
+        setTimeout(() => {
+            const filteredData = applyFilteringAndSorting(mockRoles, tableState, searchTerm);
+            const pageIndex = tableState.pagination.pageIndex;
+            const pageSize = tableState.pagination.pageSize;
+            const start = pageIndex * pageSize;
+            const end = start + pageSize;
+            const paginatedData = filteredData.slice(start, end);
 
-        // --- searchTerm global ---
-        if (searchTerm && searchTerm.trim()) {
-            const searchConditions = [
-                ODataQueryBuilder.equals("id", searchTerm),
-                ODataQueryBuilder.contains("name", searchTerm),
-                ODataQueryBuilder.contains("description", searchTerm),
-            ].filter(Boolean);
-
-            if (searchConditions.length > 0) {
-                filterConditions.push(`(${searchConditions.join(" or ")})`);
-            }
-        }
-
-        // --- column filters ---
-        tableState.columnFilters.forEach((filter) => {
-            const { id, value } = filter;
-
-            if (value === undefined || value === null || value === "") return;
-
-            // multi-select array
-            if (Array.isArray(value)) {
-                if (value.length === 0) return;
-
-                // Nếu là status thì cast sang số
-                if (id === "status") {
-                    const nums = value
-                        .map((v) => Number(v))
-                        .filter((v) => !isNaN(v));
-                    if (nums.length > 0) {
-                        filterConditions.push(
-                            ODataQueryBuilder.equalsOr(id, nums)
-                        );
-                    }
-                } else {
-                    filterConditions.push(
-                        ODataQueryBuilder.equalsOr(id, value)
-                    );
-                }
-                return;
-            }
-
-            // single value
-            switch (id) {
-                case "name":
-                    filterConditions.push(
-                        ODataQueryBuilder.contains("name", value)
-                    );
-                    break;
-                case "status":
-                    filterConditions.push(
-                        ODataQueryBuilder.equals("status", value)
-                    );
-                    break;
-                case "description":
-                    filterConditions.push(
-                        ODataQueryBuilder.contains("description", value)
-                    );
-                    break;
-                default:
-                    filterConditions.push(
-                        ODataQueryBuilder.contains(id, String(value))
-                    );
-                    break;
-            }
-        });
-
-        if (filterConditions.length > 0) {
-            queryBuilder.filter(filterConditions);
-        }
-
-        // --- sorting ---
-        if (tableState.sorting.length > 0) {
-            const sort = tableState.sorting[0];
-            queryBuilder.orderBy(sort.id, sort.desc ? "desc" : "asc");
-        } else {
-            queryBuilder.orderBy("createdAt", "desc");
-        }
-
-        const hasAnyFilter =
-            filterConditions.length > 0 || (searchTerm && searchTerm.trim());
-        // --- pagination ---
-        const skip = hasAnyFilter
-            ? 0 // Reset to first page when filtering
-            : (tableState.pagination.pageIndex || 0) *
-              (tableState.pagination.pageSize || 10);
-
-        queryBuilder.skip(skip).top(tableState.pagination.pageSize || 10);
-
-        // --- count ---
-        queryBuilder.count(true);
-
-        // --- build URL ---
-        const queryString = queryBuilder.build();
-        const url = `${API_BASE_URL}/roles${
-            queryString ? `?${queryString}` : ""
-        }`;
-
-        const data: ODataResponse<Role> = await odataApiCall<Role>(url);
-
-        return {
-            roles: data.value || [],
-            totalCount: data["@odata.count"] || data.value?.length || 0,
-            hasMore: !!data["@odata.nextLink"],
-        };
-    } catch (error) {
-        console.error("OData API call failed:", error);
-        throw error;
-    }
+            resolve({
+                roles: paginatedData,
+                totalCount: filteredData.length,
+                hasMore: end < filteredData.length,
+            });
+        }, 500);
+    });
 };
 
 export const getRolesByFieldWithOData = async (
     field?: string,
     searchTerm?: string | string[]
 ): Promise<RolesQueryResult> => {
-    try {
-        const queryBuilder = new ODataQueryBuilder();
-
-        if (field) {
-            queryBuilder.select([field]);
-        }
-
-        if (field && searchTerm) {
-            if (Array.isArray(searchTerm)) {
-                queryBuilder.filter([
-                    ODataQueryBuilder.equalsOr(field, searchTerm),
-                ]);
-            } else {
-                queryBuilder.filter([
-                    ODataQueryBuilder.equals(field, searchTerm),
-                ]);
+     console.log("Mocking getRolesByFieldWithOData", { field, searchTerm });
+      return new Promise(resolve => {
+        setTimeout(() => {
+             let results = mockRoles;
+            if (field && searchTerm) {
+                 results = mockRoles.filter(role => {
+                    const roleField = (role as any)[field];
+                    if (Array.isArray(searchTerm)) {
+                        return searchTerm.includes(roleField);
+                    }
+                    return roleField === searchTerm;
+                });
             }
-        }
-
-        const queryString = queryBuilder.build();
-        const url = `${API_BASE_URL}/roles${
-            queryString ? `?${queryString}` : ""
-        }`;
-        const data: ODataResponse<Role> = await odataApiCall<Role>(url);
-
-        return {
-            roles: data.value || [],
-            totalCount: data["@odata.count"] || data.value?.length || 0,
-            hasMore: !!data["@odata.nextLink"],
-        };
-    } catch (error) {
-        console.error("OData API call failed:", error);
-        throw error;
-    }
+            resolve({
+                roles: results,
+                totalCount: results.length,
+                hasMore: false,
+            });
+        }, 300);
+    });
 };
 
 export const searchRolesByFieldWithOData = async (
     field?: string,
     searchTerm?: string
 ): Promise<RolesQueryResult> => {
-    try {
-        const queryBuilder = new ODataQueryBuilder();
-
-        if (field) {
-            queryBuilder.select([field]);
-        }
-
-        if (field && searchTerm) {
-            queryBuilder.filter([
-                ODataQueryBuilder.contains(field, searchTerm),
-            ]);
-        }
-
-        // Xây dựng và gọi API
-        const queryString = queryBuilder.build();
-        const url = `${API_BASE_URL}/roles${
-            queryString ? `?${queryString}` : ""
-        }`;
-
-        const data: ODataResponse<Role> = await odataApiCall<Role>(url);
-
-        return {
-            roles: data.value || [],
-            totalCount: data["@odata.count"] || data.value?.length || 0,
-            hasMore: !!data["@odata.nextLink"],
-        };
-    } catch (error) {
-        console.error("OData API call failed:", error);
-        throw error;
-    }
+     console.log("Mocking searchRolesByFieldWithOData", { field, searchTerm });
+     return new Promise(resolve => {
+        setTimeout(() => {
+             let results = mockRoles;
+            if (field && searchTerm) {
+                 results = mockRoles.filter(role => {
+                    const roleField = (role as any)[field];
+                    return roleField?.toLowerCase().includes(searchTerm.toLowerCase());
+                });
+            }
+            resolve({
+                roles: results,
+                totalCount: results.length,
+                hasMore: false,
+            });
+        }, 300);
+    });
 };
 
 export const getRoleUsersWithOData = async (
@@ -224,96 +144,23 @@ export const getRoleUsersWithOData = async (
     tableState: TableState,
     searchTerm?: string
 ): Promise<RoleUsersQueryResult> => {
-    try {
-        const queryBuilder = new ODataQueryBuilder();
-        const filterConditions: string[] = [];
+    console.log("Mocking getRoleUsersWithOData", { roleId, tableState, searchTerm });
+     return new Promise(resolve => {
+        setTimeout(() => {
+            const filteredData = applyFilteringAndSorting(mockRoleUsers, tableState, searchTerm, ['email', 'connection']);
+            const pageIndex = tableState.pagination.pageIndex;
+            const pageSize = tableState.pagination.pageSize;
+            const start = pageIndex * pageSize;
+            const end = start + pageSize;
+            const paginatedData = filteredData.slice(start, end);
 
-        // --- searchTerm global ---
-        if (searchTerm && searchTerm.trim()) {
-            const searchConditions = [
-                ODataQueryBuilder.equals("id", searchTerm),
-                ODataQueryBuilder.contains("email", searchTerm),
-                ODataQueryBuilder.contains("connection", searchTerm),
-            ].filter(Boolean);
-
-            if (searchConditions.length > 0) {
-                filterConditions.push(`(${searchConditions.join(" or ")})`);
-            }
-        }
-
-        // --- column filters ---
-        tableState.columnFilters.forEach((filter) => {
-            const { id, value } = filter;
-
-            if (value === undefined || value === null || value === "") return;
-
-            // multi-select array
-            if (Array.isArray(value)) {
-                if (value.length === 0) return;
-                filterConditions.push(ODataQueryBuilder.equalsOr(id, value));
-                return;
-            }
-
-            // single value
-            switch (id) {
-                case "email":
-                    filterConditions.push(
-                        ODataQueryBuilder.contains("email", value)
-                    );
-                    break;
-                case "connection":
-                    filterConditions.push(
-                        ODataQueryBuilder.contains("connection", value)
-                    );
-                    break;
-                default:
-                    filterConditions.push(
-                        ODataQueryBuilder.contains(id, String(value))
-                    );
-                    break;
-            }
-        });
-
-        if (filterConditions.length > 0) {
-            queryBuilder.filter(filterConditions);
-        }
-
-        // --- sorting ---
-        if (tableState.sorting.length > 0) {
-            const sort = tableState.sorting[0];
-            queryBuilder.orderBy(sort.id, sort.desc ? "desc" : "asc");
-        }
-
-        const hasAnyFilter =
-            filterConditions.length > 0 || (searchTerm && searchTerm.trim());
-        // --- pagination ---
-        const skip = hasAnyFilter
-            ? 0 // Reset to first page when filtering
-            : (tableState.pagination.pageIndex || 0) *
-              (tableState.pagination.pageSize || 10);
-
-        queryBuilder.skip(skip).top(tableState.pagination.pageSize || 10);
-
-        // --- count ---
-        queryBuilder.count(true);
-
-        // --- build URL ---
-        const queryString = queryBuilder.build();
-        const url = `${API_BASE_URL}/roles/${roleId}/users${
-            queryString ? `?${queryString}` : ""
-        }`;
-
-        const data: ODataResponse<RoleUser> = await odataApiCall<RoleUser>(url);
-
-        return {
-            roles: data.value || [],
-            totalCount: data["@odata.count"] || data.value?.length || 0,
-            hasMore: !!data["@odata.nextLink"],
-        };
-    } catch (error) {
-        console.error("OData API call failed:", error);
-        throw error;
-    }
+            resolve({
+                roles: paginatedData,
+                totalCount: filteredData.length,
+                hasMore: end < filteredData.length,
+            });
+        }, 500);
+    });
 };
 
 export const getRolePermissionsWithOData = async (
@@ -321,96 +168,21 @@ export const getRolePermissionsWithOData = async (
     tableState: TableState,
     searchTerm?: string
 ): Promise<RolePermissionsQueryResult> => {
-    try {
-        const queryBuilder = new ODataQueryBuilder();
-        const filterConditions: string[] = [];
+    console.log("Mocking getRolePermissionsWithOData", { roleId, tableState, searchTerm });
+     return new Promise(resolve => {
+        setTimeout(() => {
+            const filteredData = applyFilteringAndSorting(mockRolePermissions, tableState, searchTerm);
+            const pageIndex = tableState.pagination.pageIndex;
+            const pageSize = tableState.pagination.pageSize;
+            const start = pageIndex * pageSize;
+            const end = start + pageSize;
+            const paginatedData = filteredData.slice(start, end);
 
-        // --- searchTerm global ---
-        if (searchTerm && searchTerm.trim()) {
-            const searchConditions = [
-                ODataQueryBuilder.equals("id", searchTerm),
-                ODataQueryBuilder.contains("name", searchTerm),
-                ODataQueryBuilder.contains("description", searchTerm),
-            ].filter(Boolean);
-
-            if (searchConditions.length > 0) {
-                filterConditions.push(`(${searchConditions.join(" or ")})`);
-            }
-        }
-
-        // --- column filters ---
-        tableState.columnFilters.forEach((filter) => {
-            const { id, value } = filter;
-
-            if (value === undefined || value === null || value === "") return;
-
-            // multi-select array
-            if (Array.isArray(value)) {
-                if (value.length === 0) return;
-                filterConditions.push(ODataQueryBuilder.equalsOr(id, value));
-                return;
-            }
-
-            // single value
-            switch (id) {
-                case "name":
-                    filterConditions.push(
-                        ODataQueryBuilder.contains("name", value)
-                    );
-                    break;
-                case "description":
-                    filterConditions.push(
-                        ODataQueryBuilder.contains("description", value)
-                    );
-                    break;
-                default:
-                    filterConditions.push(
-                        ODataQueryBuilder.contains(id, String(value))
-                    );
-                    break;
-            }
-        });
-
-        if (filterConditions.length > 0) {
-            queryBuilder.filter(filterConditions);
-        }
-
-        // --- sorting ---
-        if (tableState.sorting.length > 0) {
-            const sort = tableState.sorting[0];
-            queryBuilder.orderBy(sort.id, sort.desc ? "desc" : "asc");
-        }
-
-        const hasAnyFilter =
-            filterConditions.length > 0 || (searchTerm && searchTerm.trim());
-        // --- pagination ---
-        const skip = hasAnyFilter
-            ? 0 // Reset to first page when filtering
-            : (tableState.pagination.pageIndex || 0) *
-              (tableState.pagination.pageSize || 10);
-
-        queryBuilder.skip(skip).top(tableState.pagination.pageSize || 10);
-
-        // --- count ---
-        queryBuilder.count(true);
-
-        // --- build URL ---
-        const queryString = queryBuilder.build();
-        const url = `${API_BASE_URL}/roles/${roleId}/permissions${
-            queryString ? `?${queryString}` : ""
-        }`;
-
-        const data: ODataResponse<Permission> = await odataApiCall<Permission>(
-            url
-        );
-
-        return {
-            rolePermissions: data.value || [],
-            totalCount: data["@odata.count"] || data.value?.length || 0,
-            hasMore: !!data["@odata.nextLink"],
-        };
-    } catch (error) {
-        console.error("OData API call failed:", error);
-        throw error;
-    }
+            resolve({
+                rolePermissions: paginatedData,
+                totalCount: filteredData.length,
+                hasMore: end < filteredData.length,
+            });
+        }, 500);
+    });
 };

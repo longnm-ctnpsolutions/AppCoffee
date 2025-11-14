@@ -1,7 +1,19 @@
-import type { Client } from '@/features/clients/types/client.types';
-import { apiCall } from '@/lib/response-handler';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+import type { Client } from '@/features/clients/types/client.types';
+
+const mockClients: Client[] = Array.from({ length: 20 }, (_, i) => ({
+    id: `client-${i + 1}`,
+    name: `Client thứ ${i + 1}`,
+    description: `Mô tả cho client ${i + 1}`,
+    homePageUrl: `http://client${i+1}.com`,
+    audience: `aud-client-${i+1}`,
+    issuer: `iss-client-${i+1}`,
+    tokenExpired: 3600,
+    logoUrl: `/images/new-icon.png`,
+    status: i % 3 === 0 ? 0 : 1,
+    clientId: `id-${i+1}`,
+    identifier: `identifier-${i+1}`
+}));
 
 export type UpdateClientData = {
   id: string;
@@ -20,77 +32,99 @@ export type UpdateClientData = {
 };
 
 export const getClients = async (): Promise<Client[]> => {
-  const data = await apiCall<{ value: Client[] }>(`${API_BASE_URL}/clients`, {
-    method: 'GET',
-  });
-  return data.value;
+  console.log("Mocking getClients");
+  return new Promise(resolve => setTimeout(() => resolve([...mockClients]), 300));
 };
 
 export const createClient = async (
   newClientData: Omit<Client, 'id' | 'status'>
 ): Promise<Client> => {
-  return await apiCall<Client>(`${API_BASE_URL}/clients`, {
-    method: 'POST',
-    body: JSON.stringify(newClientData),
-  });
+   console.log("Mocking createClient", newClientData);
+   return new Promise(resolve => {
+        setTimeout(() => {
+            const newClient: Client = {
+                id: `client-${Date.now()}`,
+                status: 1,
+                ...newClientData
+            };
+            mockClients.unshift(newClient);
+            resolve(newClient);
+        }, 500);
+   });
 };
 
 export const accessClient = async (clientId: string): Promise<any> => {
-  const data = await apiCall<any>(`${API_BASE_URL}/clients/access?clientId=${clientId}`, {
-    method: 'GET',
-  });
-  return data;
+    console.log("Mocking accessClient", clientId);
+    return new Promise(resolve => setTimeout(() => resolve({ accessToken: 'mock-access-token-for-' + clientId, callbackUrl: 'http://localhost:3000' }), 300));
 };
 
 export const updateClient = async (
   clientId: string,
   updateData: UpdateClientData
 ): Promise<Client> => {
-  return await apiCall<Client>(`${API_BASE_URL}/clients/${clientId}`, {
-    method: 'PUT',
-    body: JSON.stringify({
-      id: clientId,
-      name: updateData.name,
-      audience: updateData.audience,
-      issuer: updateData.issuer,
-      tokenExpired: updateData.tokenExpired,
-      description: updateData.description,
-      logoUrl: updateData.logoUrl,
-      callbackUrl: updateData.callbackUrl,
-      logoutUrl: updateData.logoutUrl,
-      homePageUrl: updateData.homePageUrl,
-    }),
-  });
+    console.log("Mocking updateClient", clientId, updateData);
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const index = mockClients.findIndex(c => c.id === clientId);
+            if (index !== -1) {
+                mockClients[index] = { ...mockClients[index], ...updateData };
+                resolve(mockClients[index]);
+            } else {
+                reject(new Error("Client not found"));
+            }
+        }, 500);
+    });
 };
 
 export const deleteClient = async (clientId: string): Promise<void> => {
-  await apiCall<void>(`${API_BASE_URL}/clients/${clientId}`, {
-    method: 'DELETE',
-  });
+  console.log("Mocking deleteClient", clientId);
+  return new Promise(resolve => setTimeout(() => {
+      const index = mockClients.findIndex(c => c.id === clientId);
+      if (index !== -1) {
+          mockClients.splice(index, 1);
+      }
+      resolve();
+  }, 500));
 };
 
 export const deleteMultipleClients = async (clientIds: string[]): Promise<void> => {
-  await Promise.all(
-    clientIds.map(async (id) => {
-      await apiCall<void>(`${API_BASE_URL}/clients/${id}`, {
-        method: 'DELETE',
+  console.log("Mocking deleteMultipleClients", clientIds);
+   return new Promise(resolve => setTimeout(() => {
+      clientIds.forEach(id => {
+          const index = mockClients.findIndex(c => c.id === id);
+          if (index !== -1) {
+              mockClients.splice(index, 1);
+          }
       });
-    })
-  );
+      resolve();
+  }, 500));
 };
 
 export const updateClientStatus = async (clientId: string, status: number): Promise<Client> => {
-  return await apiCall<Client>(`${API_BASE_URL}/clients/${clientId}/status`, {
-    method: 'PUT',
-    body: JSON.stringify({
-      id: clientId,
-      status: status,
-    }),
-  });
+  console.log("Mocking updateClientStatus", clientId, status);
+   return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const index = mockClients.findIndex(c => c.id === clientId);
+            if (index !== -1) {
+                mockClients[index].status = status;
+                resolve(mockClients[index]);
+            } else {
+                reject(new Error("Client not found"));
+            }
+        }, 500);
+    });
 };
 
 export const getClientById = async (clientId: string): Promise<Client> => {
-  return await apiCall<Client>(`${API_BASE_URL}/clients/${clientId}`, {
-    method: "GET",
-  });
+   console.log("Mocking getClientById", clientId);
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const client = mockClients.find(c => c.id === clientId);
+            if (client) {
+                resolve(client);
+            } else {
+                reject(new Error("Client not found"));
+            }
+        }, 300);
+    });
 };
