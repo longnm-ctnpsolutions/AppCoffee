@@ -1,8 +1,9 @@
+
 "use client";
 
 import * as React from "react";
 import { Table } from "@tanstack/react-table";
-import * as XLSX from "xlsx-js-style";
+import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import autoTable from "jspdf-autotable";
@@ -242,49 +243,6 @@ export function useUniversalExport<T extends Record<string, any>>(
                         e: { r: 0, c: headers.length - 1 },
                     });
                     worksheet["!autofilter"] = { ref: range };
-
-                    for (let col = 0; col < headers.length; col++) {
-                        const cellAddress = XLSX.utils.encode_cell({
-                            r: 0,
-                            c: col,
-                        });
-                        if (worksheet[cellAddress]) {
-                            worksheet[cellAddress].s = {
-                                font: {
-                                    name: "Arial",
-                                    bold:
-                                        options?.headerStyle?.font?.bold ||
-                                        false,
-                                },
-                                alignment: {
-                                    wrapText: true,
-                                    vertical: "center",
-                                    horizontal: "center",
-                                },
-                            };
-                        }
-                    }
-
-                    const dataRange = XLSX.utils.decode_range(
-                        worksheet["!ref"]!
-                    );
-                    for (let R = 1; R <= dataRange.e.r; ++R) {
-                        for (let C = 0; C <= dataRange.e.c; ++C) {
-                            const cellAddress = XLSX.utils.encode_cell({
-                                r: R,
-                                c: C,
-                            });
-                            const cell = worksheet[cellAddress];
-                            if (cell) {
-                                cell.s = {
-                                    alignment: {
-                                        wrapText: true,
-                                        vertical: "top",
-                                    },
-                                };
-                            }
-                        }
-                    }
                 }
 
                 const workbook = XLSX.utils.book_new();
@@ -299,8 +257,7 @@ export function useUniversalExport<T extends Record<string, any>>(
                 }
 
                 XLSX.writeFile(workbook, `${filename}.xlsx`, {
-                    bookType: "xlsx",
-                    cellStyles: true,
+                    bookType: "xlsx"
                 });
             } catch (err) {
                 console.error("Excel export error:", err);
