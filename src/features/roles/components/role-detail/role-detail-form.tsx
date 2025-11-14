@@ -32,7 +32,7 @@ interface RoleDetailsFormProps {
   canEdit?: boolean;
 }
 
-const RoleDetailsForm: React.FC<RoleDetailsFormProps> = ({ error, canEdit }) => {
+const RoleDetailsForm: React.FC<RoleDetailsFormProps> = ({ error, canEdit = true }) => {
   const [isEditable, setIsEditable] = useState(false);
   const [isDeactivating, setIsDeactivating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -58,16 +58,16 @@ const RoleDetailsForm: React.FC<RoleDetailsFormProps> = ({ error, canEdit }) => 
       });
       setIsEditable(false);
     }
-  }, [selectedRole]);
+  }, [selectedRole, form]);
 
   const [activeTooltip, setActiveTooltip] = React.useState<string | null>(null);
 
   async function validateRole(value: string): Promise<true | string> {
-    if (!value) return "This field is required.";
+    if (!value) return "Trường này là bắt buộc.";
 
     const validRegex = /^[a-zA-Z0-9_ ]+$/;
     if (!validRegex.test(value)) {
-      return "The input value must not contain special characters.";
+      return "Dữ liệu nhập không được chứa ký tự đặc biệt.";
     }
 
     const result = await fetchRolesByField("name", value);
@@ -79,7 +79,7 @@ const RoleDetailsForm: React.FC<RoleDetailsFormProps> = ({ error, canEdit }) => 
 
       const conflict = result.roles.find((r: any) => r.id !== selectedRole?.id);
       if (conflict) {
-        return "A role with this name already exists.";
+        return "Tên vai trò này đã tồn tại.";
       }
     }
 
@@ -98,6 +98,7 @@ const RoleDetailsForm: React.FC<RoleDetailsFormProps> = ({ error, canEdit }) => 
       };
 
       await updateRoleData(selectedRole.id, updateData);
+      setIsEditable(false); // Turn off edit mode on success
     } catch (error) {
       console.error("❌ Unexpected error during role update:", error);
     } finally {
@@ -106,7 +107,13 @@ const RoleDetailsForm: React.FC<RoleDetailsFormProps> = ({ error, canEdit }) => 
   };
 
   const handleCancel = () => {
-    form.reset();
+    if (selectedRole) {
+      form.reset({
+        id: selectedRole.id || "",
+        name: selectedRole.name || "",
+        description: selectedRole.description || "",
+      });
+    }
     setIsEditable(false);
   };
 
@@ -128,7 +135,7 @@ const RoleDetailsForm: React.FC<RoleDetailsFormProps> = ({ error, canEdit }) => 
                       onClick={handleCancel}
                       disabled={isDeactivating || isSaving}
                     >
-                      Cancel
+                      Hủy
                     </Button>
                     <Button
                       size="sm"
@@ -139,10 +146,10 @@ const RoleDetailsForm: React.FC<RoleDetailsFormProps> = ({ error, canEdit }) => 
                       {isSaving ? (
                         <>
                           <RefreshCcw className="w-4 h-4 mr-2 animate-spin" />
-                          Saving...
+                          Đang lưu...
                         </>
                       ) : (
-                        "Save"
+                        "Lưu"
                       )}
                     </Button>
                   </>
@@ -155,7 +162,7 @@ const RoleDetailsForm: React.FC<RoleDetailsFormProps> = ({ error, canEdit }) => 
                     disabled={isDeactivating || isSaving}
                   >
                     <Pencil className="w-4 h-4 mr-2" />
-                    Edit
+                    Chỉnh sửa
                   </Button>
                 )}
               </div>
@@ -167,7 +174,7 @@ const RoleDetailsForm: React.FC<RoleDetailsFormProps> = ({ error, canEdit }) => 
               name="id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Role ID</FormLabel>
+                  <FormLabel>ID Vai trò</FormLabel>
                   <FormControl>
                     <Input disabled className="bg-transparent" {...field} />
                   </FormControl>
@@ -183,7 +190,7 @@ const RoleDetailsForm: React.FC<RoleDetailsFormProps> = ({ error, canEdit }) => 
               render={({ field }) => (
                 <FormItem className="flex-1 min-w-0">
                   <FormLabel>
-                    Role Name <span className="text-red-500">*</span>
+                    Tên vai trò <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <Tooltip open={activeTooltip === "name"}>
@@ -192,7 +199,7 @@ const RoleDetailsForm: React.FC<RoleDetailsFormProps> = ({ error, canEdit }) => 
                           <Input
                             disabled={!isEditable}
                             className={`bg-transparent w-full ${form.formState.errors.name ? "pr-10 border-destructive" : ""}`}
-                            placeholder="Enter role name"
+                            placeholder="Nhập tên vai trò"
                             maxLength={100}
                             autoComplete="off"
                             {...field}
@@ -247,14 +254,14 @@ const RoleDetailsForm: React.FC<RoleDetailsFormProps> = ({ error, canEdit }) => 
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>Mô tả</FormLabel>
                   <FormControl>
                     <Input
                       disabled={!isEditable}
                       maxLength={500}
                       autoComplete="off"
                       className="bg-transparent"
-                      placeholder="Enter description"
+                      placeholder="Nhập mô tả"
                       {...field}
                     />
                   </FormControl>

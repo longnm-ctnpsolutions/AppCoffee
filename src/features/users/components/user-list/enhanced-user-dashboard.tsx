@@ -26,13 +26,14 @@ interface PaginationState {
 export function EnhancedUserDashboard() {
 
     const userContext = useUsersActions();
-    const { hasPermission } = usePermissions();
-
+    
+    // Always allow all permissions in dev
     const userPermissions = React.useMemo(() => ({
-        canCreate: hasPermission(CORE_PERMISSIONS.USERS_CREATE),
-        canDelete: hasPermission(CORE_PERMISSIONS.USERS_DELETE),
-        canExport: hasPermission(CORE_PERMISSIONS.USERS_EXPORT),
-    }), [hasPermission]);
+        canCreate: true,
+        canDelete: true,
+        canExport: true,
+    }), []);
+    
     const [originalUsersData, setOriginalUsersData] = React.useState<User[]>([])
 
     React.useEffect(() => {
@@ -188,7 +189,7 @@ export function EnhancedUserDashboard() {
             isLoading={isLoading}
             emptyState={emptyStateComponent}
         />
-    ), [table, columns, isLoading, columnVisibility, rowSelection]); // 🔥 FIX: Add rowSelection dependency
+    ), [table, columns, isLoading, columnVisibility, rowSelection, emptyStateComponent]); // 🔥 FIX: Add rowSelection dependency
 
     const actionsComponent = React.useMemo(() => (
         <UserActions
@@ -219,7 +220,8 @@ export function EnhancedUserDashboard() {
         handleRefreshData,
         isSidebarExpanded,
         users,
-        rowSelection, // 🔥 FIX: Add rowSelection dependency
+        rowSelection, 
+        userPermissions
     ]);
 
     const paginationComponent = React.useMemo(() => {

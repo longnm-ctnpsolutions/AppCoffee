@@ -34,17 +34,19 @@ function UserActions({ user, onDelete }: UserActionsProps) {
     const router = useRouter();
     const [isDeleting, setIsDeleting] = React.useState(false);
     const { fetchUserById, updateStatus, updatePassword } = useUsersActions();
-    const { hasPermission } = usePermissions();
-    const canDelete = hasPermission(CORE_PERMISSIONS.USERS_DELETE);
+
+    // Assume all actions are allowed
+    const canDelete = true;
+
     const [open, setOpen] = useState(false);
 
     const handleDetailsClick = async () => {
         try {
             await fetchUserById(user.id);
-            router.push(`/en/users/${user.id}`);
+            router.push(`/vi/users/${user.id}`);
         } catch (error) {
             console.error('Failed to fetch user details:', error);
-            router.push(`/en/users/${user.id}`);
+            router.push(`/vi/users/${user.id}`);
         }
     };
 
@@ -78,7 +80,7 @@ function UserActions({ user, onDelete }: UserActionsProps) {
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0" disabled={isDeleting}>
-                        <span className="sr-only">Open menu</span>
+                        <span className="sr-only">Mở menu</span>
                         {isDeleting ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
@@ -88,10 +90,10 @@ function UserActions({ user, onDelete }: UserActionsProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" data-no-expand>
                     <DropdownMenuItem onSelect={handleDetailsClick} data-no-expand>
-                        Details
+                        Chi tiết
                     </DropdownMenuItem>
                     <DropdownMenuItem onSelect={handleDeactivesClick} data-no-expand>
-                        {user.lockoutEnabled ? "Active" : "Deactive"}
+                        {user.lockoutEnabled ? "Kích hoạt" : "Vô hiệu hóa"}
                     </DropdownMenuItem>
 
                     {user.connection === "Database" && (
@@ -102,7 +104,7 @@ function UserActions({ user, onDelete }: UserActionsProps) {
                             }}
                             data-no-expand
                         >
-                            Change Password
+                            Đổi mật khẩu
                         </DropdownMenuItem>
                     )}
 
@@ -119,18 +121,18 @@ function UserActions({ user, onDelete }: UserActionsProps) {
                                         {isDeleting ? (
                                             <>
                                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                Deleting...
+                                                Đang xóa...
                                             </>
                                         ) : (
-                                            "Delete"
+                                            "Xóa"
                                         )}
                                     </DropdownMenuItem>
                                 }
-                                title="Confirm"
+                                title="Xác nhận"
                                 description={
-                                    <>Are you sure you want to delete this: <b>{user.email}</b>?</>
+                                    <>Bạn có chắc muốn xóa: <b>{user.email}</b>?</>
                                 }
-                                actionLabel="Delete"
+                                actionLabel="Xóa"
                                 variant="destructive"
                                 isLoading={isDeleting}
                                 onConfirm={handleDeleteClick}
@@ -203,7 +205,7 @@ export function useUserTableColumns(
                         console.log('Header checkbox changed:', value);
                         table.toggleAllPageRowsSelected(!!value);
                     }}
-                    aria-label="Select all"
+                    aria-label="Chọn tất cả"
                 />
             ),
             cell: ({ row }) => (
@@ -213,7 +215,7 @@ export function useUserTableColumns(
                         console.log('Row checkbox changed:', row.id, value);
                         row.toggleSelected(!!value);
                     }}
-                    aria-label="Select row"
+                    aria-label="Chọn hàng"
                 />
             ),
             enableSorting: false,
@@ -227,30 +229,6 @@ export function useUserTableColumns(
         },
         {
             accessorKey: "email",
-            // header: ({ column, table }) => {
-            //     React.useEffect(() => {
-            //         const sorting = table.getState().sorting;
-            //         const alreadySorted = sorting.some((s) => s.id === column.id);
-            //         if (!alreadySorted) {
-            //             table.setSorting([{ id: column.id, desc: true }]);
-            //         }
-            //     }, [table, column.id]);
-
-            //     return (
-            //         <SortableHeader
-            //             column={column}
-            //             table={table}
-            //             enableSorting={true}
-            //             enableFiltering={true}
-            //             allValues={getUniqueValues('email', table)}
-            //             searchTerm={searchTerm}
-            //             onFilterOk={handleFilterOk}
-            //             justClickedOk={justClickedOk}
-            //         >
-            //             Email
-            //         </SortableHeader>
-            //     );
-            // },
             header: ({ column, table }) => (
                 <SortableHeader
                     column={column}
@@ -284,7 +262,7 @@ export function useUserTableColumns(
                     onFilterOk={handleFilterOk}
                     justClickedOk={justClickedOk}
                 >
-                    Status
+                    Trạng thái
                 </SortableHeader>
             ),
             cell: ({ row }) => {
@@ -311,7 +289,7 @@ export function useUserTableColumns(
                     onFilterOk={handleFilterOk}
                     justClickedOk={justClickedOk}
                 >
-                    Connection
+                    Kết nối
                 </SortableHeader>
             ),
             cell: ({ row }) => (

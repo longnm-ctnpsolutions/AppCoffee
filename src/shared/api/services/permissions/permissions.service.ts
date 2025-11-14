@@ -1,200 +1,133 @@
-import type { Permission } from "@/types/permissions.types";
-import { apiCall, handleResponse } from "@/lib/response-handler";
 
-const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL;
+import type { Permission } from "@/types/permissions.types";
+
+const mockPermissions: Permission[] = Array.from({ length: 30 }, (_, i) => ({
+    id: `perm-${i + 1}`,
+    name: `permissions:action${i+1}`,
+    description: `Mô tả cho quyền ${i + 1}`,
+    clientName: `Client ${i % 5 + 1}`
+}));
+
 
 export const deletePermissionId = async (
     clientId: string,
     permissionId: string
 ): Promise<void> => {
-    try {
-          await apiCall<void>(`${API_BASE_URL}/clients/${clientId}/permissions/${permissionId}`, {
-            method: 'DELETE',
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-          });
-    } catch (error) {
-        console.error("Delete client failed:", error);
-        throw error;
-    }
+    console.log("Mocking deletePermissionId", {clientId, permissionId});
+    return new Promise(resolve => {
+        setTimeout(() => {
+            const index = mockPermissions.findIndex(p => p.id === permissionId);
+            if (index !== -1) {
+                mockPermissions.splice(index, 1);
+            }
+            resolve();
+        }, 500);
+    });
 };
 
 export const deleteRolePermissionId = async (
     roleId: string,
     permissionId: string
 ): Promise<void> => {
-    try {
-        await apiCall<void>(`${API_BASE_URL}/roles/${roleId}/permissions/${permissionId}`, {
-            method: 'DELETE',
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-    } catch (error) {
-        console.error("Delete client failed:", error);
-        throw error;
-    }
+    console.log("Mocking deleteRolePermissionId", {roleId, permissionId});
+    // In a real scenario, this would remove the permission from the role
+    return new Promise(resolve => setTimeout(resolve, 500));
 };
 
 export const deleteUserPermissionId = async (
     userId: string,
     permissionId: string
 ): Promise<void> => {
-    try {
-        await apiCall<void>(`${API_BASE_URL}/users/${userId}/permissions/${permissionId}`, {
-            method: 'DELETE',
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-    } catch (error) {
-        console.error("Delete client failed:", error);
-        throw error;
-    }
+    console.log("Mocking deleteUserPermissionId", {userId, permissionId});
+     // In a real scenario, this would remove the permission from the user
+    return new Promise(resolve => setTimeout(resolve, 500));
 };
 
 interface AddPermissionRequest {
-    clientId: string;
     name: string;
     description: string;
 }
 
-interface AddRolePermissionRequest {
-    roleId: string;
-    permissionIds: string[];
-}
 
 export const addPermission = async (
     clientId: string,
     permissionData: Omit<AddPermissionRequest, "clientId">
 ): Promise<Permission> => {
-    try {
-        return await apiCall<Permission>(`${API_BASE_URL}/clients/${clientId}/permissions`, {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            
-            body: JSON.stringify({
-                clientId,
+    console.log("Mocking addPermission", {clientId, permissionData});
+    return new Promise(resolve => {
+        setTimeout(() => {
+            const newPermission: Permission = {
+                id: `perm-${Date.now()}`,
                 name: permissionData.name,
                 description: permissionData.description,
-            })});
-    } catch (error) {
-        console.error("Add permission failed:", error);
-        throw error;
-    }
+                clientName: `Client for ${clientId}`
+            };
+            mockPermissions.unshift(newPermission);
+            resolve(newPermission);
+        }, 500);
+    });
 };
 
 export const importPermission = async (
     clientId: string,
     file: File
 ): Promise<Permission[]> => {
-    try {
-        const formData = new FormData();
-        formData.append("file", file);
-
-        return await apiCall<Permission[]>(
-            `${API_BASE_URL}/clients/${clientId}/permissions/import`,
-            {
-                method: "POST",
-                credentials: "include",
-                body: formData,
-            }
-        );
-    } catch (error) {
-        console.error("Import permissions failed:", error);
-        throw error;
-    }
+    console.log("Mocking importPermission", {clientId, fileName: file.name});
+    return new Promise(resolve => {
+        setTimeout(() => {
+            // Simulate adding a few permissions from the file
+            const newPerms = [
+                { id: `imported-${Date.now()}-1`, name: 'imported:read', description: 'Imported Read', clientName: `Client for ${clientId}` },
+                { id: `imported-${Date.now()}-2`, name: 'imported:write', description: 'Imported Write', clientName: `Client for ${clientId}` },
+            ];
+            mockPermissions.unshift(...newPerms);
+            resolve(newPerms);
+        }, 1000);
+    });
 };
 
 export const addRolePermission = async (
     roleId: string,
     permissions: string[]
 ): Promise<boolean> => {
-    try {
-        return await apiCall<boolean>(`${API_BASE_URL}/roles/${roleId}/permissions`, {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                    roleId,
-                    permissions, 
-                })});
-    } catch (error) {
-        console.error("❌ Add permission failed:", error);
-        return false;
-    }
+    console.log("Mocking addRolePermission", {roleId, permissions});
+    return new Promise(resolve => setTimeout(() => resolve(true), 500));
 };
 
 export const addUserPermission = async (
     userId: string,
     permissions: string[]
 ): Promise<boolean> => {
-    try {
-         return await apiCall<boolean>(`${API_BASE_URL}/users/${userId}/permissions`, {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-                body: JSON.stringify({
-                    userId,
-                    permissions, // truyền nguyên mảng ID
-                })});
-    } catch (error) {
-        console.error("❌ Add permission failed:", error);
-        return false;
-    }
+     console.log("Mocking addUserPermission", {userId, permissions});
+    return new Promise(resolve => setTimeout(() => resolve(true), 500));
 };
 
 export const getRolePermission = async (roleId: string): Promise<Permission[]> => {
-    try {
-
-        const data = await apiCall<{ value: Permission[] }>(`${API_BASE_URL}/roles/${roleId}/permissions`, {
-                method: "GET",
-        });
-
-        return data.value;
-    } catch (error) {
-        console.error("API call failed, falling back to mock data:", error);
-        return [];
-    }
+    console.log("Mocking getRolePermission", roleId);
+    return new Promise(resolve => {
+        setTimeout(() => {
+            // Return a subset of permissions for the role
+            resolve(mockPermissions.slice(0, 5));
+        }, 300);
+    });
 };
 
 export const getUserPermission = async (userId: string): Promise<Permission[]> => {
-    try {
-        const data = await apiCall<{ value: Permission[] }>(`${API_BASE_URL}/users/${userId}/permissions`, {
-                method: "GET",
-        });
-
-        return data.value;
-    } catch (error) {
-        console.error("API call failed, falling back to mock data:", error);
-        return [];
-    }
+     console.log("Mocking getUserPermission", userId);
+      return new Promise(resolve => {
+        setTimeout(() => {
+            // Return a subset of permissions for the user
+            resolve(mockPermissions.slice(5, 10));
+        }, 300);
+    });
 };
 
 export const getPermission = async (clientId: string): Promise<Permission[]> => {
-    try {
-
-        const data = await apiCall<{ value: Permission[] }>(`${API_BASE_URL}/clients/${clientId}/permissions`, {
-                method: "GET",
-        });
-
-        return data.value;
-    } catch (error) {
-        console.error("API call failed, falling back to mock data:", error);
-        return [];
-    }
+     console.log("Mocking getPermission", clientId);
+      return new Promise(resolve => {
+        setTimeout(() => {
+            // Return permissions for a specific client
+            resolve(mockPermissions.filter(p => p.clientName === `Client for ${clientId}`));
+        }, 300);
+    });
 };
-
-

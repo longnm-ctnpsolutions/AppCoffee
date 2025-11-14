@@ -26,8 +26,8 @@ export const ActionButtons = memo<ActionButtonsProps>(({
     onCancel,
     onSave,
     onDeactivate,
-    canEdit = false,
-    canChangeStatus = false
+    canEdit = true, // Force true
+    canChangeStatus = true // Force true
 }) => {
     return (
         <div className="flex justify-end mt-4 gap-x-2">
@@ -41,12 +41,12 @@ export const ActionButtons = memo<ActionButtonsProps>(({
                     {isDeactivating ? (
                         <>
                             <RefreshCcw className="w-4 h-4 mr-2 animate-spin" />
-                            {clientStatus === 1 ? 'Deactivating...' : 'Activating...'}
+                            {clientStatus === 1 ? 'Vô hiệu hóa...' : 'Kích hoạt...'}
                         </>
                     ) : (
                         <>
                             <RefreshCcw className="w-4 h-4 mr-2" />
-                            {clientStatus === 1 ? 'Deactivate' : 'Activate'}
+                            {clientStatus === 1 ? 'Vô hiệu hóa' : 'Kích hoạt'}
                         </>
                     )}
                 </Button>
@@ -62,7 +62,7 @@ export const ActionButtons = memo<ActionButtonsProps>(({
                                 onClick={onCancel}
                                 disabled={isDeactivating || isSaving}
                             >
-                                Cancel
+                                Hủy
                             </Button>
                             <Button
                                 size="sm"
@@ -73,10 +73,10 @@ export const ActionButtons = memo<ActionButtonsProps>(({
                                 {isSaving ? (
                                     <>
                                         <RefreshCcw className="w-4 h-4 mr-2 animate-spin" />
-                                        Saving...
+                                        Đang lưu...
                                     </>
                                 ) : (
-                                    'Save'
+                                    'Lưu'
                                 )}
                             </Button>
                         </>
@@ -88,7 +88,7 @@ export const ActionButtons = memo<ActionButtonsProps>(({
                             disabled={isDeactivating || isSaving}
                         >
                             <Pencil className="w-4 h-4 mr-2" />
-                            Edit
+                            Chỉnh sửa
                         </Button>
                     )}
                 </>

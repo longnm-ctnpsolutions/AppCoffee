@@ -1,10 +1,19 @@
-import type { Client } from "@/features/clients/types/client.types";
-import type { ODataResponse, TableState } from "@/types/odata.types";
-import { ODataQueryBuilder } from "@/lib/odata-builder";
-import { odataApiCall } from "@/lib/response-handler";
 
-const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL;
+import type { Client } from "@/features/clients/types/client.types";
+
+const mockClients: Client[] = Array.from({ length: 20 }, (_, i) => ({
+    id: `client-${i + 1}`,
+    name: `Client thứ ${i + 1}`,
+    description: `Mô tả cho client ${i + 1}`,
+    homePageUrl: `http://client${i+1}.com`,
+    audience: `aud-client-${i+1}`,
+    issuer: `iss-client-${i+1}`,
+    tokenExpired: 3600,
+    logoUrl: `/images/new-icon.png`,
+    status: i % 3 === 0 ? 0 : 1,
+    clientId: `id-${i+1}`,
+    identifier: `identifier-${i+1}`
+}));
 
 export interface ClientsQueryResult {
     clients: Client[];
@@ -12,197 +21,110 @@ export interface ClientsQueryResult {
     hasMore: boolean;
 }
 
+const applyFilteringAndSorting = (clients: Client[], tableState: any, searchTerm?: string): Client[] => {
+     let filteredData = [...clients];
+
+    if (searchTerm) {
+        const lowercasedFilter = searchTerm.toLowerCase();
+        filteredData = filteredData.filter(client =>
+            client.name?.toLowerCase().includes(lowercasedFilter) ||
+            client.description?.toLowerCase().includes(lowercasedFilter)
+        );
+    }
+    
+    // Column filters
+    tableState.columnFilters.forEach((filter: {id: string, value: any}) => {
+        if(filter.id === 'status' && filter.value !== undefined) {
+             filteredData = filteredData.filter(client => String(client.status) === String(filter.value));
+        }
+        // Add other column filters here if needed
+    });
+
+
+    // Sắp xếp
+    if (tableState.sorting.length > 0) {
+        const sorter = tableState.sorting[0];
+        filteredData.sort((a, b) => {
+            const valA = (a as any)[sorter.id] || '';
+            const valB = (b as any)[sorter.id] || '';
+            if (valA < valB) return sorter.desc ? 1 : -1;
+            if (valA > valB) return sorter.desc ? -1 : 1;
+            return 0;
+        });
+    }
+
+    return filteredData;
+}
+
+
 export const getClientsWithOData = async (
-    tableState: TableState,
+    tableState: any,
     searchTerm?: string
 ): Promise<ClientsQueryResult> => {
-    try {
-        const queryBuilder = new ODataQueryBuilder();
-        const filterConditions: string[] = [];
+     console.log("Mocking getClientsWithOData", { tableState, searchTerm });
+     return new Promise(resolve => {
+        setTimeout(() => {
+            const filteredData = applyFilteringAndSorting(mockClients, tableState, searchTerm);
+            const pageIndex = tableState.pagination.pageIndex;
+            const pageSize = tableState.pagination.pageSize;
+            const start = pageIndex * pageSize;
+            const end = start + pageSize;
+            const paginatedData = filteredData.slice(start, end);
 
-        // --- searchTerm global ---
-        if (searchTerm && searchTerm.trim()) {
-            const searchConditions = [
-                ODataQueryBuilder.equals("id", searchTerm),
-                ODataQueryBuilder.contains("name", searchTerm),
-                ODataQueryBuilder.contains("description", searchTerm),
-            ].filter(Boolean);
-
-            if (searchConditions.length > 0) {
-                filterConditions.push(`(${searchConditions.join(" or ")})`);
-            }
-        }
-
-        // --- column filters ---
-        tableState.columnFilters.forEach((filter) => {
-            const { id, value } = filter;
-
-            if (value === undefined || value === null || value === "") return;
-
-            // multi-select array
-            if (Array.isArray(value)) {
-                if (value.length === 0) return;
-
-                // Nếu là status thì cast sang số
-                if (id === "status") {
-                    const nums = value
-                        .map((v) => Number(v))
-                        .filter((v) => !isNaN(v));
-                    if (nums.length > 0) {
-                        //filterConditions.push(ODataQueryBuilder.in(id, nums));
-                        filterConditions.push(
-                            ODataQueryBuilder.equalsOr(id, nums)
-                        );
-                    }
-                } else {
-                    //filterConditions.push(ODataQueryBuilder.in(id, value));
-                    filterConditions.push(
-                        ODataQueryBuilder.equalsOr(id, value)
-                    );
-                }
-                return;
-            }
-
-            // single value
-            switch (id) {
-                case "name":
-                    filterConditions.push(
-                        ODataQueryBuilder.equals("name", value)
-                    );
-                    break;
-                case "status":
-                    filterConditions.push(
-                        ODataQueryBuilder.equals("status", value)
-                    );
-                    break;
-                case "description":
-                    filterConditions.push(
-                        ODataQueryBuilder.contains("description", value)
-                    );
-                    break;
-                default:
-                    filterConditions.push(
-                        ODataQueryBuilder.contains(id, String(value))
-                    );
-                    break;
-            }
-        });
-
-        if (filterConditions.length > 0) {
-            queryBuilder.filter(filterConditions);
-        }
-
-        // --- sorting ---
-        if (tableState.sorting.length > 0) {
-            const sort = tableState.sorting[0];
-            queryBuilder.orderBy(sort.id, sort.desc ? "desc" : "asc");
-        } else {
-            queryBuilder.orderBy("createdAt", "desc");
-        }
-
-        const skip =
-            (tableState.pagination.pageIndex || 0) *
-            (tableState.pagination.pageSize || 10);
-
-        queryBuilder.skip(skip).top(tableState.pagination.pageSize || 10);
-        // --- count ---
-        queryBuilder.count(true);
-
-        // --- build URL ---
-        const queryString = queryBuilder.build();
-        const url = `${API_BASE_URL}/clients${
-            queryString ? `?${queryString}` : ""
-        }`;
-
-        // 🔄 Sử dụng odataApiCall thay vì fetch thủ công
-        const data: ODataResponse<Client> = await odataApiCall<Client>(url);
-
-        return {
-            clients: data.value || [],
-            totalCount: data["@odata.count"] || data.value?.length || 0,
-            hasMore: !!data["@odata.nextLink"],
-        };
-    } catch (error) {
-        console.error("OData API call failed:", error);
-        throw error;
-    }
+            resolve({
+                clients: paginatedData,
+                totalCount: filteredData.length,
+                hasMore: end < filteredData.length,
+            });
+        }, 500);
+    });
 };
 
 export const getClientsByFieldWithOData = async (
     field?: string,
     searchTerm?: string | string[]
 ): Promise<ClientsQueryResult> => {
-    try {
-        const queryBuilder = new ODataQueryBuilder();
-
-        if (field) {
-            queryBuilder.select([field]);
-        }
-
-        if (field && searchTerm) {
-            if (Array.isArray(searchTerm)) {
-                //queryBuilder.filter([ODataQueryBuilder.in(field, searchTerm)]);
-                queryBuilder.filter([
-                    ODataQueryBuilder.equalsOr(field, searchTerm),
-                ]);
-            } else {
-                queryBuilder.filter([
-                    ODataQueryBuilder.equals(field, searchTerm),
-                ]);
+    console.log("Mocking getClientsByFieldWithOData", { field, searchTerm });
+     return new Promise(resolve => {
+        setTimeout(() => {
+             let results = mockClients;
+            if (field && searchTerm) {
+                 results = mockClients.filter(client => {
+                    const clientField = (client as any)[field];
+                    if (Array.isArray(searchTerm)) {
+                        return searchTerm.includes(clientField);
+                    }
+                    return clientField === searchTerm;
+                });
             }
-        }
-
-        const queryString = queryBuilder.build();
-        const url = `${API_BASE_URL}/clients${
-            queryString ? `?${queryString}` : ""
-        }`;
-
-        const data: ODataResponse<Client> = await odataApiCall<Client>(url);
-
-        return {
-            clients: data.value || [],
-            totalCount: data["@odata.count"] || data.value?.length || 0,
-            hasMore: !!data["@odata.nextLink"],
-        };
-    } catch (error) {
-        console.error("OData API call failed:", error);
-        throw error;
-    }
+            resolve({
+                clients: results,
+                totalCount: results.length,
+                hasMore: false,
+            });
+        }, 300);
+    });
 };
 
 export const searchClientsByFieldWithOData = async (
     field?: string,
     searchTerm?: string
 ): Promise<ClientsQueryResult> => {
-    try {
-        const queryBuilder = new ODataQueryBuilder();
-
-        if (field) {
-            queryBuilder.select([field]);
-        }
-
-        if (field && searchTerm) {
-            queryBuilder.filter([
-                ODataQueryBuilder.contains(field, searchTerm),
-            ]);
-        }
-
-        // Xây dựng và gọi API
-        const queryString = queryBuilder.build();
-        const url = `${API_BASE_URL}/clients${
-            queryString ? `?${queryString}` : ""
-        }`;
-
-        // 🔄 Sử dụng odataApiCall thay vì fetch thủ công
-        const data: ODataResponse<Client> = await odataApiCall<Client>(url);
-
-        return {
-            clients: data.value || [],
-            totalCount: data["@odata.count"] || data.value?.length || 0,
-            hasMore: !!data["@odata.nextLink"],
-        };
-    } catch (error) {
-        console.error("OData API call failed:", error);
-        throw error;
-    }
+     console.log("Mocking searchClientsByFieldWithOData", { field, searchTerm });
+      return new Promise(resolve => {
+        setTimeout(() => {
+             let results = mockClients;
+            if (field && searchTerm) {
+                 results = mockClients.filter(client => {
+                    const clientField = (client as any)[field];
+                    return clientField?.toLowerCase().includes(searchTerm.toLowerCase());
+                });
+            }
+            resolve({
+                clients: results,
+                totalCount: results.length,
+                hasMore: false,
+            });
+        }, 300);
+    });
 };

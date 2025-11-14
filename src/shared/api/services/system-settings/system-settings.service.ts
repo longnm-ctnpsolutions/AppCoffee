@@ -1,4 +1,4 @@
-import { apiCall } from "@/lib/response-handler";
+
 import {
     MfaConfiguration,
     UpdateMfaConfigurationRequest,
@@ -10,81 +10,79 @@ import {
     UpdateFailedAttemptTime,
 } from "@/types/system-setting.types";
 
-const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL;
+let mockMfaConfig: MfaConfiguration = { twoFactorEnabled: true, loginAlertEnabled: false };
+let mockLoginSecurity: LoginSecurity = { maxFailedLogin: 5 };
+let mockFailedAttemptTime: FailedAttemptTime = { failedAttemptTime: 10 };
+let mockPasswordPolicy: PasswordPolicy = { passwordHistoryCount: 3, passwordExpiryDays: 90 };
 
 // MFA Configuration APIs
 export const getMfaConfiguration = async (): Promise<MfaConfiguration> => {
-    return await apiCall<MfaConfiguration>(
-        `${API_BASE_URL}/system-settings/mfa-configuration`,
-        {
-            method: "GET",
-        }
-    );
+    console.log("Mocking getMfaConfiguration");
+    return new Promise(resolve => setTimeout(() => resolve(mockMfaConfig), 300));
 };
 
 export const updateMfaConfiguration = async (
     data: UpdateMfaConfigurationRequest
 ): Promise<void> => {
-    await apiCall<void>(`${API_BASE_URL}/system-settings/mfa-configuration`, {
-        method: "PUT",
-        body: JSON.stringify(data),
+    console.log("Mocking updateMfaConfiguration", data);
+    return new Promise(resolve => {
+        setTimeout(() => {
+            mockMfaConfig = { ...mockMfaConfig, ...data };
+            resolve();
+        }, 500);
     });
 };
 
 // Login Security APIs
 export const getLoginSecurity = async (): Promise<LoginSecurity> => {
-    return await apiCall<LoginSecurity>(
-        `${API_BASE_URL}/system-settings/login-security`,
-        {
-            method: "GET",
-        }
-    );
+     console.log("Mocking getLoginSecurity");
+    return new Promise(resolve => setTimeout(() => resolve(mockLoginSecurity), 300));
 };
 
 export const updateLoginSecurityTern = async (
     data: UpdateLoginSecurity
 ): Promise<void> => {
-    await apiCall<void>(`${API_BASE_URL}/system-settings/login-security`, {
-        method: "PUT",
-        body: JSON.stringify(data),
+     console.log("Mocking updateLoginSecurityTern", data);
+     return new Promise(resolve => {
+        setTimeout(() => {
+            mockLoginSecurity = { ...mockLoginSecurity, ...data };
+            resolve();
+        }, 500);
     });
 };
 
 // failed attempt time window
 export const getFailedAttemptTime = async (): Promise<FailedAttemptTime> => {
-    return await apiCall<FailedAttemptTime>(
-        `${API_BASE_URL}/system-settings/failed-attempt-time`,
-        {
-            method: "GET",
-        }
-    );
+    console.log("Mocking getFailedAttemptTime");
+    return new Promise(resolve => setTimeout(() => resolve(mockFailedAttemptTime), 300));
 };
 
 export const updateFailedAttemptTimeTern = async (
     data: UpdateFailedAttemptTime
 ): Promise<void> => {
-    await apiCall<void>(`${API_BASE_URL}/system-settings/failed-attempt-time`, {
-        method: "PUT",
-        body: JSON.stringify(data),
+     console.log("Mocking updateFailedAttemptTimeTern", data);
+     return new Promise(resolve => {
+        setTimeout(() => {
+            mockFailedAttemptTime = { ...mockFailedAttemptTime, ...data };
+            resolve();
+        }, 500);
     });
 };
 
 // Password Policy APIs
 export const getPasswordPolicy = async (): Promise<PasswordPolicy> => {
-    return await apiCall<PasswordPolicy>(
-        `${API_BASE_URL}/system-settings/password-policy`,
-        {
-            method: "GET",
-        }
-    );
+    console.log("Mocking getPasswordPolicy");
+    return new Promise(resolve => setTimeout(() => resolve(mockPasswordPolicy), 300));
 };
 
 export const updatePasswordPolicy = async (
     data: UpdatePasswordPolicyRequest
 ): Promise<void> => {
-    await apiCall<void>(`${API_BASE_URL}/system-settings/password-policy`, {
-        method: "PUT",
-        body: JSON.stringify(data),
+    console.log("Mocking updatePasswordPolicy", data);
+     return new Promise(resolve => {
+        setTimeout(() => {
+            mockPasswordPolicy = { ...mockPasswordPolicy, ...data };
+            resolve();
+        }, 500);
     });
 };
