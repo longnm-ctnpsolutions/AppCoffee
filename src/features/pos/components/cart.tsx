@@ -93,7 +93,7 @@ export const Cart = ({ cart, setCart, onClearCart, onPaymentSuccess }: CartProps
             </ScrollArea>
 
             {cart.length > 0 && (
-                <div className="border-t bg-white">
+                <div className="border-t bg-white flex-shrink-0">
                     <div className="p-4">
                         <label className="text-sm font-semibold mb-2 block text-gray-800">
                             Giảm giá

@@ -79,13 +79,13 @@ const CafePOSSystem = () => {
   }
 
   const cartPanelClass = showCart
-    ? "fixed inset-0 z-40 md:relative md:z-0 md:flex md:w-96 lg:w-[28rem] bg-white border-l flex-col shadow-lg"
+    ? "fixed inset-0 z-40 md:relative md:z-0 md:flex md:w-96 lg:w-[28rem] bg-white border-l flex flex-col shadow-lg"
     : "hidden md:flex md:w-96 lg:w-[28rem] bg-white border-l flex-col shadow-lg";
 
   return (
     <div className="flex h-screen bg-gray-50">
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="bg-white border-b p-4 shadow-sm">
+        <div className="bg-white border-b p-4 shadow-sm flex-shrink-0">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl md:text-2xl font-bold text-gray-800">
               ☕ Quán Cafe Take Away
@@ -150,7 +150,7 @@ const CafePOSSystem = () => {
       </div>
 
       <div className={cartPanelClass}>
-        <div className="p-4 border-b bg-white flex items-center justify-between">
+        <div className="p-4 border-b bg-white flex items-center justify-between flex-shrink-0">
           <h2 className="text-xl font-bold text-gray-800">Đơn hàng</h2>
           <Button
             variant="ghost"
