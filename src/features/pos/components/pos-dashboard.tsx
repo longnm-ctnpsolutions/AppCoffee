@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useMemo } from "react";
@@ -88,7 +89,7 @@ const CafePOSSystem = () => {
     };
 
     const cartPanelClass = showCart
-        ? "fixed inset-0 z-40 md:relative md:z-0 md:flex md:w-96 lg:w-[28rem] bg-white border-l flex-col shadow-lg"
+        ? "fixed inset-0 z-40 md:relative md:z-0 flex w-full md:w-96 lg:w-[28rem] bg-white border-l flex-col shadow-lg"
         : "hidden md:flex md:w-96 lg:w-[28rem] bg-white border-l flex-col shadow-lg";
 
     return (
@@ -165,7 +166,7 @@ const CafePOSSystem = () => {
             </div>
 
             <div className={cartPanelClass}>
-                <div className="p-4 border-b bg-white flex items-center justify-between flex-shrink-0">
+                 <div className="p-4 border-b bg-white flex items-center justify-between flex-shrink-0">
                     <h2 className="text-xl font-bold text-gray-800">Đơn hàng</h2>
                     <Button
                         variant="ghost"
@@ -207,3 +208,4 @@ const CafePOSSystem = () => {
 };
 
 export default CafePOSSystem;
+
