@@ -35,13 +35,13 @@ export const menuConfig: MenuItem[] = [
                 href: "/users",
                 permission: CORE_PERMISSIONS.USERS_READ,
             },
-            {
-                id: "clients",
-                label: "Clients",
-                icon: User,
-                href: "/clients",
-                permission: CORE_PERMISSIONS.CLIENTS_READ,
-            },
+            // {
+            //     id: "clients",
+            //     label: "Clients",
+            //     icon: User,
+            //     href: "/clients",
+            //     permission: CORE_PERMISSIONS.CLIENTS_READ,
+            // },
             {
                 id: "roles",
                 label: "Roles",

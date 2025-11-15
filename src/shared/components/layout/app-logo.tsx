@@ -8,7 +8,7 @@ interface AppLogoProps {
 }
 
 export function AppLogo({ 
-  appName = "Portal Identity", 
+  appName = "Quản lý Cafe", 
   logoSrc = "/images/ctnp-logo.png",
   href = "/"
 }: AppLogoProps) {

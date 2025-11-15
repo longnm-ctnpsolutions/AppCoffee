@@ -34,14 +34,14 @@ import { useAuthActions } from "@/context/auth-context"
 
 const formSchema = z.object({
   password: z.string()
-    .min(1, { message: "Password is required." })
+    .min(1, { message: "Mật khẩu là bắt buộc." })
     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/, {
-      message: "Password must contain at least one lowercase letter, one uppercase letter, and one number.",
+      message: "Mật khẩu phải chứa ít nhất một chữ thường, một chữ hoa, và một số.",
     }),
   rePassword: z.string()
-    .min(1, { message: "Password confirmation is required." }),
+    .min(1, { message: "Xác nhận mật khẩu là bắt buộc." }),
 }).refine((data) => data.password === data.rePassword, {
-  message: "Passwords don't match",
+  message: "Mật khẩu không khớp",
   path: ["rePassword"],
 })
 
@@ -53,15 +53,13 @@ export function CreateNewPasswordForm() {
   const { resetPassword, isActionLoading, error } = useAuthActions()
   
   const languages = [
-    { code: 'EN', name: 'English', flag: '/images/en.png' },
-    { code: 'VI', name: 'Vietnamese', flag: '/images/vi.png' }
+    { code: 'VI', name: 'Tiếng Việt', flag: '/images/vi.png' },
+    { code: 'EN', name: 'English', flag: '/images/en.png' }
   ]
 
-  // State to track form submission success
   const [isSubmitted, setIsSubmitted] = React.useState(false)
   const [localError, setLocalError] = React.useState('')
   
-  // Lấy email và token từ URL params
   const [email, setEmail] = React.useState('')
   const [token, setToken] = React.useState('')
 
@@ -81,7 +79,6 @@ export function CreateNewPasswordForm() {
     console.log('Token from URL:', tokenFromUrl)
   }, [searchParams])
 
-  // Initialize language from localStorage or default to English
   const [selectedLanguage, setSelectedLanguage] = React.useState(() => {
     if (typeof window !== 'undefined') {
       const savedLanguage = localStorage.getItem('layout-language')
@@ -89,10 +86,9 @@ export function CreateNewPasswordForm() {
         return languages.find(lang => lang.code === savedLanguage) || languages[0]
       }
     }
-    return languages[0] // Default to English
+    return languages[0]
   })
 
-  // Handle language change and save to localStorage
   const handleLanguageChange = (language: typeof languages[0]) => {
     setSelectedLanguage(language)
     if (typeof window !== 'undefined') {
@@ -108,12 +104,10 @@ export function CreateNewPasswordForm() {
     },
   })
 
-  // Handle click outside to close tooltips
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement
       
-      // Don't close if clicking on tooltip trigger elements or tooltip content
       if (target.closest('[data-tooltip-trigger]') || target.closest('[data-radix-tooltip-content]')) {
         return
       }
@@ -130,26 +124,23 @@ export function CreateNewPasswordForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLocalError('')
     
-    // Validate email và token có tồn tại
     if (!email || !token) {
-      setLocalError('Missing email or token. Please try again from the email link.')
+      setLocalError('Thiếu email hoặc token. Vui lòng thử lại từ liên kết trong email.')
       return
     }
 
     try {
-      // Gọi resetPassword từ context
       const success = await resetPassword(email, token, values.password)
       
       if (success) {
         setIsSubmitted(true)
       }
     } catch (error) {
-      console.error('Reset password error:', error)
-      setLocalError('Failed to reset password. Please try again.')
+      console.error('Lỗi đặt lại mật khẩu:', error)
+      setLocalError('Không thể đặt lại mật khẩu. Vui lòng thử lại.')
     }
   }
 
-  // If form is submitted successfully, show success message
   if (isSubmitted) {
     return (
       <TooltipProvider>
@@ -157,11 +148,10 @@ export function CreateNewPasswordForm() {
           <div className="flex flex-col items-center mb-2">
             <div className="flex items-center">
               <Image src="/images/ctnp-logo.png" alt="Logo" width={50} height={50} data-ai-hint="logo" />
-              <h1 className="text-xl font-bold text-foreground whitespace-nowrap">Create New Password</h1>
+              <h1 className="text-xl font-bold text-foreground whitespace-nowrap">Tạo mật khẩu mới</h1>
             </div>
           </div>
 
-          {/* Success Icon */}
           <div className="flex justify-center my-8">
             <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center">
               <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center">
@@ -171,20 +161,20 @@ export function CreateNewPasswordForm() {
           </div>
 
           <p className="text-muted-foreground text-center mb-8">
-            Password changed successfully, you can login again with new password
+            Mật khẩu đã được thay đổi thành công, bạn có thể đăng nhập lại bằng mật khẩu mới.
           </p>
 
           <div className="relative my-6">
             <Separator />
             <span className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-              or
+              hoặc
             </span>
           </div>
 
           <Button variant="outline" className="w-full h-12 text-base" asChild>
-            <Link href="/en/auth/login">
+            <Link href="/vi/auth/login">
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Return to Sign In
+                Quay lại trang Đăng nhập
             </Link>
           </Button>
         </div>
@@ -198,7 +188,7 @@ export function CreateNewPasswordForm() {
         <div className="flex flex-col items-center mb-2">
           <div className="flex items-center">
               <Image src="/images/ctnp-logo.png" alt="Logo" width={50} height={50} data-ai-hint="logo" />
-              <h1 className="text-xl font-bold text-foreground whitespace-nowrap">Create New Password</h1>
+              <h1 className="text-xl font-bold text-foreground whitespace-nowrap">Tạo mật khẩu mới</h1>
           </div>
         </div>
         
@@ -256,7 +246,7 @@ export function CreateNewPasswordForm() {
                         >
                           <Input
                             type={showPassword ? "text" : "password"}
-                            placeholder="Enter your new password"
+                            placeholder="Nhập mật khẩu mới của bạn"
                             {...field}
                             className={`h-12 text-base pr-10 ${form.formState.errors.password ? "border-destructive" : ""}`}
                             disabled={isActionLoading}
@@ -319,7 +309,7 @@ export function CreateNewPasswordForm() {
                         >
                           <Input
                             type={showRePassword ? "text" : "password"}
-                            placeholder="Confirm your password"
+                            placeholder="Xác nhận mật khẩu của bạn"
                             {...field}
                             className={`h-12 text-base pr-10 ${form.formState.errors.rePassword ? "border-destructive" : ""}`}
                             disabled={isActionLoading}
@@ -377,10 +367,10 @@ export function CreateNewPasswordForm() {
               {isActionLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating Password...
+                  Đang tạo mật khẩu...
                 </>
               ) : (
-                'Create Password'
+                'Tạo mật khẩu'
               )}
             </Button>
           </form>
@@ -389,14 +379,14 @@ export function CreateNewPasswordForm() {
         <div className="relative my-6">
           <Separator />
           <span className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-            or
+            hoặc
           </span>
         </div>
 
         <Button variant="outline" className="w-full h-12 text-base" asChild>
-          <Link href="/en/auth/login">
+          <Link href="/vi/auth/login">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Return to Sign In
+              Quay lại trang Đăng nhập
           </Link>
         </Button>
       </div>

@@ -10,7 +10,7 @@ import type { HeaderProps } from "@/shared/components/layout/types/header-menu.t
 
 export function Header({
   user,
-  appName = "Portal Identity",
+  appName = "Quản lý Cafe",
   logoSrc = "/images/ctnp-logo.png"
 }: HeaderProps) {
   const { menuState, menuActions } = useMenuState();

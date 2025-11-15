@@ -34,11 +34,11 @@ import { useToast } from "@/shared/hooks/use-toast";
 
 const formSchema = z.object({
     email: z.string()
-        .min(1, { message: "This field is required." })
-        .max(50, { message: "Email cannot exceed 50 characters." })
+        .min(1, { message: "Trường này là bắt buộc." })
+        .max(50, { message: "Email không được vượt quá 50 ký tự." })
         .trim()
         .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {
-            message: "Invalid email format.",
+            message: "Định dạng email không hợp lệ.",
         }),
 });
 
@@ -48,11 +48,10 @@ export function ForgotPasswordForm() {
     const { toast } = useToast();
 
     const languages = [
-        { code: 'EN', name: 'English', flag: '/images/en.png' },
-        { code: 'VI', name: 'Vietnamese', flag: '/images/vi.png' }
+        { code: 'VI', name: 'Tiếng Việt', flag: '/images/vi.png' },
+        { code: 'EN', name: 'English', flag: '/images/en.png' }
     ];
 
-    // Initialize language from localStorage or default to English
     const [selectedLanguage, setSelectedLanguage] = React.useState(() => {
         if (typeof window !== 'undefined') {
             const savedLanguage = localStorage.getItem('layout-language');
@@ -60,10 +59,9 @@ export function ForgotPasswordForm() {
                 return languages.find(lang => lang.code === savedLanguage) || languages[0];
             }
         }
-        return languages[0]; // Default to English
+        return languages[0];
     });
 
-    // Handle language change and save to localStorage
     const handleLanguageChange = (language: typeof languages[0]) => {
         setSelectedLanguage(language);
         if (typeof window !== 'undefined') {
@@ -78,12 +76,10 @@ export function ForgotPasswordForm() {
         },
     });
 
-    // Handle click outside to close tooltips
     React.useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             const target = event.target as HTMLElement;
 
-            // Don't close if clicking on tooltip trigger elements or tooltip content
             if (target.closest('[data-tooltip-trigger]') || target.closest('[data-radix-tooltip-content]')) {
                 return;
             }
@@ -105,7 +101,7 @@ export function ForgotPasswordForm() {
                 form.reset();
             }
         } catch (error) {
-            console.error('Forgot password error:', error);
+            console.error('Lỗi quên mật khẩu:', error);
         }
     }
 
@@ -114,7 +110,6 @@ export function ForgotPasswordForm() {
             <div className="w-full max-w-[360px] xs:bg-card xs:p-8 xs:rounded-2xl xs:border xs:shadow-lg">
                 <div className="flex flex-col items-center mb-2">
                     <div className="flex items-center">
-                        {/* FIX: Add proper sizing to prevent aspect ratio issues */}
                         <Image 
                             src="/images/ctnp-logo.png" 
                             alt="Logo" 
@@ -124,7 +119,7 @@ export function ForgotPasswordForm() {
                             priority
                             data-ai-hint="logo" 
                         />
-                        <h1 className="text-2xl font-bold text-foreground">Forgot password?</h1>
+                        <h1 className="text-2xl font-bold text-foreground">Quên mật khẩu?</h1>
                     </div>
                 </div>
 
@@ -132,7 +127,6 @@ export function ForgotPasswordForm() {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="flex items-center gap-1 text-sm text-muted-foreground">
-                                {/* FIX: Remove conflicting style attributes and use only Tailwind */}
                                 <Image
                                     src={selectedLanguage.flag}
                                     alt={`${selectedLanguage.name} Flag`}
@@ -151,7 +145,6 @@ export function ForgotPasswordForm() {
                                     key={language.code}
                                     onClick={() => handleLanguageChange(language)}
                                 >
-                                    {/* FIX: Same fix for flag images */}
                                     <Image
                                         src={language.flag}
                                         alt={`${language.name} Flag`}
@@ -168,7 +161,7 @@ export function ForgotPasswordForm() {
                 </div>
 
                 <p className="text-muted-foreground text-sm mb-6 text-start">
-                    Enter your email, we will send a verification code to your email
+                    Nhập email của bạn, chúng tôi sẽ gửi mã xác minh đến email của bạn
                 </p>
 
                 <Form {...form}>
@@ -185,10 +178,9 @@ export function ForgotPasswordForm() {
                                                     className="relative"
                                                     data-tooltip-trigger
                                                 >
-                                                    {/* FIX: Add autocomplete and type attributes */}
                                                     <Input
                                                         type="email"
-                                                        placeholder="Enter your email"
+                                                        placeholder="Nhập email của bạn"
                                                         autoComplete="email"
                                                         {...field}
                                                         className={`h-12 text-base ${form.formState.errors.email ? "pr-10 border-destructive" : ""}`}
@@ -225,7 +217,6 @@ export function ForgotPasswordForm() {
                             )}
                         />
 
-                        {/* FIX: Replace inline styles with Tailwind classes */}
                         <Button
                             type="submit"
                             className="w-full h-12 text-base font-semibold bg-[#003366] hover:bg-[#002244] focus:bg-[#002244] disabled:opacity-50 disabled:cursor-not-allowed"
@@ -234,10 +225,10 @@ export function ForgotPasswordForm() {
                             {isActionLoading ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Sending...
+                                    Đang gửi...
                                 </>
                             ) : (
-                                'Recover Password'
+                                'Khôi phục mật khẩu'
                             )}
                         </Button>
                     </form>
@@ -246,7 +237,7 @@ export function ForgotPasswordForm() {
                 <div className="relative my-6">
                     <Separator />
                     <span className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-                        or
+                        hoặc
                     </span>
                 </div>
 
@@ -255,9 +246,9 @@ export function ForgotPasswordForm() {
                     className="w-full h-12 text-base disabled:opacity-50 disabled:cursor-not-allowed" 
                     asChild
                 >
-                    <Link href="/en/auth/login">
+                    <Link href="/vi/auth/login">
                         <ArrowLeft className="mr-2 h-4 w-4" />
-                        Return to Sign In
+                        Quay lại trang Đăng nhập
                     </Link>
                 </Button>
             </div>

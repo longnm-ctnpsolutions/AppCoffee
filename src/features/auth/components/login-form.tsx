@@ -33,16 +33,16 @@ import Link from "next/link";
 import { useAuthActions } from "@/shared/context/auth-context";
 const formSchema = z.object({
     email: z.string()
-        .min(1, { message: "This field is required." })
-        .max(50, { message: "Email cannot exceed 50 characters." })
+        .min(1, { message: "Trường này là bắt buộc." })
+        .max(50, { message: "Email không được vượt quá 50 ký tự." })
         .trim()
         .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {
-            message: "Email cannot contain leading or trailing spaces.",
+            message: "Email không được chứa khoảng trắng ở đầu hoặc cuối.",
         }),
     password: z.string()
-        .min(1, { message: "This field is required." })
+        .min(1, { message: "Trường này là bắt buộc." })
         .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/, {
-            message: "Password must be 8+ characters, include uppercase, lowercase, and a number.",
+            message: "Mật khẩu phải từ 8 ký tự trở lên, bao gồm chữ hoa, chữ thường và số.",
         }),
     rememberMe: z.boolean().default(false).optional(),
 });
@@ -53,8 +53,8 @@ export function LoginForm() {
     const { login, loginWithGoogle, loginWithMicrosoft, isActionLoading, error } = useAuthActions();
 
     const languages = [
-        { code: 'EN', name: 'English', flag: '/images/en.png' },
-        { code: 'VI', name: 'Vietnamese', flag: '/images/vi.png' }
+        { code: 'VI', name: 'Tiếng Việt', flag: '/images/vi.png' },
+        { code: 'EN', name: 'English', flag: '/images/en.png' }
     ];
 
     // Initialize language from localStorage or default to English
@@ -153,7 +153,7 @@ export function LoginForm() {
                             priority
                             data-ai-hint="logo"
                         />
-                        <h1 className="text-2xl font-bold text-foreground">Sign in</h1>
+                        <h1 className="text-2xl font-bold text-foreground">Đăng nhập</h1>
                     </div>
                 </div>
 
@@ -212,7 +212,7 @@ export function LoginForm() {
                                                     {/* FIX: Add autocomplete attribute */}
                                                     <Input
                                                         type="email"
-                                                        placeholder="Enter your email"
+                                                        placeholder="Nhập email của bạn"
                                                         autoComplete="email"
                                                         {...field}
                                                         className={`h-12 text-base ${form.formState.errors.email ? "pr-10 border-destructive" : ""}`}
@@ -264,7 +264,7 @@ export function LoginForm() {
                                                     {/* FIX: Add autocomplete attribute */}
                                                     <Input
                                                         type={showPassword ? "text" : "password"}
-                                                        placeholder="Enter your password"
+                                                        placeholder="Nhập mật khẩu của bạn"
                                                         autoComplete="current-password"
                                                         {...field}
                                                         className={`h-12 text-base pr-10 ${form.formState.errors.password ? "border-destructive" : ""}`}
@@ -288,7 +288,7 @@ export function LoginForm() {
                                                             setShowPassword(!showPassword);
                                                         }}
                                                         disabled={isActionLoading}
-                                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                                        aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
                                                     >
                                                         {showPassword ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
                                                     </Button>
@@ -333,7 +333,7 @@ export function LoginForm() {
                                         className={`text-sm font-medium leading-none select-none ${isActionLoading ? "cursor-not-allowed opacity-50" : "cursor-pointer"
                                             }`}
                                     >
-                                        Remember Me
+                                        Ghi nhớ tôi
                                     </label>
                                 </FormItem>
                             )}
@@ -347,16 +347,16 @@ export function LoginForm() {
                             {isActionLoading ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Signing in...
+                                    Đang đăng nhập...
                                 </>
                             ) : (
-                                'Sign in'
+                                'Đăng nhập'
                             )}
                         </Button>
 
                         <div className="text-center">
-                            <Link href="/en/auth/forgot-password" className="text-sm text-primary hover:underline focus:underline">
-                                Forgot password?
+                            <Link href="/vi/auth/forgot-password" className="text-sm text-primary hover:underline focus:underline">
+                                Quên mật khẩu?
                             </Link>
                         </div>
                     </form>
@@ -365,7 +365,7 @@ export function LoginForm() {
                 <div className="relative my-6">
                     <Separator />
                     <span className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-                        or
+                        hoặc
                     </span>
                 </div>
 
@@ -387,7 +387,7 @@ export function LoginForm() {
                             className="mr-2 object-contain"
                             data-ai-hint="google logo"
                         />
-                        Login with Google
+                        Đăng nhập với Google
                     </Button>
 
                     {/* Microsoft OAuth Button */}
@@ -406,7 +406,7 @@ export function LoginForm() {
                             className="mr-2 object-contain"
                             data-ai-hint="microsoft logo"
                         />
-                        Login with Microsoft
+                        Đăng nhập với Microsoft
                     </Button>
                 </div>
             </div>

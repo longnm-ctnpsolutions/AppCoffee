@@ -6,8 +6,8 @@ import { FilesProvider } from "@/shared/context/files-context"
 import { AuthProvider } from "@/shared/context/auth-context"
 import { AuthGuard } from '@/shared/components/custom-ui/auth-guard';
 export const metadata: Metadata = {
-  title: 'Portal Identity',
-  description: 'Manage your application users with ease.',
+  title: 'Quản lý Cafe',
+  description: 'Hệ thống quản lý dành cho quán cafe.',
 };
 
 export default function RootLayout({
