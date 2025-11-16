@@ -112,8 +112,8 @@ export const useHeaderTheme = () => {
   const { setTheme } = useTheme();
 
   const themeOptions: ThemeOption[] = [
-    { value: 'light', label: 'Light', icon: '☀️' },
-    { value: 'dark', label: 'Dark', icon: '🌙' },
+    { value: 'light', label: 'Sáng', icon: '☀️' },
+    { value: 'dark', label: 'Tối', icon: '🌙' },
   ];
 
   const handleThemeChange = useCallback((theme: ThemeOption['value']) => {
@@ -174,13 +174,13 @@ export const useUserMenu = () => {
   const userMenuActions: UserMenuAction[] = [
     {
       key: 'profile',
-      label: 'Profile',
+      label: 'Hồ sơ',
       icon: SquareUser,
       onClick: handleProfile
     },
     {
       key: 'logout',
-      label: 'Logout',
+      label: 'Đăng xuất',
       icon: LogOut,
       onClick: handleLogout,
       separator: true,
