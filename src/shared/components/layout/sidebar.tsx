@@ -56,7 +56,7 @@ export function SidebarNav() {
         <div className="p-4 transition-all duration-500">
           <div className="text-xs text-muted-foreground transition-all duration-500">
             <div>Copyright © 2025</div>
-            <div>CTNP Solutions.</div>
+            <div>Long Nguyen.</div>
           </div>
         </div>
       )}

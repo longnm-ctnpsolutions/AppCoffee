@@ -28,10 +28,10 @@ export function UserProfileHeader({
         <div className="flex items-center justify-between">
             <div>
                 <CardTitle className="text-2xl tracking-tight">
-                    User Profile
+                    Hồ sơ người dùng
                 </CardTitle>
                 <CardDescription>
-                    Manage your profile information.
+                    Quản lý thông tin hồ sơ của bạn.
                 </CardDescription>
             </div>
             <div className="flex items-center gap-2">
@@ -42,7 +42,7 @@ export function UserProfileHeader({
                         onClick={onEdit}
                     >
                         <Pencil className="mr-2 h-4 w-4" />
-                        Edit
+                        Chỉnh sửa
                     </Button>
                 ) : (
                     <>
@@ -52,7 +52,7 @@ export function UserProfileHeader({
                             disabled={isPending}
                             onClick={onCancel}
                         >
-                            Cancel
+                            Hủy
                         </Button>
                         <Button type="submit" disabled={isPending}>
                             {isPending ? (
@@ -60,7 +60,7 @@ export function UserProfileHeader({
                             ) : (
                                 <Save className="mr-2 h-4 w-4" />
                             )}
-                            Save
+                            Lưu
                         </Button>
                     </>
                 )}

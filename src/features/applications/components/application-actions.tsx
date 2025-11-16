@@ -39,7 +39,7 @@ export const ApplicationActions = React.memo(function ApplicationActions({
   const actions: ActionItem[] = React.useMemo(() => [
     {
       id: 'refresh',
-      label: 'Refresh Data',
+      label: 'Làm mới dữ liệu',
       icon: RefreshCw,
       type: 'button',
       variant: 'ghost',
@@ -53,8 +53,8 @@ export const ApplicationActions = React.memo(function ApplicationActions({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Applications</CardTitle>
-          <CardDescription>Loading...</CardDescription>
+          <CardTitle>Ứng dụng</CardTitle>
+          <CardDescription>Đang tải...</CardDescription>
         </CardHeader>
       </Card>
     )
@@ -65,14 +65,14 @@ export const ApplicationActions = React.memo(function ApplicationActions({
       <CardHeader>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <CardTitle>Applications</CardTitle>
-            <CardDescription>Manage your applications.</CardDescription>
+            <CardTitle>Ứng dụng</CardTitle>
+            <CardDescription>Quản lý các ứng dụng của bạn.</CardDescription>
           </div>
           <div className="flex items-center gap-2">
             <div className="relative flex-1 md:grow-0">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search applications..."
+                placeholder="Tìm ứng dụng..."
                 value={searchTerm}
                 onChange={handleSearchChange}
                 className="pl-9 w-full md:w-[250px]"

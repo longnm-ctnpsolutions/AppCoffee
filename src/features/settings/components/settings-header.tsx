@@ -31,10 +31,10 @@ export function SettingsHeader({
         <div className="flex items-start justify-between">
             <div>
                 <CardTitle className="text-2xl tracking-tight">
-                    System Settings
+                    Cài đặt hệ thống
                 </CardTitle>
                 <CardDescription>
-                    Manage authentication and password policies for the system.
+                    Quản lý xác thực và chính sách mật khẩu cho hệ thống.
                 </CardDescription>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
@@ -46,7 +46,7 @@ export function SettingsHeader({
                         disabled={isActionLoading}
                     >
                         <Pencil className="mr-2 h-4 w-4" />
-                        Edit
+                        Chỉnh sửa
                     </Button>
                 ) : (
                     <>
@@ -56,7 +56,7 @@ export function SettingsHeader({
                             onClick={onCancel}
                             disabled={isActionLoading}
                         >
-                            Cancel
+                            Hủy
                         </Button>
                         <Button
                             type="submit"
@@ -64,7 +64,7 @@ export function SettingsHeader({
                             disabled={!canSave || isActionLoading}
                         >
                             <Save className="mr-2 h-4 w-4" />
-                            {isActionLoading ? "Saving..." : "Save"}
+                            {isActionLoading ? "Đang lưu..." : "Lưu"}
                         </Button>
                     </>
                 )}

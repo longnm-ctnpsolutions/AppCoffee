@@ -107,7 +107,7 @@ export const AuditLogActions = React.memo(function AuditLogActions({
         if (true) {
             actionsList.push({
                 id: 'export-dropdown',
-                label: 'Export Data',
+                label: 'Xuất dữ liệu',
                 icon: Download,
                 type: 'button',
                 onClick: handleExportClick,
@@ -122,7 +122,7 @@ export const AuditLogActions = React.memo(function AuditLogActions({
         if (onRefreshData) {
             actionsList.push({
                 id: 'refresh',
-                label: 'Refresh Data',
+                label: 'Làm mới dữ liệu',
                 icon: RefreshCw,
                 type: 'button',
                 variant: 'ghost',
@@ -154,14 +154,14 @@ export const AuditLogActions = React.memo(function AuditLogActions({
                 <CardHeader>
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
-                            <CardTitle>Audit Logs</CardTitle>
-                            <CardDescription>Manage your audit logs.</CardDescription>
+                            <CardTitle>Nhật ký truy vết</CardTitle>
+                            <CardDescription>Quản lý nhật ký truy vết của bạn.</CardDescription>
                         </div>
 
                         <div className="flex items-center gap-2">
                             <div className="relative flex-1 md:grow-0">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                <Input placeholder="Search..." value="" className="pl-9 w-full md:w-[150px] lg:w-[250px]" disabled />
+                                <Input placeholder="Tìm kiếm..." value="" className="pl-9 w-full md:w-[150px] lg:w-[250px]" disabled />
                             </div>
                             <div className="items-center gap-2 hidden sm:flex">
                                 <div className="w-20 h-8 bg-gray-200 rounded animate-pulse"></div>
@@ -183,14 +183,14 @@ export const AuditLogActions = React.memo(function AuditLogActions({
             <CardHeader>
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
-                        <CardTitle>Audit Logs</CardTitle>
-                        <CardDescription>Manage your audit logs.</CardDescription>
+                        <CardTitle>Nhật ký truy vết</CardTitle>
+                        <CardDescription>Quản lý nhật ký truy vết của bạn.</CardDescription>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="relative flex-1 md:grow-0">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
-                                placeholder="Search..."
+                                placeholder="Tìm kiếm..."
                                 value={searchTerm}
                                 onChange={handleSearchChange}
                                 className="pl-9 w-full md:w-[150px] lg:w-[250px]"

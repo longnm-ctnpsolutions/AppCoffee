@@ -24,13 +24,13 @@ export interface MenuItem {
 export const menuConfig: MenuItem[] = [
     {
         id: "identity",
-        label: "Identity Manager",
+        label: "Quản lý định danh",
         icon: SquareUser,
         dividerAfter: true,
         children: [
             {
                 id: "users",
-                label: "Users",
+                label: "Người dùng",
                 icon: User,
                 href: "/users",
                 permission: CORE_PERMISSIONS.USERS_READ,
@@ -44,7 +44,7 @@ export const menuConfig: MenuItem[] = [
             // },
             {
                 id: "roles",
-                label: "Roles",
+                label: "Vai trò",
                 icon: Shield,
                 href: "/roles",
                 permission: CORE_PERMISSIONS.ROLES_READ,
@@ -53,7 +53,7 @@ export const menuConfig: MenuItem[] = [
     },
     {
         id: "applications",
-        label: "Applications",
+        label: "Ứng dụng",
         icon: BriefcaseBusiness,
         href: "/applications",
         dividerAfter: true,
@@ -67,26 +67,26 @@ export const menuConfig: MenuItem[] = [
     },
     {
         id: "audit-logs",
-        label: "Audit Logs",
+        label: "Nhật ký truy vết",
         icon: FileText,
         href: "/audit-logs",
         dividerAfter: true,
     },
     {
         id: "settings",
-        label: "Settings",
+        label: "Cài đặt",
         icon: Settings,
         dividerAfter: true,
         children: [
             {
                 id: "profile",
-                label: "User Profile",
+                label: "Hồ sơ người dùng",
                 icon: User,
                 href: "/user-profile",
             },
             {
                 id: "system-settings",
-                label: "System Settings",
+                label: "Cài đặt hệ thống",
                 icon: Settings,
                 href: "/settings",
                 permission: CORE_PERMISSIONS.SYSTEM_SETTINGS,
