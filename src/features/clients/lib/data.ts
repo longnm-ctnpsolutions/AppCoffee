@@ -16,7 +16,7 @@ export const clients: Client[] = [
     name: 'Activation', 
     clientId: 'a1b2c3d4e5', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Manage and track the activation of systems, services, or products with support for requests, approvals, and status monitoring.'
   },
   { 
@@ -24,7 +24,7 @@ export const clients: Client[] = [
     name: 'ClaimTire', 
     clientId: 'f6g7h8i9j0', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Support tire-related claim submissions, tracking, and resolution management.'
   },
   { 
@@ -32,7 +32,7 @@ export const clients: Client[] = [
     name: 'Fleet Approach', 
     clientId: 'k1l2m3n4o5', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Enable streamlined operations and insights for fleet-related activities and services.'
   },
   { 
@@ -40,7 +40,7 @@ export const clients: Client[] = [
     name: 'Portal Identity', 
     clientId: 'p6q7r8s9t0', 
     status: 0,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'A centralized application for managing user identities, roles, permissions, and client configurations across integrated systems.'
   },
   { 
@@ -48,7 +48,7 @@ export const clients: Client[] = [
     name: 'Web Order for Dealer', 
     clientId: 'u1v2w3x4y5', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Place, track, and manage orders through the integrated online ordering system.'
   },
   { 
@@ -56,7 +56,7 @@ export const clients: Client[] = [
     name: 'SystemSync', 
     clientId: 'z1a2b3c4d5', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Synchronize data and operations across multiple systems for seamless integration.'
   },
   { 
@@ -64,7 +64,7 @@ export const clients: Client[] = [
     name: 'TrackMate', 
     clientId: 'e6f7g8h9i0', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Real-time tracking and monitoring for assets, shipments, or services.'
   },
   { 
@@ -72,7 +72,7 @@ export const clients: Client[] = [
     name: 'OrderFlow', 
     clientId: 'j1k2l3m4n5', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Streamline order processing with automated workflows and status updates.'
   },
   { 
@@ -80,7 +80,7 @@ export const clients: Client[] = [
     name: 'UserHub', 
     clientId: 'o6p7q8r9s0', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Centralized platform for user management, authentication, and access control.'
   },
   { 
@@ -88,7 +88,7 @@ export const clients: Client[] = [
     name: 'InsightCore', 
     clientId: 't1u2v3w4x5', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Advanced analytics and reporting for operational and business insights.'
   },
   { 
@@ -96,7 +96,7 @@ export const clients: Client[] = [
     name: 'ClaimPro', 
     clientId: 'y6z7a8b9c0', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Efficient claim processing with automated validation and tracking.'
   },
   { 
@@ -104,7 +104,7 @@ export const clients: Client[] = [
     name: 'FleetSync', 
     clientId: 'd1e2f3g4h5', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Integrated fleet management with real-time data synchronization.'
   },
   { 
@@ -112,7 +112,7 @@ export const clients: Client[] = [
     name: 'ServicePoint', 
     clientId: 'i6j7k8l9m0', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Manage service requests, scheduling, and customer support operations.'
   },
   { 
@@ -120,7 +120,7 @@ export const clients: Client[] = [
     name: 'OrderTrack', 
     clientId: 'n1o2p3q4r5', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Track orders from placement to delivery with real-time updates.'
   },
   { 
@@ -128,7 +128,7 @@ export const clients: Client[] = [
     name: 'IdentitySync', 
     clientId: 's6t7u8v9w0', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Synchronize user identities and permissions across multiple platforms.'
   },
   { 
@@ -136,7 +136,7 @@ export const clients: Client[] = [
     name: 'DataBridge', 
     clientId: 'x1y2z3a4b5', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Connect and transfer data between disparate systems securely.'
   },
   { 
@@ -144,7 +144,7 @@ export const clients: Client[] = [
     name: 'ClaimEase', 
     clientId: 'c6d7e8f9g0', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Simplify claim submissions with user-friendly interfaces and automation.'
   },
   { 
@@ -152,7 +152,7 @@ export const clients: Client[] = [
     name: 'FleetInsight', 
     clientId: 'i1j2k3l4m5', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Provide actionable insights for fleet operations and maintenance.'
   },
   { 
@@ -160,7 +160,7 @@ export const clients: Client[] = [
     name: 'PortalSync', 
     clientId: 'n6o7p8q9r0', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Sync portal configurations and user data across integrated systems.'
   },
   { 
@@ -168,7 +168,7 @@ export const clients: Client[] = [
     name: 'OrderPro', 
     clientId: 's1t2u3v4w5', 
     status: 1,
-    logo: '/images/new-icon.png',
+    logo: '/images/new-icon.svg',
     description: 'Advanced order management with customizable workflows and reporting.'
   },
 ];

@@ -9,7 +9,7 @@ const mockClients: Client[] = Array.from({ length: 20 }, (_, i) => ({
     audience: `aud-client-${i+1}`,
     issuer: `iss-client-${i+1}`,
     tokenExpired: 3600,
-    logoUrl: `/images/new-icon.png`,
+    logoUrl: `/images/new-icon.svg`,
     status: i % 3 === 0 ? 0 : 1,
     clientId: `id-${i+1}`,
     identifier: `identifier-${i+1}`
