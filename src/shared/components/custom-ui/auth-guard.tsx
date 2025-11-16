@@ -107,18 +107,18 @@ export function AuthGuard({ children }: AuthGuardProps) {
     const hasCalledAccessClient = useRef(false);
 
     const publicRoutes = [
-        "/en/auth/login",
-        "/en/auth/register",
-        "/en/auth/forgot-password",
-        "/en/auth/reset-password",
-        "/en/auth/verify-email",
-        "/en/auth/create-new-password",
-        "/en/auth/authenticator",
+        "/vi/auth/login",
+        "/vi/auth/register",
+        "/vi/auth/forgot-password",
+        "/vi/auth/reset-password",
+        "/vi/auth/verify-email",
+        "/vi/auth/create-new-password",
+        "/vi/auth/authenticator",
     ];
 
-    const loginRoutes = ["/en/auth/login"];
+    const loginRoutes = ["/vi/auth/login"];
 
-    const signOutRoutes = ["/en/signout"];
+    const signOutRoutes = ["/vi/signout"];
 
     const isPublicRoute = publicRoutes.some((route) =>
         pathname.startsWith(route)
@@ -197,7 +197,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
                     const params = getUrlParams();
                     if (params?.hasHashPath) {
                         const hash = window.location.hash;
-                        const newUrl = "/en/auth/login/" + hash;
+                        const newUrl = "/vi/auth/login/" + hash;
                         router.replace(newUrl);
                         return;
                     }
@@ -206,7 +206,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
             }
 
             if (isAuthenticated) {
-                router.replace("/en/applications");
+                router.replace("/vi/applications");
             } else {
                 if (typeof window !== "undefined") {
                     const fullUrl =
@@ -216,16 +216,16 @@ export function AuthGuard({ children }: AuthGuardProps) {
                     if (fullUrl !== "/") {
                         router.replace(fullUrl);
                     } else {
-                        router.replace("/en/auth/login");
+                        router.replace("/vi/auth/login");
                     }
                 } else {
-                    router.replace("/en/auth/login");
+                    router.replace("/vi/auth/login");
                 }
             }
             return;
         }
 
-        if (isAuthenticated && pathname === "/en/auth/login") {
+        if (isAuthenticated && pathname === "/vi/auth/login") {
             if (typeof window !== "undefined") {
                 const params = getUrlParams();
 
@@ -234,7 +234,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
                     // const targetUrl = decodeURIComponent(params.redirectUrl);
 
                     // if (!isValidRedirectUrl(targetUrl)) {
-                    //   router.replace('/en/applications');
+                    //   router.replace('/vi/applications');
                     //   return;
                     // }
                     // if (targetUrl.startsWith('http://') || targetUrl.startsWith('https://')) {
@@ -249,11 +249,11 @@ export function AuthGuard({ children }: AuthGuardProps) {
                 if (params?.returnUrl) {
                     targetUrl = decodeURIComponent(params.returnUrl);
                 } else {
-                    targetUrl = "/en/applications";
+                    targetUrl = "/vi/applications";
                 }
 
                 if (!isValidRedirectUrl(targetUrl)) {
-                    targetUrl = "/en/applications";
+                    targetUrl = "/vi/applications";
                 }
 
                 if (
@@ -276,7 +276,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
             if (typeof window !== "undefined") {
                 const currentPath = pathname + window.location.search;
                 const returnUrl = encodeURIComponent(currentPath);
-                router.replace(`/en/auth/login?returnUrl=${returnUrl}`);
+                router.replace(`/vi/auth/login?returnUrl=${returnUrl}`);
             }
             return;
         }
@@ -296,7 +296,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
         if (clientId) {
             authService.logout().then(() => {
                 window.location.href =
-                    "/en/auth/login?redirect=true&clientId=" + clientId;
+                    "/vi/auth/login?redirect=true&clientId=" + clientId;
             });
         }
         return <LoadingOverlay message="Signing out..." />;

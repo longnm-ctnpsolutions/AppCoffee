@@ -36,10 +36,10 @@ function RoleActions({ role, onDelete }: RoleActionsProps) {
     const handleDetailsClick = async () => {
         try {
             await getRoleDetails(role.id);
-            router.push(`/en/roles/${role.id}`);
+            router.push(`/vi/roles/${role.id}`);
         } catch (error) {
             console.error('Failed to fetch role details:', error);
-            router.push(`/en/roles/${role.id}`);
+            router.push(`/vi/roles/${role.id}`);
         }
     };
 
