@@ -391,7 +391,7 @@ export const useRolesActions = (debounceDelay: number = 300) => {
         variant: "default",
       });
 
-      router.push(`/en/roles/${newRole}`);
+      router.push(`/vi/roles/${newRole}`);
       return true;
     } catch (error: any) {
       const message = error instanceof Error ? error.message : 'Failed to update';

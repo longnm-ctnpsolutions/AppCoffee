@@ -438,7 +438,7 @@ export const useUsersActions = (debounceDelay: number = 300) => {
                     description: "User created successfully!",
                     variant: "default",
                 });
-                router.push(`/en/users/${newUser}`);
+                router.push(`/vi/users/${newUser}`);
                 return true;
             } catch (error) {
                 const message =

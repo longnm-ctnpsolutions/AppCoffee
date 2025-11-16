@@ -390,13 +390,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const isPublicRoute = (path: string): boolean => {
         const publicRoutes = [
-            "/en/auth/login",
-            "/en/auth/register",
-            "/en/auth/forgot-password",
-            "/en/auth/reset-password",
-            "/en/auth/verify-email",
-            "/en/auth/create-new-password",
-            "/en/auth/authenticator",
+            "/vi/auth/login",
+            "/vi/auth/register",
+            "/vi/auth/forgot-password",
+            "/vi/auth/reset-password",
+            "/vi/auth/verify-email",
+            "/vi/auth/create-new-password",
+            "/vi/auth/authenticator",
         ];
         return publicRoutes.some((route) => path.startsWith(route));
     };
@@ -498,13 +498,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             if (typeof window !== "undefined") {
                 const pathname = window.location.pathname;
                 const publicRoutes = [
-                    "/en/auth/login",
-                    "/en/auth/register",
-                    "/en/auth/forgot-password",
-                    "/en/auth/reset-password",
-                    "/en/auth/verify-email",
-                    "/en/auth/create-new-password",
-                    "/en/auth/authenticator",
+                    "/vi/auth/login",
+                    "/vi/auth/register",
+                    "/vi/auth/forgot-password",
+                    "/vi/auth/reset-password",
+                    "/vi/auth/verify-email",
+                    "/vi/auth/create-new-password",
+                    "/vi/auth/authenticator",
                 ];
 
                 if (publicRoutes.some((route) => pathname.startsWith(route))) {
@@ -530,7 +530,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                         window.location.search +
                         window.location.hash;
                     const encodedReturnUrl = encodeURIComponent(currentUrl);
-                    window.location.href = `/en/auth/login?returnUrl=${encodedReturnUrl}`;
+                    window.location.href = `/vi/auth/login?returnUrl=${encodedReturnUrl}`;
                 }
 
                 throw error;
@@ -657,22 +657,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                                 ? cleanTokensFromUrl(oauthResult.returnUrl)
                                 : null;
                             const rawReturnUrl =
-                                cleanedOAuthReturnUrl || "/en/applications";
+                                cleanedOAuthReturnUrl || "/vi/applications";
                             const publicRoutes = [
-                                "/en/auth/login",
-                                "/en/auth/register",
-                                "/en/auth/forgot-password",
-                                "/en/auth/reset-password",
-                                "/en/auth/verify-email",
-                                "/en/auth/create-new-password",
-                                "/en/auth/authenticator",
+                                "/vi/auth/login",
+                                "/vi/auth/register",
+                                "/vi/auth/forgot-password",
+                                "/vi/auth/reset-password",
+                                "/vi/auth/verify-email",
+                                "/vi/auth/create-new-password",
+                                "/vi/auth/authenticator",
                             ];
 
                             const isPublicRoute = publicRoutes.some((route) =>
                                 rawReturnUrl.startsWith(route)
                             );
                             const safeReturnUrl = isPublicRoute
-                                ? "/en/applications"
+                                ? "/vi/applications"
                                 : rawReturnUrl;
                             delete (window as any).__oauthRedirectInProgress;
                             const cleanedCurrentUrl = cleanTokensFromUrl(
@@ -742,7 +742,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                             type: "LOGIN_FAILURE",
                             payload: "OAuth authentication failed",
                         });
-                        router.push("/en/auth/login?error=oauth_failed");
+                        router.push("/vi/auth/login?error=oauth_failed");
                         return;
                     }
                 }
@@ -960,7 +960,7 @@ export const useAuthActions = () => {
                     variant: "default",
                 });
 
-                const returnUrl = getReturnUrl("/en/applications");
+                const returnUrl = getReturnUrl("/vi/applications");
                 router.push(returnUrl);
                 return true;
             } catch (error: any) {
@@ -1159,7 +1159,7 @@ export const useAuthActions = () => {
                         variant: "default",
                     });
 
-                    const returnUrl = getReturnUrl("/en/applications");
+                    const returnUrl = getReturnUrl("/vi/applications");
                     router.push(returnUrl);
                     return true;
                 } catch (error) {

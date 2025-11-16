@@ -393,7 +393,7 @@ export const useClientsActions = (debounceDelay: number = 300) => {
         variant: 'default',
       });
 
-      router.push(`/en/clients/${newClient}`);
+      router.push(`/vi/clients/${newClient}`);
       return true;
 
     } catch (error) {
