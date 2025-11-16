@@ -21,8 +21,8 @@ import { MfaStatusResponse, SetupMfaResponse } from "@/shared/types/auth.types";
 const formSchema = z.object({
     otp: z
         .string()
-        .length(6, { message: "OTP must be exactly 6 digits." })
-        .regex(/^\d{6}$/, { message: "OTP must contain only numbers." }),
+        .length(6, { message: "OTP phải có đúng 6 chữ số." })
+        .regex(/^\d{6}$/, { message: "OTP chỉ được chứa số." }),
 });
 
 export function AuthenticatorForm() {
@@ -47,7 +47,7 @@ export function AuthenticatorForm() {
 
     React.useEffect(() => {
         if (!token) {
-            setError("Missing token. Please log in first.");
+            setError("Thiếu token. Vui lòng đăng nhập trước.");
             setIsLoading(false);
             return;
         }
@@ -61,7 +61,7 @@ export function AuthenticatorForm() {
                 setSetup(setupMfa)
 
             } catch (err) {
-                setError("Failed to fetch MFA status.");
+                setError("Không thể lấy trạng thái MFA.");
             } finally {
                 setIsLoading(false);
             }
@@ -128,8 +128,8 @@ export function AuthenticatorForm() {
         return (
             <div className="text-center text-sm text-destructive">
                 <div className="mt-4">
-                    <Link href="/en/auth/login">
-                        <Button variant="outline">Return to Login</Button>
+                    <Link href="/vi/auth/login">
+                        <Button variant="outline">Quay lại trang Đăng nhập</Button>
                     </Link>
                 </div>
             </div>
@@ -151,7 +151,7 @@ export function AuthenticatorForm() {
                         priority
                     />
                     <h1 className="text-2xl font-bold text-foreground">
-                        {status?.twoFactorEnabled ? "2-Step Verification" : "Add Authenticator App"}
+                        {status?.twoFactorEnabled ? "Xác minh 2 bước" : "Thêm ứng dụng xác thực"}
                     </h1>
                 </div>
             </div>
@@ -159,10 +159,10 @@ export function AuthenticatorForm() {
             {!status?.twoFactorEnabled && (
                 <div className="mt-4 text-left">
                     <h2 className="text-base font-semibold text-foreground">
-                        Step 1: Scan this QR code
+                        Bước 1: Quét mã QR này
                     </h2>
                     <p className="text-xs text-muted-foreground mt-2">
-                        Scan the following QR code with your authenticator app.
+                        Quét mã QR sau đây bằng ứng dụng xác thực của bạn.
                     </p>
 
                     <div className="mt-4 flex justify-center">
@@ -185,7 +185,7 @@ export function AuthenticatorForm() {
                                         onClick={() => setOpen(!open)}
                                         className="text-xs text-blue-600 underline transition-colors cursor-pointer"
                                     >
-                                        How to use Authenticator App?
+                                        Cách sử dụng ứng dụng Xác thực?
                                     </span>
                                 </TooltipTrigger>
 
@@ -195,10 +195,10 @@ export function AuthenticatorForm() {
                                     sideOffset={isMobile ? 0 : 12}
                                     className="max-w-xs text-left p-3 text-xs leading-relaxed border border-border bg-muted text-muted-foreground rounded-md"
                                 >
-                                    <p>1. Open the <strong>Google Authenticator</strong> or <strong>Microsoft Authenticator</strong> app.</p>
-                                    <p>2. Select <strong>Add Account</strong> or <strong>"+"</strong>.</p>
-                                    <p>3. <strong>Scan the QR code</strong> displayed on the screen.</p>
-                                    <p>4. After scanning, the app will show a <strong>6-digit code</strong>. Enter it in <strong>Step 2</strong>.</p>
+                                    <p>1. Mở ứng dụng <strong>Google Authenticator</strong> hoặc <strong>Microsoft Authenticator</strong>.</p>
+                                    <p>2. Chọn <strong>Thêm tài khoản</strong> hoặc <strong>"+"</strong>.</p>
+                                    <p>3. <strong>Quét mã QR</strong> hiển thị trên màn hình.</p>
+                                    <p>4. Sau khi quét, ứng dụng sẽ hiển thị một <strong>mã 6 chữ số</strong>. Nhập mã đó vào <strong>Bước 2</strong>.</p>
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
@@ -220,11 +220,11 @@ export function AuthenticatorForm() {
                 <div className="mt-4 text-left mb-4">
                     {!status?.twoFactorEnabled && (
                         <h2 className="text-base font-semibold text-foreground">
-                            Step 2: Enter the one-time code
+                            Bước 2: Nhập mã sử dụng một lần
                         </h2>
                     )}
                     <p className="text-xs text-muted-foreground mt-2">
-                        Enter the 6-digit verification code generated by the authenticator app.
+                        Nhập mã xác minh gồm 6 chữ số được tạo bởi ứng dụng xác thực.
                     </p>
                 </div>
 
@@ -268,7 +268,7 @@ export function AuthenticatorForm() {
                         type="submit"
                         className="w-full h-12 text-base font-semibold bg-[#003366] hover:bg-[#002244] disabled:opacity-50 disabled:cursor-not-allowed mt-8 mb-4"
                     >
-                        Continue
+                        Tiếp tục
                     </Button>
                 </form>
             </Form>
@@ -276,7 +276,7 @@ export function AuthenticatorForm() {
             <div className="relative my-6">
                 <Separator />
                 <span className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-                    or
+                    hoặc
                 </span>
             </div>
 
@@ -286,9 +286,9 @@ export function AuthenticatorForm() {
                 className="w-full h-12 text-base disabled:opacity-50 disabled:cursor-not-allowed"
                 asChild
             >
-                <Link href="/en/auth/login">
+                <Link href="/vi/auth/login">
                     <ArrowLeft className="mr-2 h-4 w-4" />
-                    Return to Sign In
+                    Quay lại trang Đăng nhập
                 </Link>
             </Button>
         </div>

@@ -12,7 +12,7 @@ export default async function RootPage({ searchParams }: RootPageProps) {
     const { token, email, returnUrl } = await searchParams;
 
     if (token && email) {
-        redirect(`/en/auth/create-new-password?token=${token}&email=${email}`);
+        redirect(`/vi/auth/create-new-password?token=${token}&email=${email}`);
     }
 
     return <RootClientRedirect returnUrl={returnUrl} />;

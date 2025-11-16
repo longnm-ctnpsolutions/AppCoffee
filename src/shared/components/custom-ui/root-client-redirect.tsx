@@ -18,12 +18,12 @@ export function RootClientRedirect({ returnUrl }: RootClientRedirectProps) {
     }
 
     if (authState.isAuthenticated && authState.user) {
-      router.push('/en/applications');
+      router.push('/vi/applications');
     } else {
       // Cookie existed but validation failed - invalid/expired
       const loginUrl = returnUrl 
-        ? `/en/auth/login?returnUrl=${encodeURIComponent(returnUrl)}`
-        : '/en/auth/login';
+        ? `/vi/auth/login?returnUrl=${encodeURIComponent(returnUrl)}`
+        : '/vi/auth/login';
       router.push(loginUrl);
     }
   }, [authState.isInitialized, authState.isAuthenticated, authState.user, returnUrl, router]);

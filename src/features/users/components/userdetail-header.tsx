@@ -19,12 +19,12 @@ interface UserDetailHeaderProps {
 const UserDetailHeader: React.FC<UserDetailHeaderProps> = ({ user, activeTab }) => {
     const router = useRouter();
     const subtitleMap: Record<string, string> = {
-        details: "User details.",
-        permissions: "List of permissions this user has.",
-        roles: "Users group assigned to this user.",
+        details: "Chi tiết người dùng.",
+        permissions: "Danh sách các quyền mà người dùng này có.",
+        roles: "Các vai trò được gán cho người dùng này.",
     };
     const handleBackClick = React.useCallback(() => {
-        router.push('/en/users');
+        router.push('/vi/users');
     }, [router]);
     return (
         <Card>
@@ -62,7 +62,7 @@ const UserDetailHeader: React.FC<UserDetailHeaderProps> = ({ user, activeTab }) 
                                 )}
                             />
                             <span className="capitalize">
-                                {user.lockoutEnabled === false ? "Active" : "Inactive"}
+                                {user.lockoutEnabled === false ? "Hoạt động" : "Không hoạt động"}
                             </span>
                         </Badge>
                     </div>

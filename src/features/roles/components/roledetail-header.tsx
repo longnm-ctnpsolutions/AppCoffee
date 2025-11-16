@@ -20,17 +20,21 @@ export default function RoleDetailHeader({ role, activeTab }: RoleDetailHeaderPr
   const router = useRouter()
 
   const subtitleMap: Record<string, string> = {
-    details: "Role details.",
-    permissions: "List of permissions this user has.",
-    users: "Users group assigned to this role.",
+    details: "Chi tiết vai trò.",
+    permissions: "Danh sách các quyền mà người dùng này có.",
+    users: "Nhóm người dùng được gán cho vai trò này.",
   }
+
+  const handleBackClick = () => {
+    router.push('/vi/roles');
+  };
 
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => router.push('/en/roles')}>
+            <Button variant="ghost" size="icon" onClick={handleBackClick}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
 

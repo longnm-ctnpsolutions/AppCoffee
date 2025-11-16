@@ -19,7 +19,7 @@ export default function ClientDetailHeader({ client }: ClientDetailHeaderProps) 
     const router = useRouter();
 
     const handleBackClick = () => {
-        router.push('/en/clients');
+        router.push('/vi/clients');
     };
 
     const isActive = client.status === 1;
@@ -77,7 +77,7 @@ export default function ClientDetailHeader({ client }: ClientDetailHeaderProps) 
                                 "mr-1.5 h-2 w-2 rounded-full",
                                 isActive ? "bg-green-500" : "bg-gray-400"
                             )} />
-                            <span className="capitalize"> {isActive ? "Active" : "Inactive"}</span>
+                            <span className="capitalize"> {isActive ? "Hoạt động" : "Không hoạt động"}</span>
                         </Badge>
                     </div>
                 </div>
