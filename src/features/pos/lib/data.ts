@@ -17,7 +17,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "coffee",
     basePrice: 25000,
     sizes: { S: 25000, M: 30000, L: 35000 },
-    image: "/images/new-icon.svg",
+    image: "☕️",
   },
   {
     id: 2,
@@ -25,7 +25,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "coffee",
     basePrice: 20000,
     sizes: { S: 20000, M: 25000, L: 30000 },
-    image: "/images/new-icon.svg",
+    image: "☕️",
   },
   {
     id: 3,
@@ -33,7 +33,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "coffee",
     basePrice: 28000,
     sizes: { S: 28000, M: 33000, L: 38000 },
-    image: "/images/new-icon.svg",
+    image: "☕️",
   },
   {
     id: 4,
@@ -41,7 +41,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "coffee",
     basePrice: 35000,
     sizes: { S: 35000, M: 40000, L: 45000 },
-    image:"images/new-icon.svg",
+    image:"☕️",
   },
   {
     id: 5,
@@ -49,7 +49,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "coffee",
     basePrice: 38000,
     sizes: { S: 38000, M: 43000, L: 48000 },
-    image: "images/new-icon.svg",
+    image: "☕️",
   },
   {
     id: 6,
@@ -57,7 +57,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "milktea",
     basePrice: 30000,
     sizes: { S: 30000, M: 35000, L: 40000 },
-    image: "images/new-icon.svg"
+    image: "🧋"
   },
   {
     id: 7,
@@ -65,7 +65,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "milktea",
     basePrice: 32000,
     sizes: { S: 32000, M: 37000, L: 42000 },
-    image: "images/new-icon.svg",
+    image: "🧋",
   },
   {
     id: 8,
@@ -73,7 +73,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "milktea",
     basePrice: 35000,
     sizes: { S: 35000, M: 40000, L: 45000 },
-    image: "images/new-icon.svg",
+    image: "🧋",
   },
   {
     id: 9,
@@ -81,7 +81,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "smoothie",
     basePrice: 35000,
     sizes: { S: 35000, M: 40000, L: 45000 },
-    image: "images/new-icon.svg",
+    image: "🥤",
   },
   {
     id: 10,
@@ -89,7 +89,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "smoothie",
     basePrice: 32000,
     sizes: { S: 32000, M: 37000, L: 42000 },
-    image: "images/new-icon.svg",
+    image: "🍓",
   },
   {
     id: 11,
@@ -97,7 +97,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "tea",
     basePrice: 30000,
     sizes: { S: 30000, M: 35000, L: 40000 },
-    image: "images/new-icon.svg",
+    image: "🍑",
   },
   {
     id: 12,
@@ -105,7 +105,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "tea",
     basePrice: 28000,
     sizes: { S: 28000, M: 33000, L: 38000 },
-    image: "images/new-icon.svg",
+    image: "🍵",
   },
   {
     id: 13,
@@ -113,7 +113,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "juice",
     basePrice: 25000,
     sizes: { S: 25000, M: 30000, L: 35000 },
-    image: "images/new-icon.svg",
+    image: "🍊",
   },
   {
     id: 14,
@@ -121,7 +121,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "juice",
     basePrice: 27000,
     sizes: { S: 27000, M: 32000, L: 37000 },
-    image: "images/new-icon.svg",
+    image: "🍍",
   },
   {
     id: 15,
@@ -129,7 +129,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "snack",
     basePrice: 20000,
     sizes: { S: 20000 },
-    image: "images/new-icon.svg",
+    image: "🍞",
   },
   {
     id: 16,
@@ -137,7 +137,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "snack",
     basePrice: 35000,
     sizes: { S: 35000 },
-    image: "images/new-icon.svg"
+    image: "🍗"
   },
 ];
 
